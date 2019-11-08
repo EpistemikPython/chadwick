@@ -1,0 +1,1735 @@
+2210 > ll
+total 1.6M
+-rw-rw-r-- 1 marksa marksa 365K Oct 11 10:20 aclocal.m4
+-rw-rw-r-- 1 marksa marksa  260 Oct 11 07:40 AUTHORS
+drwxr-xr-x 2 marksa marksa 4.0K Oct 11 10:32 autom4te.cache
+-rw-rw-r-- 1 marksa marksa  73K Oct 12 05:12 build.term
+-rw-rw-r-- 1 marksa marksa    0 Oct 11 07:40 ChangeLog
+lrwxrwxrwx 1 marksa marksa   32 Oct 11 10:27 compile -> /usr/share/automake-1.15/compile
+lrwxrwxrwx 1 marksa marksa   37 Oct 11 10:27 config.guess -> /usr/share/automake-1.15/config.guess
+-rw-rw-r-- 1 marksa marksa  26K Oct 11 10:34 config.log
+-rwxrwxr-x 1 marksa marksa  53K Oct 11 10:34 config.status
+lrwxrwxrwx 1 marksa marksa   35 Oct 11 10:27 config.sub -> /usr/share/automake-1.15/config.sub
+-rwxrwxr-x 1 marksa marksa 420K Oct 11 10:32 configure
+-rw-rw-r-- 1 marksa marksa 1.7K Oct 11 07:40 configure.ac
+drwxrwxr-x 3 marksa marksa 4.0K Oct 11 07:40 contrib
+-rw-rw-r-- 1 marksa marksa  18K Oct 11 07:40 COPYING
+-rwxrwxr-x 1 marksa marksa  14K Oct 11 07:40 depcomp
+drwxrwxr-x 4 marksa marksa 4.0K Oct 11 07:40 doc
+-rw-rw-r-- 1 marksa marksa  42K Oct 12 05:10 git.term
+-rw-rw-r-- 1 marksa marksa 8.8K Oct 11 07:40 INSTALL
+-rwxrwxr-x 1 marksa marksa 5.5K Oct 11 07:40 install-sh
+-rwxrwxr-x 1 marksa marksa 332K Oct 11 10:34 libtool
+-rwxrwxr-x 1 marksa marksa  96K Oct 11 07:40 ltconfig
+lrwxrwxrwx 1 marksa marksa   38 Oct 11 10:33 ltmain.sh -> /usr/share/libtool/build-aux/ltmain.sh
+drwxrwxr-x 2 marksa marksa 4.0K Oct 11 10:33 m4
+-rw-rw-r-- 1 marksa marksa  26K Oct 11 10:34 Makefile
+-rw-rw-r-- 1 marksa marksa  984 Oct 11 07:40 Makefile.am
+-rw-rw-r-- 1 marksa marksa  26K Oct 11 10:33 Makefile.in
+-rw-rw-r-- 1 marksa marksa  11K Oct 11 07:40 missing
+-rw-rw-r-- 1 marksa marksa  671 Oct 11 07:40 mkinstalldirs
+-rw-rw-r-- 1 marksa marksa  295 Oct 11 07:40 NEWS
+-rw-rw-r-- 1 marksa marksa  375 Oct 11 07:40 README
+-rw-rw-r-- 1 marksa marksa  26K Oct 12 05:14 run.term
+drwxrwxr-x 5 marksa marksa 4.0K Oct 11 10:34 src
+~/dev/git/fork/ChadwickBureau/chadwick | Sat Oct 12 05:15:17 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2211 > ltf
+total 1624
+-rw-rw-r-- 1 marksa marksa  25806 Oct 12 05:14 run.term
+-rw-rw-r-- 1 marksa marksa  74447 Oct 12 05:12 build.term
+-rw-rw-r-- 1 marksa marksa  41987 Oct 12 05:10 git.term
+-rw-rw-r-- 1 marksa marksa  26150 Oct 11 10:34 config.log
+-rwxrwxr-x 1 marksa marksa 339599 Oct 11 10:34 libtool
+-rw-rw-r-- 1 marksa marksa  26087 Oct 11 10:34 Makefile
+drwxrwxr-x 5 marksa marksa   4096 Oct 11 10:34 src
+-rwxrwxr-x 1 marksa marksa  54172 Oct 11 10:34 config.status
+-rw-rw-r-- 1 marksa marksa  25641 Oct 11 10:33 Makefile.in
+drwxrwxr-x 2 marksa marksa   4096 Oct 11 10:33 m4
+lrwxrwxrwx 1 marksa marksa     38 Oct 11 10:33 ltmain.sh -> /usr/share/libtool/build-aux/ltmain.sh
+-rwxrwxr-x 1 marksa marksa 429976 Oct 11 10:32 configure
+drwxr-xr-x 2 marksa marksa   4096 Oct 11 10:32 autom4te.cache
+lrwxrwxrwx 1 marksa marksa     32 Oct 11 10:27 compile -> /usr/share/automake-1.15/compile
+lrwxrwxrwx 1 marksa marksa     37 Oct 11 10:27 config.guess -> /usr/share/automake-1.15/config.guess
+lrwxrwxrwx 1 marksa marksa     35 Oct 11 10:27 config.sub -> /usr/share/automake-1.15/config.sub
+-rw-rw-r-- 1 marksa marksa 372955 Oct 11 10:20 aclocal.m4
+drwxrwxr-x 8 marksa marksa   4096 Oct 11 08:04 .git
+-rwxrwxr-x 1 marksa marksa  13681 Oct 11 07:40 depcomp
+drwxrwxr-x 4 marksa marksa   4096 Oct 11 07:40 doc
+-rwxrwxr-x 1 marksa marksa   5598 Oct 11 07:40 install-sh
+-rwxrwxr-x 1 marksa marksa  97712 Oct 11 07:40 ltconfig
+-rw-rw-r-- 1 marksa marksa  10270 Oct 11 07:40 missing
+-rw-rw-r-- 1 marksa marksa    671 Oct 11 07:40 mkinstalldirs
+-rw-rw-r-- 1 marksa marksa    260 Oct 11 07:40 AUTHORS
+-rw-rw-r-- 1 marksa marksa      0 Oct 11 07:40 ChangeLog
+-rw-rw-r-- 1 marksa marksa   1724 Oct 11 07:40 configure.ac
+drwxrwxr-x 3 marksa marksa   4096 Oct 11 07:40 contrib
+-rw-rw-r-- 1 marksa marksa  17992 Oct 11 07:40 COPYING
+-rw-rw-r-- 1 marksa marksa    245 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa   8999 Oct 11 07:40 INSTALL
+-rw-rw-r-- 1 marksa marksa    984 Oct 11 07:40 Makefile.am
+-rw-rw-r-- 1 marksa marksa    295 Oct 11 07:40 NEWS
+-rw-rw-r-- 1 marksa marksa    375 Oct 11 07:40 README
+~/dev/git/fork/ChadwickBureau/chadwick | Sat Oct 12 05:15:19 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2212 > git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	build.term
+	git.term
+	run.term
+
+nothing added to commit but untracked files present (use "git add" to track)
+~/dev/git/fork/ChadwickBureau/chadwick | Sat Oct 12 05:15:34 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2213 > file missing 
+missing: POSIX shell script, ASCII text executable
+~/dev/git/fork/ChadwickBureau/chadwick | Sat Oct 12 05:16:19 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2214 > hd missing 
+#! /bin/sh
+# Common stub for a few missing GNU programs while installing.
+# Copyright (C) 1996, 1997, 1999, 2000, 2002 Free Software Foundation, Inc.
+# Originally by Fran,cois Pinard <pinard@iro.umontreal.ca>, 1996.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+
+# As a special exception to the GNU General Public License, if you
+# distribute this file as part of a program that contains a
+# configuration script generated by Autoconf, you may include it under
+# the same distribution terms that you use for the rest of that program.
+
+if test $# -eq 0; then
+  echo 1>&2 "Try \`$0 --help' for more information"
+  exit 1
+fi
+
+run=:
+
+# In the cases where this matters, `missing' is being run in the
+# srcdir already.
+if test -f configure.ac; then
+  configure_ac=configure.ac
+else
+  configure_ac=configure.in
+fi
+
+case "$1" in
+--run)
+  # Try to run requested program, and just exit if it succeeds.
+  run=
+  shift
+~/dev/git/fork/ChadwickBureau/chadwick | Sat Oct 12 05:16:27 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2215 > lt
+total 1.6M
+drwxrwxr-x 8 marksa marksa 4.0K Oct 12 05:15 .git
+-rw-rw-r-- 1 marksa marksa  26K Oct 12 05:14 run.term
+-rw-rw-r-- 1 marksa marksa  73K Oct 12 05:12 build.term
+-rw-rw-r-- 1 marksa marksa  42K Oct 12 05:10 git.term
+-rw-rw-r-- 1 marksa marksa  26K Oct 11 10:34 config.log
+-rwxrwxr-x 1 marksa marksa 332K Oct 11 10:34 libtool
+-rw-rw-r-- 1 marksa marksa  26K Oct 11 10:34 Makefile
+drwxrwxr-x 5 marksa marksa 4.0K Oct 11 10:34 src
+-rwxrwxr-x 1 marksa marksa  53K Oct 11 10:34 config.status
+-rw-rw-r-- 1 marksa marksa  26K Oct 11 10:33 Makefile.in
+drwxrwxr-x 2 marksa marksa 4.0K Oct 11 10:33 m4
+lrwxrwxrwx 1 marksa marksa   38 Oct 11 10:33 ltmain.sh -> /usr/share/libtool/build-aux/ltmain.sh
+-rwxrwxr-x 1 marksa marksa 420K Oct 11 10:32 configure
+drwxr-xr-x 2 marksa marksa 4.0K Oct 11 10:32 autom4te.cache
+lrwxrwxrwx 1 marksa marksa   32 Oct 11 10:27 compile -> /usr/share/automake-1.15/compile
+lrwxrwxrwx 1 marksa marksa   37 Oct 11 10:27 config.guess -> /usr/share/automake-1.15/config.guess
+lrwxrwxrwx 1 marksa marksa   35 Oct 11 10:27 config.sub -> /usr/share/automake-1.15/config.sub
+-rw-rw-r-- 1 marksa marksa 365K Oct 11 10:20 aclocal.m4
+-rwxrwxr-x 1 marksa marksa  14K Oct 11 07:40 depcomp
+drwxrwxr-x 4 marksa marksa 4.0K Oct 11 07:40 doc
+-rwxrwxr-x 1 marksa marksa 5.5K Oct 11 07:40 install-sh
+-rwxrwxr-x 1 marksa marksa  96K Oct 11 07:40 ltconfig
+-rw-rw-r-- 1 marksa marksa  11K Oct 11 07:40 missing
+-rw-rw-r-- 1 marksa marksa  671 Oct 11 07:40 mkinstalldirs
+-rw-rw-r-- 1 marksa marksa  260 Oct 11 07:40 AUTHORS
+-rw-rw-r-- 1 marksa marksa    0 Oct 11 07:40 ChangeLog
+-rw-rw-r-- 1 marksa marksa 1.7K Oct 11 07:40 configure.ac
+drwxrwxr-x 3 marksa marksa 4.0K Oct 11 07:40 contrib
+-rw-rw-r-- 1 marksa marksa  18K Oct 11 07:40 COPYING
+-rw-rw-r-- 1 marksa marksa  245 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa 8.8K Oct 11 07:40 INSTALL
+-rw-rw-r-- 1 marksa marksa  984 Oct 11 07:40 Makefile.am
+-rw-rw-r-- 1 marksa marksa  295 Oct 11 07:40 NEWS
+-rw-rw-r-- 1 marksa marksa  375 Oct 11 07:40 README
+~/dev/git/fork/ChadwickBureau/chadwick | Sat Oct 12 05:16:38 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2216 > chmod ugo+x missing 
+~/dev/git/fork/ChadwickBureau/chadwick | Sat Oct 12 05:16:52 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2217 > ltf
+total 1624
+drwxrwxr-x 8 marksa marksa   4096 Oct 12 05:15 .git
+-rw-rw-r-- 1 marksa marksa  25806 Oct 12 05:14 run.term
+-rw-rw-r-- 1 marksa marksa  74447 Oct 12 05:12 build.term
+-rw-rw-r-- 1 marksa marksa  41987 Oct 12 05:10 git.term
+-rw-rw-r-- 1 marksa marksa  26150 Oct 11 10:34 config.log
+-rwxrwxr-x 1 marksa marksa 339599 Oct 11 10:34 libtool
+-rw-rw-r-- 1 marksa marksa  26087 Oct 11 10:34 Makefile
+drwxrwxr-x 5 marksa marksa   4096 Oct 11 10:34 src
+-rwxrwxr-x 1 marksa marksa  54172 Oct 11 10:34 config.status
+-rw-rw-r-- 1 marksa marksa  25641 Oct 11 10:33 Makefile.in
+drwxrwxr-x 2 marksa marksa   4096 Oct 11 10:33 m4
+lrwxrwxrwx 1 marksa marksa     38 Oct 11 10:33 ltmain.sh -> /usr/share/libtool/build-aux/ltmain.sh
+-rwxrwxr-x 1 marksa marksa 429976 Oct 11 10:32 configure
+drwxr-xr-x 2 marksa marksa   4096 Oct 11 10:32 autom4te.cache
+lrwxrwxrwx 1 marksa marksa     32 Oct 11 10:27 compile -> /usr/share/automake-1.15/compile
+lrwxrwxrwx 1 marksa marksa     37 Oct 11 10:27 config.guess -> /usr/share/automake-1.15/config.guess
+lrwxrwxrwx 1 marksa marksa     35 Oct 11 10:27 config.sub -> /usr/share/automake-1.15/config.sub
+-rw-rw-r-- 1 marksa marksa 372955 Oct 11 10:20 aclocal.m4
+-rwxrwxr-x 1 marksa marksa  13681 Oct 11 07:40 depcomp
+drwxrwxr-x 4 marksa marksa   4096 Oct 11 07:40 doc
+-rwxrwxr-x 1 marksa marksa   5598 Oct 11 07:40 install-sh
+-rwxrwxr-x 1 marksa marksa  97712 Oct 11 07:40 ltconfig
+-rwxrwxr-x 1 marksa marksa  10270 Oct 11 07:40 missing
+-rw-rw-r-- 1 marksa marksa    671 Oct 11 07:40 mkinstalldirs
+-rw-rw-r-- 1 marksa marksa    260 Oct 11 07:40 AUTHORS
+-rw-rw-r-- 1 marksa marksa      0 Oct 11 07:40 ChangeLog
+-rw-rw-r-- 1 marksa marksa   1724 Oct 11 07:40 configure.ac
+drwxrwxr-x 3 marksa marksa   4096 Oct 11 07:40 contrib
+-rw-rw-r-- 1 marksa marksa  17992 Oct 11 07:40 COPYING
+-rw-rw-r-- 1 marksa marksa    245 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa   8999 Oct 11 07:40 INSTALL
+-rw-rw-r-- 1 marksa marksa    984 Oct 11 07:40 Makefile.am
+-rw-rw-r-- 1 marksa marksa    295 Oct 11 07:40 NEWS
+-rw-rw-r-- 1 marksa marksa    375 Oct 11 07:40 README
+~/dev/git/fork/ChadwickBureau/chadwick | Sat Oct 12 05:16:55 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2218 > file mkinstalldirs 
+mkinstalldirs: POSIX shell script, ASCII text executable
+~/dev/git/fork/ChadwickBureau/chadwick | Sat Oct 12 05:17:02 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2219 > chmod ugo+x mkinstalldirs 
+~/dev/git/fork/ChadwickBureau/chadwick | Sat Oct 12 05:17:11 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2220 > ltf
+total 1624
+drwxrwxr-x 8 marksa marksa   4096 Oct 12 05:15 .git
+-rw-rw-r-- 1 marksa marksa  25806 Oct 12 05:14 run.term
+-rw-rw-r-- 1 marksa marksa  74447 Oct 12 05:12 build.term
+-rw-rw-r-- 1 marksa marksa  41987 Oct 12 05:10 git.term
+-rw-rw-r-- 1 marksa marksa  26150 Oct 11 10:34 config.log
+-rwxrwxr-x 1 marksa marksa 339599 Oct 11 10:34 libtool
+-rw-rw-r-- 1 marksa marksa  26087 Oct 11 10:34 Makefile
+drwxrwxr-x 5 marksa marksa   4096 Oct 11 10:34 src
+-rwxrwxr-x 1 marksa marksa  54172 Oct 11 10:34 config.status
+-rw-rw-r-- 1 marksa marksa  25641 Oct 11 10:33 Makefile.in
+drwxrwxr-x 2 marksa marksa   4096 Oct 11 10:33 m4
+lrwxrwxrwx 1 marksa marksa     38 Oct 11 10:33 ltmain.sh -> /usr/share/libtool/build-aux/ltmain.sh
+-rwxrwxr-x 1 marksa marksa 429976 Oct 11 10:32 configure
+drwxr-xr-x 2 marksa marksa   4096 Oct 11 10:32 autom4te.cache
+lrwxrwxrwx 1 marksa marksa     32 Oct 11 10:27 compile -> /usr/share/automake-1.15/compile
+lrwxrwxrwx 1 marksa marksa     37 Oct 11 10:27 config.guess -> /usr/share/automake-1.15/config.guess
+lrwxrwxrwx 1 marksa marksa     35 Oct 11 10:27 config.sub -> /usr/share/automake-1.15/config.sub
+-rw-rw-r-- 1 marksa marksa 372955 Oct 11 10:20 aclocal.m4
+-rwxrwxr-x 1 marksa marksa  13681 Oct 11 07:40 depcomp
+drwxrwxr-x 4 marksa marksa   4096 Oct 11 07:40 doc
+-rwxrwxr-x 1 marksa marksa   5598 Oct 11 07:40 install-sh
+-rwxrwxr-x 1 marksa marksa  97712 Oct 11 07:40 ltconfig
+-rwxrwxr-x 1 marksa marksa  10270 Oct 11 07:40 missing
+-rwxrwxr-x 1 marksa marksa    671 Oct 11 07:40 mkinstalldirs
+-rw-rw-r-- 1 marksa marksa    260 Oct 11 07:40 AUTHORS
+-rw-rw-r-- 1 marksa marksa      0 Oct 11 07:40 ChangeLog
+-rw-rw-r-- 1 marksa marksa   1724 Oct 11 07:40 configure.ac
+drwxrwxr-x 3 marksa marksa   4096 Oct 11 07:40 contrib
+-rw-rw-r-- 1 marksa marksa  17992 Oct 11 07:40 COPYING
+-rw-rw-r-- 1 marksa marksa    245 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa   8999 Oct 11 07:40 INSTALL
+-rw-rw-r-- 1 marksa marksa    984 Oct 11 07:40 Makefile.am
+-rw-rw-r-- 1 marksa marksa    295 Oct 11 07:40 NEWS
+-rw-rw-r-- 1 marksa marksa    375 Oct 11 07:40 README
+~/dev/git/fork/ChadwickBureau/chadwick | Sat Oct 12 05:17:31 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2221 > dv
+ 0  ~/dev/git/fork/ChadwickBureau/chadwick
+ 1  ~/dev/git/fork/ChadwickBureau
+ 2  ~/dev/git/fork/ChadwickBureau/obituaries
+ 3  ~/dev/git/fork/ChadwickBureau/vitals
+ 4  ~/dev/git/fork/ChadwickBureau/identlink
+ 5  ~/dev/git/fork/ChadwickBureau/ident
+ 6  ~/dev/git/fork/ChadwickBureau/researchers
+ 7  ~/dev/git/fork/ChadwickBureau/register
+ 8  ~/dev/git/fork/ChadwickBureau/chadwick
+ 9  ~/dev/git/fork/ChadwickBureau/retrosheet
+10  ~/dev/git/fork/ChadwickBureau/retrosplits
+11  ~/dev/git/fork/ChadwickBureau/baseballdatabank
+12  ~/dev/git/fork
+13  /usr/local/lib
+14  /usr/local/bin
+15  /usr/local
+16  ~/dev/git/fork/ChadwickBureau/chadwick
+17  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+18  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+19  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+20  ~/dev/git/fork/ChadwickBureau/retrosheet
+21  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+22  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+23  ~/dev/git/fork/ChadwickBureau/chadwick/src
+~/dev/git/fork/ChadwickBureau/chadwick | Sat Oct 12 09:26:11 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2222 > rtt
+~/dev/git/fork/ChadwickBureau ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src
+~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src
+.git        Y1900  Y1917  Y1927  Y1932  Y1938  Y1943  Y1948  Y1953  Y1958  Y1963  Y1968  Y1973  Y1978  Y1983  Y1988  Y1994  Y1999  Y2004  Y2009  Y2014
+.gitignore  Y1901  Y1918  Y1928  Y1934  Y1939  Y1944  Y1949  Y1954  Y1959  Y1964  Y1969  Y1974  Y1979  Y1984  Y1989  Y1995  Y2000  Y2005  Y2010  Y2015
+processed   Y1906  Y1922  Y1929  Y1935  Y1940  Y1945  Y1950  Y1955  Y1960  Y1965  Y1970  Y1975  Y1980  Y1985  Y1991  Y1996  Y2001  Y2006  Y2011  Y2016
+README.md   Y1907  Y1923  Y1930  Y1936  Y1941  Y1946  Y1951  Y1956  Y1961  Y1966  Y1971  Y1976  Y1981  Y1986  Y1992  Y1997  Y2002  Y2007  Y2012  Y2017
+src         Y1915  Y1926  Y1931  Y1937  Y1942  Y1947  Y1952  Y1957  Y1962  Y1967  Y1972  Y1977  Y1982  Y1987  Y1993  Y1998  Y2003  Y2008  Y2013  Y2018
+~/dev/git/fork/ChadwickBureau/obituaries | Sat Oct 12 09:26:25 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2223 > dv
+ 0  ~/dev/git/fork/ChadwickBureau/obituaries
+ 1  ~/dev/git/fork/ChadwickBureau/vitals
+ 2  ~/dev/git/fork/ChadwickBureau/identlink
+ 3  ~/dev/git/fork/ChadwickBureau/ident
+ 4  ~/dev/git/fork/ChadwickBureau/researchers
+ 5  ~/dev/git/fork/ChadwickBureau/register
+ 6  ~/dev/git/fork/ChadwickBureau/chadwick
+ 7  ~/dev/git/fork/ChadwickBureau/retrosheet
+ 8  ~/dev/git/fork/ChadwickBureau/retrosplits
+ 9  ~/dev/git/fork/ChadwickBureau/baseballdatabank
+10  ~/dev/git/fork
+11  /usr/local/lib
+12  /usr/local/bin
+13  /usr/local
+14  ~/dev/git/fork/ChadwickBureau/chadwick
+15  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+16  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+17  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+18  ~/dev/git/fork/ChadwickBureau/retrosheet
+19  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+20  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+21  ~/dev/git/fork/ChadwickBureau/chadwick/src
+~/dev/git/fork/ChadwickBureau/obituaries | Sat Oct 12 09:26:26 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2224 > go0
+~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+total 56
+drwxrwxr-x 6 marksa marksa  4096 Oct 11 14:51 python
+drwxrwxr-x 4 marksa marksa  4096 Oct 11 10:34 cwtools
+drwxrwxr-x 4 marksa marksa  4096 Oct 11 10:34 cwlib
+-rw-rw-r-- 1 marksa marksa 19590 Oct 11 10:34 Makefile
+-rw-rw-r-- 1 marksa marksa 19127 Oct 11 10:33 Makefile.in
+-rw-rw-r-- 1 marksa marksa   985 Oct 11 07:40 Makefile.am
+~/dev/git/fork/ChadwickBureau/chadwick/src | Sat Oct 12 09:26:31 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2225 > man grep
+~/dev/git/fork/ChadwickBureau/chadwick/src | Sat Oct 12 09:27:09 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2226 > grep -r main( *
+bash: syntax error near unexpected token `('
+~/dev/git/fork/ChadwickBureau/chadwick/src | Sat Oct 12 09:27:33 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2227 > grep -r main\( *
+cwtools/cwtools.c:int main(int argc, char *argv[])
+~/dev/git/fork/ChadwickBureau/chadwick/src | Sat Oct 12 09:27:42 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2228 > ll
+total 56K
+drwxrwxr-x 4 marksa marksa 4.0K Oct 11 10:34 cwlib
+drwxrwxr-x 4 marksa marksa 4.0K Oct 11 10:34 cwtools
+-rw-rw-r-- 1 marksa marksa  20K Oct 11 10:34 Makefile
+-rw-rw-r-- 1 marksa marksa  985 Oct 11 07:40 Makefile.am
+-rw-rw-r-- 1 marksa marksa  19K Oct 11 10:33 Makefile.in
+drwxrwxr-x 6 marksa marksa 4.0K Oct 11 14:51 python
+~/dev/git/fork/ChadwickBureau/chadwick/src | Mon Oct 21 21:32:01 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2229 > go
+~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+.git        Y1900  Y1917  Y1927  Y1932  Y1938  Y1943  Y1948  Y1953  Y1958  Y1963  Y1968  Y1973  Y1978  Y1983  Y1988  Y1994  Y1999  Y2004  Y2009  Y2014
+.gitignore  Y1901  Y1918  Y1928  Y1934  Y1939  Y1944  Y1949  Y1954  Y1959  Y1964  Y1969  Y1974  Y1979  Y1984  Y1989  Y1995  Y2000  Y2005  Y2010  Y2015
+processed   Y1906  Y1922  Y1929  Y1935  Y1940  Y1945  Y1950  Y1955  Y1960  Y1965  Y1970  Y1975  Y1980  Y1985  Y1991  Y1996  Y2001  Y2006  Y2011  Y2016
+README.md   Y1907  Y1923  Y1930  Y1936  Y1941  Y1946  Y1951  Y1956  Y1961  Y1966  Y1971  Y1976  Y1981  Y1986  Y1992  Y1997  Y2002  Y2007  Y2012  Y2017
+src         Y1915  Y1926  Y1931  Y1937  Y1942  Y1947  Y1952  Y1957  Y1962  Y1967  Y1972  Y1977  Y1982  Y1987  Y1993  Y1998  Y2003  Y2008  Y2013  Y2018
+~/dev/git/fork/ChadwickBureau/obituaries | Mon Oct 21 21:32:04 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2230 > dv
+ 0  ~/dev/git/fork/ChadwickBureau/obituaries
+ 1  ~/dev/git/fork/ChadwickBureau/chadwick/src
+ 2  ~/dev/git/fork/ChadwickBureau/vitals
+ 3  ~/dev/git/fork/ChadwickBureau/identlink
+ 4  ~/dev/git/fork/ChadwickBureau/ident
+ 5  ~/dev/git/fork/ChadwickBureau/researchers
+ 6  ~/dev/git/fork/ChadwickBureau/register
+ 7  ~/dev/git/fork/ChadwickBureau/chadwick
+ 8  ~/dev/git/fork/ChadwickBureau/retrosheet
+ 9  ~/dev/git/fork/ChadwickBureau/retrosplits
+10  ~/dev/git/fork/ChadwickBureau/baseballdatabank
+11  ~/dev/git/fork
+12  /usr/local/lib
+13  /usr/local/bin
+14  /usr/local
+15  ~/dev/git/fork/ChadwickBureau/chadwick
+16  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+17  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+18  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+19  ~/dev/git/fork/ChadwickBureau/retrosheet
+20  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+21  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+~/dev/git/fork/ChadwickBureau/obituaries | Mon Oct 21 21:32:11 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2231 > go -6
+~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local
+total 1624
+drwxrwxr-x 8 marksa marksa   4096 Oct 12 05:15 .git
+-rw-rw-r-- 1 marksa marksa  25806 Oct 12 05:14 run.term
+-rw-rw-r-- 1 marksa marksa  74447 Oct 12 05:12 build.term
+-rw-rw-r-- 1 marksa marksa  41987 Oct 12 05:10 git.term
+-rw-rw-r-- 1 marksa marksa  26150 Oct 11 10:34 config.log
+-rwxrwxr-x 1 marksa marksa 339599 Oct 11 10:34 libtool
+-rw-rw-r-- 1 marksa marksa  26087 Oct 11 10:34 Makefile
+drwxrwxr-x 5 marksa marksa   4096 Oct 11 10:34 src
+-rwxrwxr-x 1 marksa marksa  54172 Oct 11 10:34 config.status
+-rw-rw-r-- 1 marksa marksa  25641 Oct 11 10:33 Makefile.in
+drwxrwxr-x 2 marksa marksa   4096 Oct 11 10:33 m4
+lrwxrwxrwx 1 marksa marksa     38 Oct 11 10:33 ltmain.sh -> /usr/share/libtool/build-aux/ltmain.sh
+-rwxrwxr-x 1 marksa marksa 429976 Oct 11 10:32 configure
+drwxr-xr-x 2 marksa marksa   4096 Oct 11 10:32 autom4te.cache
+lrwxrwxrwx 1 marksa marksa     32 Oct 11 10:27 compile -> /usr/share/automake-1.15/compile
+lrwxrwxrwx 1 marksa marksa     37 Oct 11 10:27 config.guess -> /usr/share/automake-1.15/config.guess
+lrwxrwxrwx 1 marksa marksa     35 Oct 11 10:27 config.sub -> /usr/share/automake-1.15/config.sub
+-rw-rw-r-- 1 marksa marksa 372955 Oct 11 10:20 aclocal.m4
+-rwxrwxr-x 1 marksa marksa  13681 Oct 11 07:40 depcomp
+drwxrwxr-x 4 marksa marksa   4096 Oct 11 07:40 doc
+-rwxrwxr-x 1 marksa marksa   5598 Oct 11 07:40 install-sh
+-rwxrwxr-x 1 marksa marksa  97712 Oct 11 07:40 ltconfig
+-rwxrwxr-x 1 marksa marksa  10270 Oct 11 07:40 missing
+-rwxrwxr-x 1 marksa marksa    671 Oct 11 07:40 mkinstalldirs
+-rw-rw-r-- 1 marksa marksa    260 Oct 11 07:40 AUTHORS
+-rw-rw-r-- 1 marksa marksa      0 Oct 11 07:40 ChangeLog
+-rw-rw-r-- 1 marksa marksa   1724 Oct 11 07:40 configure.ac
+drwxrwxr-x 3 marksa marksa   4096 Oct 11 07:40 contrib
+-rw-rw-r-- 1 marksa marksa  17992 Oct 11 07:40 COPYING
+-rw-rw-r-- 1 marksa marksa    245 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa   8999 Oct 11 07:40 INSTALL
+-rw-rw-r-- 1 marksa marksa    984 Oct 11 07:40 Makefile.am
+-rw-rw-r-- 1 marksa marksa    295 Oct 11 07:40 NEWS
+-rw-rw-r-- 1 marksa marksa    375 Oct 11 07:40 README
+~/dev/git/fork/ChadwickBureau/chadwick | Mon Oct 21 21:32:22 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2232 > which cwbox
+/usr/local/bin/cwbox
+~/dev/git/fork/ChadwickBureau/chadwick | Mon Oct 21 21:32:39 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2233 > go /usr/local/bin
+/usr/local/bin ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local
+2to3        csscapture  cwdaily  datediff          edit.py  gi                 idle3.8         pip3.6    pydoc3.9        pyrsa-sign        python3.8m         search          yahoo-finance
+2to3-3.8    csscombine  cwevent  easy_install      f2py     gnome-help         idle3.9         pip3.8    pyrsa-decrypt   pyrsa-verify      python3.8m-config  stockreport.py  yelp
+2to3-3.9    cssparse    cwgame   easy_install-3.6  f2py3    gnucash2ledger.py  mint-sha256sum  pip3.9    pyrsa-encrypt   python3           python3.9          swipl
+apt         cwbox       cwsub    easy_install-3.8  f2py3.6  highlight-mint     pip             pydoc3    pyrsa-keygen    python3.8         python3.9-config   swipl-ld
+chardetect  cwcomment   dateadd  easy_install-3.9  f2py3.8  idle3              pip3            pydoc3.8  pyrsa-priv2pub  python3.8-config  python3-config     wheel
+/usr/local/bin | Mon Oct 21 21:32:49 | marksa@Ares-A717-72G | bash 4.4.20  
+2234 > dv
+ 0  /usr/local/bin
+ 1  ~/dev/git/fork/ChadwickBureau/chadwick
+ 2  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+ 3  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+ 4  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+ 5  ~/dev/git/fork/ChadwickBureau/retrosheet
+ 6  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+ 7  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 8  ~/dev/git/fork/ChadwickBureau/obituaries
+ 9  ~/dev/git/fork/ChadwickBureau/chadwick/src
+10  ~/dev/git/fork/ChadwickBureau/vitals
+11  ~/dev/git/fork/ChadwickBureau/identlink
+12  ~/dev/git/fork/ChadwickBureau/ident
+13  ~/dev/git/fork/ChadwickBureau/researchers
+14  ~/dev/git/fork/ChadwickBureau/register
+15  ~/dev/git/fork/ChadwickBureau/chadwick
+16  ~/dev/git/fork/ChadwickBureau/retrosheet
+17  ~/dev/git/fork/ChadwickBureau/retrosplits
+18  ~/dev/git/fork/ChadwickBureau/baseballdatabank
+19  ~/dev/git/fork
+20  /usr/local/lib
+21  /usr/local/bin
+22  /usr/local
+/usr/local/bin | Mon Oct 21 21:33:03 | marksa@Ares-A717-72G | bash 4.4.20  
+2235 > go
+~/dev/git/fork/ChadwickBureau/chadwick /usr/local/bin ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local
+total 1624
+drwxrwxr-x 8 marksa marksa   4096 Oct 12 05:15 .git
+-rw-rw-r-- 1 marksa marksa  25806 Oct 12 05:14 run.term
+-rw-rw-r-- 1 marksa marksa  74447 Oct 12 05:12 build.term
+-rw-rw-r-- 1 marksa marksa  41987 Oct 12 05:10 git.term
+-rw-rw-r-- 1 marksa marksa  26150 Oct 11 10:34 config.log
+-rwxrwxr-x 1 marksa marksa 339599 Oct 11 10:34 libtool
+-rw-rw-r-- 1 marksa marksa  26087 Oct 11 10:34 Makefile
+drwxrwxr-x 5 marksa marksa   4096 Oct 11 10:34 src
+-rwxrwxr-x 1 marksa marksa  54172 Oct 11 10:34 config.status
+-rw-rw-r-- 1 marksa marksa  25641 Oct 11 10:33 Makefile.in
+drwxrwxr-x 2 marksa marksa   4096 Oct 11 10:33 m4
+lrwxrwxrwx 1 marksa marksa     38 Oct 11 10:33 ltmain.sh -> /usr/share/libtool/build-aux/ltmain.sh
+-rwxrwxr-x 1 marksa marksa 429976 Oct 11 10:32 configure
+drwxr-xr-x 2 marksa marksa   4096 Oct 11 10:32 autom4te.cache
+lrwxrwxrwx 1 marksa marksa     32 Oct 11 10:27 compile -> /usr/share/automake-1.15/compile
+lrwxrwxrwx 1 marksa marksa     37 Oct 11 10:27 config.guess -> /usr/share/automake-1.15/config.guess
+lrwxrwxrwx 1 marksa marksa     35 Oct 11 10:27 config.sub -> /usr/share/automake-1.15/config.sub
+-rw-rw-r-- 1 marksa marksa 372955 Oct 11 10:20 aclocal.m4
+-rwxrwxr-x 1 marksa marksa  13681 Oct 11 07:40 depcomp
+drwxrwxr-x 4 marksa marksa   4096 Oct 11 07:40 doc
+-rwxrwxr-x 1 marksa marksa   5598 Oct 11 07:40 install-sh
+-rwxrwxr-x 1 marksa marksa  97712 Oct 11 07:40 ltconfig
+-rwxrwxr-x 1 marksa marksa  10270 Oct 11 07:40 missing
+-rwxrwxr-x 1 marksa marksa    671 Oct 11 07:40 mkinstalldirs
+-rw-rw-r-- 1 marksa marksa    260 Oct 11 07:40 AUTHORS
+-rw-rw-r-- 1 marksa marksa      0 Oct 11 07:40 ChangeLog
+-rw-rw-r-- 1 marksa marksa   1724 Oct 11 07:40 configure.ac
+drwxrwxr-x 3 marksa marksa   4096 Oct 11 07:40 contrib
+-rw-rw-r-- 1 marksa marksa  17992 Oct 11 07:40 COPYING
+-rw-rw-r-- 1 marksa marksa    245 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa   8999 Oct 11 07:40 INSTALL
+-rw-rw-r-- 1 marksa marksa    984 Oct 11 07:40 Makefile.am
+-rw-rw-r-- 1 marksa marksa    295 Oct 11 07:40 NEWS
+-rw-rw-r-- 1 marksa marksa    375 Oct 11 07:40 README
+~/dev/git/fork/ChadwickBureau/chadwick | Mon Oct 21 21:33:06 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2236 > chtt 'fork/ChadwickBureau'
+~/dev/git/fork/ChadwickBureau/chadwick | Tue Oct 22 05:39:48 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2237 > dv
+ 0  ~/dev/git/fork/ChadwickBureau/chadwick
+ 1  /usr/local/bin
+ 2  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+ 3  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+ 4  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+ 5  ~/dev/git/fork/ChadwickBureau/retrosheet
+ 6  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+ 7  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 8  ~/dev/git/fork/ChadwickBureau/obituaries
+ 9  ~/dev/git/fork/ChadwickBureau/chadwick/src
+10  ~/dev/git/fork/ChadwickBureau/vitals
+11  ~/dev/git/fork/ChadwickBureau/identlink
+12  ~/dev/git/fork/ChadwickBureau/ident
+13  ~/dev/git/fork/ChadwickBureau/researchers
+14  ~/dev/git/fork/ChadwickBureau/register
+15  ~/dev/git/fork/ChadwickBureau/chadwick
+16  ~/dev/git/fork/ChadwickBureau/retrosheet
+17  ~/dev/git/fork/ChadwickBureau/retrosplits
+18  ~/dev/git/fork/ChadwickBureau/baseballdatabank
+19  ~/dev/git/fork
+20  /usr/local/lib
+21  /usr/local/bin
+22  /usr/local
+~/dev/git/fork/ChadwickBureau/chadwick | Tue Oct 22 05:40:07 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2238 > rt
+/usr/local/bin ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local
+2to3        csscapture  cwdaily  datediff          edit.py  gi                 idle3.8         pip3.6    pydoc3.9        pyrsa-sign        python3.8m         search          yahoo-finance
+2to3-3.8    csscombine  cwevent  easy_install      f2py     gnome-help         idle3.9         pip3.8    pyrsa-decrypt   pyrsa-verify      python3.8m-config  stockreport.py  yelp
+2to3-3.9    cssparse    cwgame   easy_install-3.6  f2py3    gnucash2ledger.py  mint-sha256sum  pip3.9    pyrsa-encrypt   python3           python3.9          swipl
+apt         cwbox       cwsub    easy_install-3.8  f2py3.6  highlight-mint     pip             pydoc3    pyrsa-keygen    python3.8         python3.9-config   swipl-ld
+chardetect  cwcomment   dateadd  easy_install-3.9  f2py3.8  idle3              pip3            pydoc3.8  pyrsa-priv2pub  python3.8-config  python3-config     wheel
+/usr/local/bin | Tue Oct 22 05:40:21 | marksa@Ares-A717-72G | bash 4.4.20  
+2239 > dv
+ 0  /usr/local/bin
+ 1  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+ 2  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+ 3  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+ 4  ~/dev/git/fork/ChadwickBureau/retrosheet
+ 5  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+ 6  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 7  ~/dev/git/fork/ChadwickBureau/obituaries
+ 8  ~/dev/git/fork/ChadwickBureau/chadwick/src
+ 9  ~/dev/git/fork/ChadwickBureau/vitals
+10  ~/dev/git/fork/ChadwickBureau/identlink
+11  ~/dev/git/fork/ChadwickBureau/ident
+12  ~/dev/git/fork/ChadwickBureau/researchers
+13  ~/dev/git/fork/ChadwickBureau/register
+14  ~/dev/git/fork/ChadwickBureau/chadwick
+15  ~/dev/git/fork/ChadwickBureau/retrosheet
+16  ~/dev/git/fork/ChadwickBureau/retrosplits
+17  ~/dev/git/fork/ChadwickBureau/baseballdatabank
+18  ~/dev/git/fork
+19  /usr/local/lib
+20  /usr/local/bin
+21  /usr/local
+/usr/local/bin | Tue Oct 22 05:40:28 | marksa@Ares-A717-72G | bash 4.4.20  
+2240 > go +14
+~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local /usr/local/bin ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register
+total 1624
+drwxrwxr-x 8 marksa marksa   4096 Oct 12 05:15 .git
+-rw-rw-r-- 1 marksa marksa  25806 Oct 12 05:14 run.term
+-rw-rw-r-- 1 marksa marksa  74447 Oct 12 05:12 build.term
+-rw-rw-r-- 1 marksa marksa  41987 Oct 12 05:10 git.term
+-rw-rw-r-- 1 marksa marksa  26150 Oct 11 10:34 config.log
+-rwxrwxr-x 1 marksa marksa 339599 Oct 11 10:34 libtool
+-rw-rw-r-- 1 marksa marksa  26087 Oct 11 10:34 Makefile
+drwxrwxr-x 5 marksa marksa   4096 Oct 11 10:34 src
+-rwxrwxr-x 1 marksa marksa  54172 Oct 11 10:34 config.status
+-rw-rw-r-- 1 marksa marksa  25641 Oct 11 10:33 Makefile.in
+drwxrwxr-x 2 marksa marksa   4096 Oct 11 10:33 m4
+lrwxrwxrwx 1 marksa marksa     38 Oct 11 10:33 ltmain.sh -> /usr/share/libtool/build-aux/ltmain.sh
+-rwxrwxr-x 1 marksa marksa 429976 Oct 11 10:32 configure
+drwxr-xr-x 2 marksa marksa   4096 Oct 11 10:32 autom4te.cache
+lrwxrwxrwx 1 marksa marksa     32 Oct 11 10:27 compile -> /usr/share/automake-1.15/compile
+lrwxrwxrwx 1 marksa marksa     37 Oct 11 10:27 config.guess -> /usr/share/automake-1.15/config.guess
+lrwxrwxrwx 1 marksa marksa     35 Oct 11 10:27 config.sub -> /usr/share/automake-1.15/config.sub
+-rw-rw-r-- 1 marksa marksa 372955 Oct 11 10:20 aclocal.m4
+-rwxrwxr-x 1 marksa marksa  13681 Oct 11 07:40 depcomp
+drwxrwxr-x 4 marksa marksa   4096 Oct 11 07:40 doc
+-rwxrwxr-x 1 marksa marksa   5598 Oct 11 07:40 install-sh
+-rwxrwxr-x 1 marksa marksa  97712 Oct 11 07:40 ltconfig
+-rwxrwxr-x 1 marksa marksa  10270 Oct 11 07:40 missing
+-rwxrwxr-x 1 marksa marksa    671 Oct 11 07:40 mkinstalldirs
+-rw-rw-r-- 1 marksa marksa    260 Oct 11 07:40 AUTHORS
+-rw-rw-r-- 1 marksa marksa      0 Oct 11 07:40 ChangeLog
+-rw-rw-r-- 1 marksa marksa   1724 Oct 11 07:40 configure.ac
+drwxrwxr-x 3 marksa marksa   4096 Oct 11 07:40 contrib
+-rw-rw-r-- 1 marksa marksa  17992 Oct 11 07:40 COPYING
+-rw-rw-r-- 1 marksa marksa    245 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa   8999 Oct 11 07:40 INSTALL
+-rw-rw-r-- 1 marksa marksa    984 Oct 11 07:40 Makefile.am
+-rw-rw-r-- 1 marksa marksa    295 Oct 11 07:40 NEWS
+-rw-rw-r-- 1 marksa marksa    375 Oct 11 07:40 README
+~/dev/git/fork/ChadwickBureau/chadwick | Tue Oct 22 05:40:47 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2241 > up
+~/dev/git/fork/ChadwickBureau ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local /usr/local/bin ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register
+total 40
+drwxrwxr-x   8 marksa marksa 4096 Oct 12 05:15 chadwick
+drwxrwxr-x 105 marksa marksa 4096 Oct 11 09:36 obituaries
+drwxrwxr-x  15 marksa marksa 4096 Oct 11 09:01 vitals
+drwxrwxr-x   6 marksa marksa 4096 Oct 11 08:58 identlink
+drwxrwxr-x   6 marksa marksa 4096 Oct 11 08:56 ident
+drwxrwxr-x   6 marksa marksa 4096 Oct 11 08:53 researchers
+drwxrwxr-x   4 marksa marksa 4096 Oct 11 08:45 register
+drwxrwxr-x   5 marksa marksa 4096 Oct 11 08:28 baseballdatabank
+drwxrwxr-x   5 marksa marksa 4096 Oct 11 08:19 retrosplits
+drwxrwxr-x   9 marksa marksa 4096 Oct 11 07:49 retrosheet
+~/dev/git/fork/ChadwickBureau | Tue Oct 22 05:40:50 | marksa@Ares-A717-72G | bash 4.4.20  
+2242 > dv
+ 0  ~/dev/git/fork/ChadwickBureau
+ 1  ~/dev/git/fork/ChadwickBureau/chadwick
+ 2  ~/dev/git/fork/ChadwickBureau/retrosheet
+ 3  ~/dev/git/fork/ChadwickBureau/retrosplits
+ 4  ~/dev/git/fork/ChadwickBureau/baseballdatabank
+ 5  ~/dev/git/fork
+ 6  /usr/local/lib
+ 7  /usr/local/bin
+ 8  /usr/local
+ 9  /usr/local/bin
+10  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+11  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+12  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+13  ~/dev/git/fork/ChadwickBureau/retrosheet
+14  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+15  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+16  ~/dev/git/fork/ChadwickBureau/obituaries
+17  ~/dev/git/fork/ChadwickBureau/chadwick/src
+18  ~/dev/git/fork/ChadwickBureau/vitals
+19  ~/dev/git/fork/ChadwickBureau/identlink
+20  ~/dev/git/fork/ChadwickBureau/ident
+21  ~/dev/git/fork/ChadwickBureau/researchers
+22  ~/dev/git/fork/ChadwickBureau/register
+~/dev/git/fork/ChadwickBureau | Tue Oct 22 05:40:54 | marksa@Ares-A717-72G | bash 4.4.20  
+2243 > popd +17
+~/dev/git/fork/ChadwickBureau ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local /usr/local/bin ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register
+~/dev/git/fork/ChadwickBureau | Tue Oct 22 05:41:18 | marksa@Ares-A717-72G | bash 4.4.20  
+2244 > popd +2
+~/dev/git/fork/ChadwickBureau ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local /usr/local/bin ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register
+~/dev/git/fork/ChadwickBureau | Tue Oct 22 05:41:22 | marksa@Ares-A717-72G | bash 4.4.20  
+2245 > dv
+ 0  ~/dev/git/fork/ChadwickBureau
+ 1  ~/dev/git/fork/ChadwickBureau/chadwick
+ 2  ~/dev/git/fork/ChadwickBureau/retrosplits
+ 3  ~/dev/git/fork/ChadwickBureau/baseballdatabank
+ 4  ~/dev/git/fork
+ 5  /usr/local/lib
+ 6  /usr/local/bin
+ 7  /usr/local
+ 8  /usr/local/bin
+ 9  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+10  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+11  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+12  ~/dev/git/fork/ChadwickBureau/retrosheet
+13  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+14  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+15  ~/dev/git/fork/ChadwickBureau/obituaries
+16  ~/dev/git/fork/ChadwickBureau/vitals
+17  ~/dev/git/fork/ChadwickBureau/identlink
+18  ~/dev/git/fork/ChadwickBureau/ident
+19  ~/dev/git/fork/ChadwickBureau/researchers
+20  ~/dev/git/fork/ChadwickBureau/register
+~/dev/git/fork/ChadwickBureau | Tue Oct 22 05:41:24 | marksa@Ares-A717-72G | bash 4.4.20  
+2246 > go
+~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local /usr/local/bin ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register
+total 1624
+drwxrwxr-x 8 marksa marksa   4096 Oct 12 05:15 .git
+-rw-rw-r-- 1 marksa marksa  25806 Oct 12 05:14 run.term
+-rw-rw-r-- 1 marksa marksa  74447 Oct 12 05:12 build.term
+-rw-rw-r-- 1 marksa marksa  41987 Oct 12 05:10 git.term
+-rw-rw-r-- 1 marksa marksa  26150 Oct 11 10:34 config.log
+-rwxrwxr-x 1 marksa marksa 339599 Oct 11 10:34 libtool
+-rw-rw-r-- 1 marksa marksa  26087 Oct 11 10:34 Makefile
+drwxrwxr-x 5 marksa marksa   4096 Oct 11 10:34 src
+-rwxrwxr-x 1 marksa marksa  54172 Oct 11 10:34 config.status
+-rw-rw-r-- 1 marksa marksa  25641 Oct 11 10:33 Makefile.in
+drwxrwxr-x 2 marksa marksa   4096 Oct 11 10:33 m4
+lrwxrwxrwx 1 marksa marksa     38 Oct 11 10:33 ltmain.sh -> /usr/share/libtool/build-aux/ltmain.sh
+-rwxrwxr-x 1 marksa marksa 429976 Oct 11 10:32 configure
+drwxr-xr-x 2 marksa marksa   4096 Oct 11 10:32 autom4te.cache
+lrwxrwxrwx 1 marksa marksa     32 Oct 11 10:27 compile -> /usr/share/automake-1.15/compile
+lrwxrwxrwx 1 marksa marksa     37 Oct 11 10:27 config.guess -> /usr/share/automake-1.15/config.guess
+lrwxrwxrwx 1 marksa marksa     35 Oct 11 10:27 config.sub -> /usr/share/automake-1.15/config.sub
+-rw-rw-r-- 1 marksa marksa 372955 Oct 11 10:20 aclocal.m4
+-rwxrwxr-x 1 marksa marksa  13681 Oct 11 07:40 depcomp
+drwxrwxr-x 4 marksa marksa   4096 Oct 11 07:40 doc
+-rwxrwxr-x 1 marksa marksa   5598 Oct 11 07:40 install-sh
+-rwxrwxr-x 1 marksa marksa  97712 Oct 11 07:40 ltconfig
+-rwxrwxr-x 1 marksa marksa  10270 Oct 11 07:40 missing
+-rwxrwxr-x 1 marksa marksa    671 Oct 11 07:40 mkinstalldirs
+-rw-rw-r-- 1 marksa marksa    260 Oct 11 07:40 AUTHORS
+-rw-rw-r-- 1 marksa marksa      0 Oct 11 07:40 ChangeLog
+-rw-rw-r-- 1 marksa marksa   1724 Oct 11 07:40 configure.ac
+drwxrwxr-x 3 marksa marksa   4096 Oct 11 07:40 contrib
+-rw-rw-r-- 1 marksa marksa  17992 Oct 11 07:40 COPYING
+-rw-rw-r-- 1 marksa marksa    245 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa   8999 Oct 11 07:40 INSTALL
+-rw-rw-r-- 1 marksa marksa    984 Oct 11 07:40 Makefile.am
+-rw-rw-r-- 1 marksa marksa    295 Oct 11 07:40 NEWS
+-rw-rw-r-- 1 marksa marksa    375 Oct 11 07:40 README
+~/dev/git/fork/ChadwickBureau/chadwick | Tue Oct 22 05:41:51 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2247 > rt
+~/dev/git/fork/ChadwickBureau ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local /usr/local/bin ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register
+total 40
+drwxrwxr-x   8 marksa marksa 4096 Oct 12 05:15 chadwick
+drwxrwxr-x 105 marksa marksa 4096 Oct 11 09:36 obituaries
+drwxrwxr-x  15 marksa marksa 4096 Oct 11 09:01 vitals
+drwxrwxr-x   6 marksa marksa 4096 Oct 11 08:58 identlink
+drwxrwxr-x   6 marksa marksa 4096 Oct 11 08:56 ident
+drwxrwxr-x   6 marksa marksa 4096 Oct 11 08:53 researchers
+drwxrwxr-x   4 marksa marksa 4096 Oct 11 08:45 register
+drwxrwxr-x   5 marksa marksa 4096 Oct 11 08:28 baseballdatabank
+drwxrwxr-x   5 marksa marksa 4096 Oct 11 08:19 retrosplits
+drwxrwxr-x   9 marksa marksa 4096 Oct 11 07:49 retrosheet
+~/dev/git/fork/ChadwickBureau | Tue Oct 22 05:41:57 | marksa@Ares-A717-72G | bash 4.4.20  
+2248 > dv
+ 0  ~/dev/git/fork/ChadwickBureau
+ 1  ~/dev/git/fork/ChadwickBureau/retrosplits
+ 2  ~/dev/git/fork/ChadwickBureau/baseballdatabank
+ 3  ~/dev/git/fork
+ 4  /usr/local/lib
+ 5  /usr/local/bin
+ 6  /usr/local
+ 7  /usr/local/bin
+ 8  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+ 9  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+10  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+11  ~/dev/git/fork/ChadwickBureau/retrosheet
+12  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+13  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+14  ~/dev/git/fork/ChadwickBureau/obituaries
+15  ~/dev/git/fork/ChadwickBureau/vitals
+16  ~/dev/git/fork/ChadwickBureau/identlink
+17  ~/dev/git/fork/ChadwickBureau/ident
+18  ~/dev/git/fork/ChadwickBureau/researchers
+19  ~/dev/git/fork/ChadwickBureau/register
+~/dev/git/fork/ChadwickBureau | Tue Oct 22 05:41:58 | marksa@Ares-A717-72G | bash 4.4.20  
+2249 > go +12
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local /usr/local/bin ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet
+total 576
+-rw-rw-r-- 1 marksa marksa 589146 Oct 11 14:51 chadwick-0.7.2-py3.6-linux-x86_64.egg
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist | Tue Oct 22 05:42:09 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2250 > go
+~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local /usr/local/bin ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet
+total 24
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 dist
+drwxrwxr-x 6 marksa marksa 4096 Oct 11 14:51 build
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 chadwick.egg-info
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:46 chadwick
+-rw-rw-r-- 1 marksa marksa   57 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa 1959 Oct 11 07:40 setup.py
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Tue Oct 22 05:42:19 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2251 > up
+~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local /usr/local/bin ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet
+total 56
+drwxrwxr-x 6 marksa marksa  4096 Oct 11 14:51 python
+drwxrwxr-x 4 marksa marksa  4096 Oct 11 10:34 cwtools
+drwxrwxr-x 4 marksa marksa  4096 Oct 11 10:34 cwlib
+-rw-rw-r-- 1 marksa marksa 19590 Oct 11 10:34 Makefile
+-rw-rw-r-- 1 marksa marksa 19127 Oct 11 10:33 Makefile.in
+-rw-rw-r-- 1 marksa marksa   985 Oct 11 07:40 Makefile.am
+~/dev/git/fork/ChadwickBureau/chadwick/src | Tue Oct 22 05:42:27 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2252 > dv
+ 0  ~/dev/git/fork/ChadwickBureau/chadwick/src
+ 1  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 2  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+ 3  ~/dev/git/fork/ChadwickBureau/obituaries
+ 4  ~/dev/git/fork/ChadwickBureau/vitals
+ 5  ~/dev/git/fork/ChadwickBureau/identlink
+ 6  ~/dev/git/fork/ChadwickBureau/ident
+ 7  ~/dev/git/fork/ChadwickBureau/researchers
+ 8  ~/dev/git/fork/ChadwickBureau/register
+ 9  ~/dev/git/fork/ChadwickBureau
+10  ~/dev/git/fork/ChadwickBureau/retrosplits
+11  ~/dev/git/fork/ChadwickBureau/baseballdatabank
+12  ~/dev/git/fork
+13  /usr/local/lib
+14  /usr/local/bin
+15  /usr/local
+16  /usr/local/bin
+17  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+18  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+19  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+20  ~/dev/git/fork/ChadwickBureau/retrosheet
+~/dev/git/fork/ChadwickBureau/chadwick/src | Tue Oct 22 05:42:29 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2253 > up
+~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local /usr/local/bin ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet
+total 1624
+drwxrwxr-x 8 marksa marksa   4096 Oct 12 05:15 .git
+-rw-rw-r-- 1 marksa marksa  25806 Oct 12 05:14 run.term
+-rw-rw-r-- 1 marksa marksa  74447 Oct 12 05:12 build.term
+-rw-rw-r-- 1 marksa marksa  41987 Oct 12 05:10 git.term
+-rw-rw-r-- 1 marksa marksa  26150 Oct 11 10:34 config.log
+-rwxrwxr-x 1 marksa marksa 339599 Oct 11 10:34 libtool
+-rw-rw-r-- 1 marksa marksa  26087 Oct 11 10:34 Makefile
+drwxrwxr-x 5 marksa marksa   4096 Oct 11 10:34 src
+-rwxrwxr-x 1 marksa marksa  54172 Oct 11 10:34 config.status
+-rw-rw-r-- 1 marksa marksa  25641 Oct 11 10:33 Makefile.in
+drwxrwxr-x 2 marksa marksa   4096 Oct 11 10:33 m4
+lrwxrwxrwx 1 marksa marksa     38 Oct 11 10:33 ltmain.sh -> /usr/share/libtool/build-aux/ltmain.sh
+-rwxrwxr-x 1 marksa marksa 429976 Oct 11 10:32 configure
+drwxr-xr-x 2 marksa marksa   4096 Oct 11 10:32 autom4te.cache
+lrwxrwxrwx 1 marksa marksa     32 Oct 11 10:27 compile -> /usr/share/automake-1.15/compile
+lrwxrwxrwx 1 marksa marksa     37 Oct 11 10:27 config.guess -> /usr/share/automake-1.15/config.guess
+lrwxrwxrwx 1 marksa marksa     35 Oct 11 10:27 config.sub -> /usr/share/automake-1.15/config.sub
+-rw-rw-r-- 1 marksa marksa 372955 Oct 11 10:20 aclocal.m4
+-rwxrwxr-x 1 marksa marksa  13681 Oct 11 07:40 depcomp
+drwxrwxr-x 4 marksa marksa   4096 Oct 11 07:40 doc
+-rwxrwxr-x 1 marksa marksa   5598 Oct 11 07:40 install-sh
+-rwxrwxr-x 1 marksa marksa  97712 Oct 11 07:40 ltconfig
+-rwxrwxr-x 1 marksa marksa  10270 Oct 11 07:40 missing
+-rwxrwxr-x 1 marksa marksa    671 Oct 11 07:40 mkinstalldirs
+-rw-rw-r-- 1 marksa marksa    260 Oct 11 07:40 AUTHORS
+-rw-rw-r-- 1 marksa marksa      0 Oct 11 07:40 ChangeLog
+-rw-rw-r-- 1 marksa marksa   1724 Oct 11 07:40 configure.ac
+drwxrwxr-x 3 marksa marksa   4096 Oct 11 07:40 contrib
+-rw-rw-r-- 1 marksa marksa  17992 Oct 11 07:40 COPYING
+-rw-rw-r-- 1 marksa marksa    245 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa   8999 Oct 11 07:40 INSTALL
+-rw-rw-r-- 1 marksa marksa    984 Oct 11 07:40 Makefile.am
+-rw-rw-r-- 1 marksa marksa    295 Oct 11 07:40 NEWS
+-rw-rw-r-- 1 marksa marksa    375 Oct 11 07:40 README
+~/dev/git/fork/ChadwickBureau/chadwick | Tue Oct 22 05:42:35 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2254 > dv
+ 0  ~/dev/git/fork/ChadwickBureau/chadwick
+ 1  ~/dev/git/fork/ChadwickBureau/chadwick/src
+ 2  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 3  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+ 4  ~/dev/git/fork/ChadwickBureau/obituaries
+ 5  ~/dev/git/fork/ChadwickBureau/vitals
+ 6  ~/dev/git/fork/ChadwickBureau/identlink
+ 7  ~/dev/git/fork/ChadwickBureau/ident
+ 8  ~/dev/git/fork/ChadwickBureau/researchers
+ 9  ~/dev/git/fork/ChadwickBureau/register
+10  ~/dev/git/fork/ChadwickBureau
+11  ~/dev/git/fork/ChadwickBureau/retrosplits
+12  ~/dev/git/fork/ChadwickBureau/baseballdatabank
+13  ~/dev/git/fork
+14  /usr/local/lib
+15  /usr/local/bin
+16  /usr/local
+17  /usr/local/bin
+18  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+19  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+20  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+21  ~/dev/git/fork/ChadwickBureau/retrosheet
+~/dev/git/fork/ChadwickBureau/chadwick | Tue Oct 22 05:42:38 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2255 > popd +17
+~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork/ChadwickBureau/retrosplits ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet
+~/dev/git/fork/ChadwickBureau/chadwick | Tue Oct 22 05:42:58 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2256 > dv
+ 0  ~/dev/git/fork/ChadwickBureau/chadwick
+ 1  ~/dev/git/fork/ChadwickBureau/chadwick/src
+ 2  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 3  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+ 4  ~/dev/git/fork/ChadwickBureau/obituaries
+ 5  ~/dev/git/fork/ChadwickBureau/vitals
+ 6  ~/dev/git/fork/ChadwickBureau/identlink
+ 7  ~/dev/git/fork/ChadwickBureau/ident
+ 8  ~/dev/git/fork/ChadwickBureau/researchers
+ 9  ~/dev/git/fork/ChadwickBureau/register
+10  ~/dev/git/fork/ChadwickBureau
+11  ~/dev/git/fork/ChadwickBureau/retrosplits
+12  ~/dev/git/fork/ChadwickBureau/baseballdatabank
+13  ~/dev/git/fork
+14  /usr/local/lib
+15  /usr/local/bin
+16  /usr/local
+17  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+18  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+19  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+20  ~/dev/git/fork/ChadwickBureau/retrosheet
+~/dev/git/fork/ChadwickBureau/chadwick | Tue Oct 22 05:42:59 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2257 > popd +11
+~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork/ChadwickBureau/baseballdatabank ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet
+~/dev/git/fork/ChadwickBureau/chadwick | Tue Oct 22 05:43:15 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2258 > popd +11
+~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet
+~/dev/git/fork/ChadwickBureau/chadwick | Tue Oct 22 05:43:17 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2258 > dv
+ 0  ~/dev/git/fork/ChadwickBureau/chadwick
+ 1  ~/dev/git/fork/ChadwickBureau/chadwick/src
+ 2  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 3  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+ 4  ~/dev/git/fork/ChadwickBureau/obituaries
+ 5  ~/dev/git/fork/ChadwickBureau/vitals
+ 6  ~/dev/git/fork/ChadwickBureau/identlink
+ 7  ~/dev/git/fork/ChadwickBureau/ident
+ 8  ~/dev/git/fork/ChadwickBureau/researchers
+ 9  ~/dev/git/fork/ChadwickBureau/register
+10  ~/dev/git/fork/ChadwickBureau
+11  ~/dev/git/fork
+12  /usr/local/lib
+13  /usr/local/bin
+14  /usr/local
+15  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+16  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+17  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+18  ~/dev/git/fork/ChadwickBureau/retrosheet
+~/dev/git/fork/ChadwickBureau/chadwick | Tue Oct 22 05:43:18 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2259 > ltf
+total 1624
+drwxrwxr-x 8 marksa marksa   4096 Oct 12 05:15 .git
+-rw-rw-r-- 1 marksa marksa  25806 Oct 12 05:14 run.term
+-rw-rw-r-- 1 marksa marksa  74447 Oct 12 05:12 build.term
+-rw-rw-r-- 1 marksa marksa  41987 Oct 12 05:10 git.term
+-rw-rw-r-- 1 marksa marksa  26150 Oct 11 10:34 config.log
+-rwxrwxr-x 1 marksa marksa 339599 Oct 11 10:34 libtool
+-rw-rw-r-- 1 marksa marksa  26087 Oct 11 10:34 Makefile
+drwxrwxr-x 5 marksa marksa   4096 Oct 11 10:34 src
+-rwxrwxr-x 1 marksa marksa  54172 Oct 11 10:34 config.status
+-rw-rw-r-- 1 marksa marksa  25641 Oct 11 10:33 Makefile.in
+drwxrwxr-x 2 marksa marksa   4096 Oct 11 10:33 m4
+lrwxrwxrwx 1 marksa marksa     38 Oct 11 10:33 ltmain.sh -> /usr/share/libtool/build-aux/ltmain.sh
+-rwxrwxr-x 1 marksa marksa 429976 Oct 11 10:32 configure
+drwxr-xr-x 2 marksa marksa   4096 Oct 11 10:32 autom4te.cache
+lrwxrwxrwx 1 marksa marksa     32 Oct 11 10:27 compile -> /usr/share/automake-1.15/compile
+lrwxrwxrwx 1 marksa marksa     37 Oct 11 10:27 config.guess -> /usr/share/automake-1.15/config.guess
+lrwxrwxrwx 1 marksa marksa     35 Oct 11 10:27 config.sub -> /usr/share/automake-1.15/config.sub
+-rw-rw-r-- 1 marksa marksa 372955 Oct 11 10:20 aclocal.m4
+-rwxrwxr-x 1 marksa marksa  13681 Oct 11 07:40 depcomp
+drwxrwxr-x 4 marksa marksa   4096 Oct 11 07:40 doc
+-rwxrwxr-x 1 marksa marksa   5598 Oct 11 07:40 install-sh
+-rwxrwxr-x 1 marksa marksa  97712 Oct 11 07:40 ltconfig
+-rwxrwxr-x 1 marksa marksa  10270 Oct 11 07:40 missing
+-rwxrwxr-x 1 marksa marksa    671 Oct 11 07:40 mkinstalldirs
+-rw-rw-r-- 1 marksa marksa    260 Oct 11 07:40 AUTHORS
+-rw-rw-r-- 1 marksa marksa      0 Oct 11 07:40 ChangeLog
+-rw-rw-r-- 1 marksa marksa   1724 Oct 11 07:40 configure.ac
+drwxrwxr-x 3 marksa marksa   4096 Oct 11 07:40 contrib
+-rw-rw-r-- 1 marksa marksa  17992 Oct 11 07:40 COPYING
+-rw-rw-r-- 1 marksa marksa    245 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa   8999 Oct 11 07:40 INSTALL
+-rw-rw-r-- 1 marksa marksa    984 Oct 11 07:40 Makefile.am
+-rw-rw-r-- 1 marksa marksa    295 Oct 11 07:40 NEWS
+-rw-rw-r-- 1 marksa marksa    375 Oct 11 07:40 README
+~/dev/git/fork/ChadwickBureau/chadwick | Tue Oct 22 05:43:24 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2260 > go src
+~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet
+total 56
+drwxrwxr-x 6 marksa marksa  4096 Oct 11 14:51 python
+drwxrwxr-x 4 marksa marksa  4096 Oct 11 10:34 cwtools
+drwxrwxr-x 4 marksa marksa  4096 Oct 11 10:34 cwlib
+-rw-rw-r-- 1 marksa marksa 19590 Oct 11 10:34 Makefile
+-rw-rw-r-- 1 marksa marksa 19127 Oct 11 10:33 Makefile.in
+-rw-rw-r-- 1 marksa marksa   985 Oct 11 07:40 Makefile.am
+~/dev/git/fork/ChadwickBureau/chadwick/src | Tue Oct 22 18:04:52 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2261 > go python/
+~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet
+total 24
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 dist
+drwxrwxr-x 6 marksa marksa 4096 Oct 11 14:51 build
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 chadwick.egg-info
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:46 chadwick
+-rw-rw-r-- 1 marksa marksa   57 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa 1959 Oct 11 07:40 setup.py
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Tue Oct 22 18:04:54 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2262 > go chadwick
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet
+total 1256
+-rw-rw-r-- 1 marksa marksa 183600 Oct 11 14:46 libchadwick.py
+-rw-rw-r-- 1 marksa marksa 999937 Oct 11 14:46 libchadwick_wrap.c
+-rw-rw-r-- 1 marksa marksa  24533 Oct 11 07:40 boxscore.i
+-rw-rw-r-- 1 marksa marksa  38365 Oct 11 07:40 game.i
+-rw-rw-r-- 1 marksa marksa   1210 Oct 11 07:40 __init__.py
+-rw-rw-r-- 1 marksa marksa   3271 Oct 11 07:40 libchadwick.i
+-rw-rw-r-- 1 marksa marksa   7042 Oct 11 07:40 roster.i
+-rw-rw-r-- 1 marksa marksa   3363 Oct 11 07:40 scorebook.i
+-rw-rw-r-- 1 marksa marksa   9100 Oct 11 07:40 state.i
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick | Tue Oct 22 18:04:58 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2263 > locate -b '\gnucash_core.py'
+/data/LinuxDesktop/HOME/marksa/dev/git/Python/Gnucash/createGncTxs/py3bindings/usr/lib/python3/dist-packages/gnucash/gnucash_core.py
+/data/LinuxDesktop/HOME/marksa/dev/git/fork/gnucash/bindings/python/gnucash_core.py
+/data/timeshift/snapshots/2019-08-23_16-00-02/localhost/home/marksa/.local/lib/python2.7/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-08-23_16-00-02/localhost/home/marksa/.local/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-08-23_16-00-02/localhost/home/marksa/.local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-08-23_16-00-02/localhost/opt/gnucash/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-08-23_16-00-02/localhost/opt/gnucash-with-python/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-08-23_16-00-02/localhost/usr/lib/python2.7/dist-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-08-23_16-00-02/localhost/usr/local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-08-30_16-00-01/localhost/home/marksa/.local/lib/python2.7/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-08-30_16-00-01/localhost/home/marksa/.local/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-08-30_16-00-01/localhost/home/marksa/.local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-08-30_16-00-01/localhost/opt/gnucash/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-08-30_16-00-01/localhost/opt/gnucash-with-python/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-08-30_16-00-01/localhost/usr/lib/python2.7/dist-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-08-30_16-00-01/localhost/usr/local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-06_16-00-02/localhost/home/marksa/.local/lib/python2.7/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-06_16-00-02/localhost/home/marksa/.local/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-06_16-00-02/localhost/home/marksa/.local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-06_16-00-02/localhost/opt/gnucash/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-06_16-00-02/localhost/opt/gnucash-with-python/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-06_16-00-02/localhost/usr/lib/python2.7/dist-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-06_16-00-02/localhost/usr/local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-18_17-00-01/localhost/home/marksa/.local/lib/python2.7/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-18_17-00-01/localhost/home/marksa/.local/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-18_17-00-01/localhost/home/marksa/.local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-18_17-00-01/localhost/opt/gnucash/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-18_17-00-01/localhost/opt/gnucash-with-python/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-18_17-00-01/localhost/usr/lib/python2.7/dist-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-18_17-00-01/localhost/usr/local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-25_19-00-01/localhost/home/marksa/.local/lib/python2.7/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-25_19-00-01/localhost/home/marksa/.local/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-25_19-00-01/localhost/home/marksa/.local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-25_19-00-01/localhost/opt/gnucash/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-25_19-00-01/localhost/opt/gnucash-with-python/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-25_19-00-01/localhost/usr/lib/python2.7/dist-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-09-25_19-00-01/localhost/usr/local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-03_16-00-01/localhost/home/marksa/.local/lib/python2.7/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-03_16-00-01/localhost/home/marksa/.local/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-03_16-00-01/localhost/home/marksa/.local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-03_16-00-01/localhost/opt/gnucash/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-03_16-00-01/localhost/opt/gnucash-with-python/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-03_16-00-01/localhost/usr/lib/python2.7/dist-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-03_16-00-01/localhost/usr/local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-10_17-00-01/localhost/home/marksa/.local/lib/python2.7/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-10_17-00-01/localhost/home/marksa/.local/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-10_17-00-01/localhost/home/marksa/.local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-10_17-00-01/localhost/opt/gnucash/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-10_17-00-01/localhost/opt/gnucash-with-python/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-10_17-00-01/localhost/usr/lib/python2.7/dist-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-10_17-00-01/localhost/usr/local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-17_17-00-01/localhost/home/marksa/.local/lib/python2.7/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-17_17-00-01/localhost/home/marksa/.local/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-17_17-00-01/localhost/home/marksa/.local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-17_17-00-01/localhost/opt/gnucash/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-17_17-00-01/localhost/opt/gnucash-with-python/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-17_17-00-01/localhost/usr/lib/python2.7/dist-packages/gnucash/gnucash_core.py
+/data/timeshift/snapshots/2019-10-17_17-00-01/localhost/usr/local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/home/marksa/.local/lib/python2.7/site-packages/gnucash/gnucash_core.py
+/home/marksa/.local/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/home/marksa/.local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+/home/marksa/dev/git/fork/gnucash/RELEASES/gnucash-3.5/bindings/python/gnucash_core.py
+/home/marksa/dev/git/fork/gnucash/RELEASES/gnucash-3.6/bindings/python/gnucash_core.py
+/home/marksa/dev/git/fork/gnucash/RELEASES/gnucash-3.7/bindings/python/gnucash_core.py
+/home/marksa/dev/git/fork/gnucash/bindings/python/gnucash_core.py
+/opt/gnucash/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/opt/gnucash-with-python/lib/python3.6/site-packages/gnucash/gnucash_core.py
+/usr/lib/python2.7/dist-packages/gnucash/gnucash_core.py
+/usr/local/lib/python3.8/site-packages/gnucash/gnucash_core.py
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick | Tue Oct 22 18:10:49 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2264 > 
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick | Thu Oct 24 07:31:24 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2264 > ll
+total 1.3M
+-rw-rw-r-- 1 marksa marksa  24K Oct 11 07:40 boxscore.i
+-rw-rw-r-- 1 marksa marksa  38K Oct 11 07:40 game.i
+-rw-rw-r-- 1 marksa marksa 1.2K Oct 11 07:40 __init__.py
+-rw-rw-r-- 1 marksa marksa 3.2K Oct 11 07:40 libchadwick.i
+-rw-rw-r-- 1 marksa marksa 180K Oct 11 14:46 libchadwick.py
+-rw-rw-r-- 1 marksa marksa 977K Oct 11 14:46 libchadwick_wrap.c
+-rw-rw-r-- 1 marksa marksa 6.9K Oct 11 07:40 roster.i
+-rw-rw-r-- 1 marksa marksa 3.3K Oct 11 07:40 scorebook.i
+-rw-rw-r-- 1 marksa marksa 8.9K Oct 11 07:40 state.i
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick | Mon Oct 28 17:26:17 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2265 > up
+~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet
+total 24
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 dist
+drwxrwxr-x 6 marksa marksa 4096 Oct 11 14:51 build
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 chadwick.egg-info
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:46 chadwick
+-rw-rw-r-- 1 marksa marksa   57 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa 1959 Oct 11 07:40 setup.py
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Mon Oct 28 17:26:23 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2266 > dv
+ 0  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 1  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick
+ 2  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 3  ~/dev/git/fork/ChadwickBureau/chadwick/src
+ 4  ~/dev/git/fork/ChadwickBureau/chadwick
+ 5  ~/dev/git/fork/ChadwickBureau/chadwick/src
+ 6  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 7  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+ 8  ~/dev/git/fork/ChadwickBureau/obituaries
+ 9  ~/dev/git/fork/ChadwickBureau/vitals
+10  ~/dev/git/fork/ChadwickBureau/identlink
+11  ~/dev/git/fork/ChadwickBureau/ident
+12  ~/dev/git/fork/ChadwickBureau/researchers
+13  ~/dev/git/fork/ChadwickBureau/register
+14  ~/dev/git/fork/ChadwickBureau
+15  ~/dev/git/fork
+16  /usr/local/lib
+17  /usr/local/bin
+18  /usr/local
+19  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+20  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+21  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+22  ~/dev/git/fork/ChadwickBureau/retrosheet
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Mon Oct 28 17:26:26 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2267 > rt
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet
+total 1256
+-rw-rw-r-- 1 marksa marksa 183600 Oct 11 14:46 libchadwick.py
+-rw-rw-r-- 1 marksa marksa 999937 Oct 11 14:46 libchadwick_wrap.c
+-rw-rw-r-- 1 marksa marksa  24533 Oct 11 07:40 boxscore.i
+-rw-rw-r-- 1 marksa marksa  38365 Oct 11 07:40 game.i
+-rw-rw-r-- 1 marksa marksa   1210 Oct 11 07:40 __init__.py
+-rw-rw-r-- 1 marksa marksa   3271 Oct 11 07:40 libchadwick.i
+-rw-rw-r-- 1 marksa marksa   7042 Oct 11 07:40 roster.i
+-rw-rw-r-- 1 marksa marksa   3363 Oct 11 07:40 scorebook.i
+-rw-rw-r-- 1 marksa marksa   9100 Oct 11 07:40 state.i
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick | Mon Oct 28 17:26:29 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2268 > go
+~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet
+total 24
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 dist
+drwxrwxr-x 6 marksa marksa 4096 Oct 11 14:51 build
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 chadwick.egg-info
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:46 chadwick
+-rw-rw-r-- 1 marksa marksa   57 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa 1959 Oct 11 07:40 setup.py
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Mon Oct 28 17:26:30 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2269 > dv
+ 0  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 1  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick
+ 2  ~/dev/git/fork/ChadwickBureau/chadwick/src
+ 3  ~/dev/git/fork/ChadwickBureau/chadwick
+ 4  ~/dev/git/fork/ChadwickBureau/chadwick/src
+ 5  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 6  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+ 7  ~/dev/git/fork/ChadwickBureau/obituaries
+ 8  ~/dev/git/fork/ChadwickBureau/vitals
+ 9  ~/dev/git/fork/ChadwickBureau/identlink
+10  ~/dev/git/fork/ChadwickBureau/ident
+11  ~/dev/git/fork/ChadwickBureau/researchers
+12  ~/dev/git/fork/ChadwickBureau/register
+13  ~/dev/git/fork/ChadwickBureau
+14  ~/dev/git/fork
+15  /usr/local/lib
+16  /usr/local/bin
+17  /usr/local
+18  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+19  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+20  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+21  ~/dev/git/fork/ChadwickBureau/retrosheet
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Mon Oct 28 17:26:35 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2270 > rt
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet
+total 1256
+-rw-rw-r-- 1 marksa marksa 183600 Oct 11 14:46 libchadwick.py
+-rw-rw-r-- 1 marksa marksa 999937 Oct 11 14:46 libchadwick_wrap.c
+-rw-rw-r-- 1 marksa marksa  24533 Oct 11 07:40 boxscore.i
+-rw-rw-r-- 1 marksa marksa  38365 Oct 11 07:40 game.i
+-rw-rw-r-- 1 marksa marksa   1210 Oct 11 07:40 __init__.py
+-rw-rw-r-- 1 marksa marksa   3271 Oct 11 07:40 libchadwick.i
+-rw-rw-r-- 1 marksa marksa   7042 Oct 11 07:40 roster.i
+-rw-rw-r-- 1 marksa marksa   3363 Oct 11 07:40 scorebook.i
+-rw-rw-r-- 1 marksa marksa   9100 Oct 11 07:40 state.i
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick | Mon Oct 28 17:26:44 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2271 > go
+~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet
+total 56
+drwxrwxr-x 6 marksa marksa  4096 Oct 11 14:51 python
+drwxrwxr-x 4 marksa marksa  4096 Oct 11 10:34 cwtools
+drwxrwxr-x 4 marksa marksa  4096 Oct 11 10:34 cwlib
+-rw-rw-r-- 1 marksa marksa 19590 Oct 11 10:34 Makefile
+-rw-rw-r-- 1 marksa marksa 19127 Oct 11 10:33 Makefile.in
+-rw-rw-r-- 1 marksa marksa   985 Oct 11 07:40 Makefile.am
+~/dev/git/fork/ChadwickBureau/chadwick/src | Mon Oct 28 17:26:45 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2272 > rt
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet
+total 1256
+-rw-rw-r-- 1 marksa marksa 183600 Oct 11 14:46 libchadwick.py
+-rw-rw-r-- 1 marksa marksa 999937 Oct 11 14:46 libchadwick_wrap.c
+-rw-rw-r-- 1 marksa marksa  24533 Oct 11 07:40 boxscore.i
+-rw-rw-r-- 1 marksa marksa  38365 Oct 11 07:40 game.i
+-rw-rw-r-- 1 marksa marksa   1210 Oct 11 07:40 __init__.py
+-rw-rw-r-- 1 marksa marksa   3271 Oct 11 07:40 libchadwick.i
+-rw-rw-r-- 1 marksa marksa   7042 Oct 11 07:40 roster.i
+-rw-rw-r-- 1 marksa marksa   3363 Oct 11 07:40 scorebook.i
+-rw-rw-r-- 1 marksa marksa   9100 Oct 11 07:40 state.i
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick | Mon Oct 28 17:26:46 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2273 > dv
+ 0  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick
+ 1  ~/dev/git/fork/ChadwickBureau/chadwick
+ 2  ~/dev/git/fork/ChadwickBureau/chadwick/src
+ 3  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 4  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+ 5  ~/dev/git/fork/ChadwickBureau/obituaries
+ 6  ~/dev/git/fork/ChadwickBureau/vitals
+ 7  ~/dev/git/fork/ChadwickBureau/identlink
+ 8  ~/dev/git/fork/ChadwickBureau/ident
+ 9  ~/dev/git/fork/ChadwickBureau/researchers
+10  ~/dev/git/fork/ChadwickBureau/register
+11  ~/dev/git/fork/ChadwickBureau
+12  ~/dev/git/fork
+13  /usr/local/lib
+14  /usr/local/bin
+15  /usr/local
+16  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+17  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+18  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+19  ~/dev/git/fork/ChadwickBureau/retrosheet
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick | Mon Oct 28 17:26:47 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2274 > go2
+~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick
+total 56
+drwxrwxr-x 6 marksa marksa  4096 Oct 11 14:51 python
+drwxrwxr-x 4 marksa marksa  4096 Oct 11 10:34 cwtools
+drwxrwxr-x 4 marksa marksa  4096 Oct 11 10:34 cwlib
+-rw-rw-r-- 1 marksa marksa 19590 Oct 11 10:34 Makefile
+-rw-rw-r-- 1 marksa marksa 19127 Oct 11 10:33 Makefile.in
+-rw-rw-r-- 1 marksa marksa   985 Oct 11 07:40 Makefile.am
+~/dev/git/fork/ChadwickBureau/chadwick/src | Mon Oct 28 17:26:55 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2275 > dv
+ 0  ~/dev/git/fork/ChadwickBureau/chadwick/src
+ 1  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 2  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+ 3  ~/dev/git/fork/ChadwickBureau/obituaries
+ 4  ~/dev/git/fork/ChadwickBureau/vitals
+ 5  ~/dev/git/fork/ChadwickBureau/identlink
+ 6  ~/dev/git/fork/ChadwickBureau/ident
+ 7  ~/dev/git/fork/ChadwickBureau/researchers
+ 8  ~/dev/git/fork/ChadwickBureau/register
+ 9  ~/dev/git/fork/ChadwickBureau
+10  ~/dev/git/fork
+11  /usr/local/lib
+12  /usr/local/bin
+13  /usr/local
+14  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+15  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+16  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+17  ~/dev/git/fork/ChadwickBureau/retrosheet
+18  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick
+19  ~/dev/git/fork/ChadwickBureau/chadwick
+~/dev/git/fork/ChadwickBureau/chadwick/src | Mon Oct 28 17:27:06 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2276 > go0
+~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick
+total 1624
+drwxrwxr-x 8 marksa marksa   4096 Oct 12 05:15 .git
+-rw-rw-r-- 1 marksa marksa  25806 Oct 12 05:14 run.term
+-rw-rw-r-- 1 marksa marksa  74447 Oct 12 05:12 build.term
+-rw-rw-r-- 1 marksa marksa  41987 Oct 12 05:10 git.term
+-rw-rw-r-- 1 marksa marksa  26150 Oct 11 10:34 config.log
+-rwxrwxr-x 1 marksa marksa 339599 Oct 11 10:34 libtool
+-rw-rw-r-- 1 marksa marksa  26087 Oct 11 10:34 Makefile
+drwxrwxr-x 5 marksa marksa   4096 Oct 11 10:34 src
+-rwxrwxr-x 1 marksa marksa  54172 Oct 11 10:34 config.status
+-rw-rw-r-- 1 marksa marksa  25641 Oct 11 10:33 Makefile.in
+drwxrwxr-x 2 marksa marksa   4096 Oct 11 10:33 m4
+lrwxrwxrwx 1 marksa marksa     38 Oct 11 10:33 ltmain.sh -> /usr/share/libtool/build-aux/ltmain.sh
+-rwxrwxr-x 1 marksa marksa 429976 Oct 11 10:32 configure
+drwxr-xr-x 2 marksa marksa   4096 Oct 11 10:32 autom4te.cache
+lrwxrwxrwx 1 marksa marksa     32 Oct 11 10:27 compile -> /usr/share/automake-1.15/compile
+lrwxrwxrwx 1 marksa marksa     37 Oct 11 10:27 config.guess -> /usr/share/automake-1.15/config.guess
+lrwxrwxrwx 1 marksa marksa     35 Oct 11 10:27 config.sub -> /usr/share/automake-1.15/config.sub
+-rw-rw-r-- 1 marksa marksa 372955 Oct 11 10:20 aclocal.m4
+-rwxrwxr-x 1 marksa marksa  13681 Oct 11 07:40 depcomp
+drwxrwxr-x 4 marksa marksa   4096 Oct 11 07:40 doc
+-rwxrwxr-x 1 marksa marksa   5598 Oct 11 07:40 install-sh
+-rwxrwxr-x 1 marksa marksa  97712 Oct 11 07:40 ltconfig
+-rwxrwxr-x 1 marksa marksa  10270 Oct 11 07:40 missing
+-rwxrwxr-x 1 marksa marksa    671 Oct 11 07:40 mkinstalldirs
+-rw-rw-r-- 1 marksa marksa    260 Oct 11 07:40 AUTHORS
+-rw-rw-r-- 1 marksa marksa      0 Oct 11 07:40 ChangeLog
+-rw-rw-r-- 1 marksa marksa   1724 Oct 11 07:40 configure.ac
+drwxrwxr-x 3 marksa marksa   4096 Oct 11 07:40 contrib
+-rw-rw-r-- 1 marksa marksa  17992 Oct 11 07:40 COPYING
+-rw-rw-r-- 1 marksa marksa    245 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa   8999 Oct 11 07:40 INSTALL
+-rw-rw-r-- 1 marksa marksa    984 Oct 11 07:40 Makefile.am
+-rw-rw-r-- 1 marksa marksa    295 Oct 11 07:40 NEWS
+-rw-rw-r-- 1 marksa marksa    375 Oct 11 07:40 README
+~/dev/git/fork/ChadwickBureau/chadwick | Mon Oct 28 17:27:11 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2277 > go doc
+~/dev/git/fork/ChadwickBureau/chadwick/doc ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick
+total 72
+-rw-rw-r-- 1 marksa marksa  6429 Oct 11 07:40 conf.py
+-rw-rw-r-- 1 marksa marksa 21910 Oct 11 07:40 cwevent.rst
+-rw-rw-r-- 1 marksa marksa 16230 Oct 11 07:40 cwgame.rst
+-rw-rw-r-- 1 marksa marksa  1106 Oct 11 07:40 cwsub.rst
+-rw-rw-r-- 1 marksa marksa  2496 Oct 11 07:40 cwtools.rst
+-rw-rw-r-- 1 marksa marksa  2061 Oct 11 07:40 index.rst
+-rw-rw-r-- 1 marksa marksa  2997 Oct 11 07:40 Makefile
+drwxrwxr-x 2 marksa marksa  4096 Oct 11 07:40 _static
+drwxrwxr-x 2 marksa marksa  4096 Oct 11 07:40 _templates
+~/dev/git/fork/ChadwickBureau/chadwick/doc | Mon Oct 28 17:27:18 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2278 > file cwevent.rst 
+cwevent.rst: ASCII text
+~/dev/git/fork/ChadwickBureau/chadwick/doc | Mon Oct 28 17:27:30 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2279 > go
+~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick
+total 1624
+drwxrwxr-x 8 marksa marksa   4096 Oct 12 05:15 .git
+-rw-rw-r-- 1 marksa marksa  25806 Oct 12 05:14 run.term
+-rw-rw-r-- 1 marksa marksa  74447 Oct 12 05:12 build.term
+-rw-rw-r-- 1 marksa marksa  41987 Oct 12 05:10 git.term
+-rw-rw-r-- 1 marksa marksa  26150 Oct 11 10:34 config.log
+-rwxrwxr-x 1 marksa marksa 339599 Oct 11 10:34 libtool
+-rw-rw-r-- 1 marksa marksa  26087 Oct 11 10:34 Makefile
+drwxrwxr-x 5 marksa marksa   4096 Oct 11 10:34 src
+-rwxrwxr-x 1 marksa marksa  54172 Oct 11 10:34 config.status
+-rw-rw-r-- 1 marksa marksa  25641 Oct 11 10:33 Makefile.in
+drwxrwxr-x 2 marksa marksa   4096 Oct 11 10:33 m4
+lrwxrwxrwx 1 marksa marksa     38 Oct 11 10:33 ltmain.sh -> /usr/share/libtool/build-aux/ltmain.sh
+-rwxrwxr-x 1 marksa marksa 429976 Oct 11 10:32 configure
+drwxr-xr-x 2 marksa marksa   4096 Oct 11 10:32 autom4te.cache
+lrwxrwxrwx 1 marksa marksa     32 Oct 11 10:27 compile -> /usr/share/automake-1.15/compile
+lrwxrwxrwx 1 marksa marksa     37 Oct 11 10:27 config.guess -> /usr/share/automake-1.15/config.guess
+lrwxrwxrwx 1 marksa marksa     35 Oct 11 10:27 config.sub -> /usr/share/automake-1.15/config.sub
+-rw-rw-r-- 1 marksa marksa 372955 Oct 11 10:20 aclocal.m4
+-rwxrwxr-x 1 marksa marksa  13681 Oct 11 07:40 depcomp
+drwxrwxr-x 4 marksa marksa   4096 Oct 11 07:40 doc
+-rwxrwxr-x 1 marksa marksa   5598 Oct 11 07:40 install-sh
+-rwxrwxr-x 1 marksa marksa  97712 Oct 11 07:40 ltconfig
+-rwxrwxr-x 1 marksa marksa  10270 Oct 11 07:40 missing
+-rwxrwxr-x 1 marksa marksa    671 Oct 11 07:40 mkinstalldirs
+-rw-rw-r-- 1 marksa marksa    260 Oct 11 07:40 AUTHORS
+-rw-rw-r-- 1 marksa marksa      0 Oct 11 07:40 ChangeLog
+-rw-rw-r-- 1 marksa marksa   1724 Oct 11 07:40 configure.ac
+drwxrwxr-x 3 marksa marksa   4096 Oct 11 07:40 contrib
+-rw-rw-r-- 1 marksa marksa  17992 Oct 11 07:40 COPYING
+-rw-rw-r-- 1 marksa marksa    245 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa   8999 Oct 11 07:40 INSTALL
+-rw-rw-r-- 1 marksa marksa    984 Oct 11 07:40 Makefile.am
+-rw-rw-r-- 1 marksa marksa    295 Oct 11 07:40 NEWS
+-rw-rw-r-- 1 marksa marksa    375 Oct 11 07:40 README
+~/dev/git/fork/ChadwickBureau/chadwick | Mon Oct 28 17:27:41 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2280 > dv
+ 0  ~/dev/git/fork/ChadwickBureau/chadwick
+ 1  ~/dev/git/fork/ChadwickBureau/chadwick/doc
+ 2  ~/dev/git/fork/ChadwickBureau/chadwick/src
+ 3  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 4  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+ 5  ~/dev/git/fork/ChadwickBureau/obituaries
+ 6  ~/dev/git/fork/ChadwickBureau/vitals
+ 7  ~/dev/git/fork/ChadwickBureau/identlink
+ 8  ~/dev/git/fork/ChadwickBureau/ident
+ 9  ~/dev/git/fork/ChadwickBureau/researchers
+10  ~/dev/git/fork/ChadwickBureau/register
+11  ~/dev/git/fork/ChadwickBureau
+12  ~/dev/git/fork
+13  /usr/local/lib
+14  /usr/local/bin
+15  /usr/local
+16  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+17  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+18  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+19  ~/dev/git/fork/ChadwickBureau/retrosheet
+20  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick
+~/dev/git/fork/ChadwickBureau/chadwick | Mon Oct 28 17:27:47 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2281 > go3
+~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc ~/dev/git/fork/ChadwickBureau/chadwick/src
+total 24
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 dist
+drwxrwxr-x 6 marksa marksa 4096 Oct 11 14:51 build
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 chadwick.egg-info
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:46 chadwick
+-rw-rw-r-- 1 marksa marksa   57 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa 1959 Oct 11 07:40 setup.py
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Mon Oct 28 17:27:53 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2282 > go chadwick
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc ~/dev/git/fork/ChadwickBureau/chadwick/src
+total 1256
+-rw-rw-r-- 1 marksa marksa 183600 Oct 11 14:46 libchadwick.py
+-rw-rw-r-- 1 marksa marksa 999937 Oct 11 14:46 libchadwick_wrap.c
+-rw-rw-r-- 1 marksa marksa  24533 Oct 11 07:40 boxscore.i
+-rw-rw-r-- 1 marksa marksa  38365 Oct 11 07:40 game.i
+-rw-rw-r-- 1 marksa marksa   1210 Oct 11 07:40 __init__.py
+-rw-rw-r-- 1 marksa marksa   3271 Oct 11 07:40 libchadwick.i
+-rw-rw-r-- 1 marksa marksa   7042 Oct 11 07:40 roster.i
+-rw-rw-r-- 1 marksa marksa   3363 Oct 11 07:40 scorebook.i
+-rw-rw-r-- 1 marksa marksa   9100 Oct 11 07:40 state.i
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick | Mon Oct 28 17:28:03 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2283 > dv
+ 0  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick
+ 1  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 2  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+ 3  ~/dev/git/fork/ChadwickBureau/obituaries
+ 4  ~/dev/git/fork/ChadwickBureau/vitals
+ 5  ~/dev/git/fork/ChadwickBureau/identlink
+ 6  ~/dev/git/fork/ChadwickBureau/ident
+ 7  ~/dev/git/fork/ChadwickBureau/researchers
+ 8  ~/dev/git/fork/ChadwickBureau/register
+ 9  ~/dev/git/fork/ChadwickBureau
+10  ~/dev/git/fork
+11  /usr/local/lib
+12  /usr/local/bin
+13  /usr/local
+14  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+15  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+16  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+17  ~/dev/git/fork/ChadwickBureau/retrosheet
+18  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick
+19  ~/dev/git/fork/ChadwickBureau/chadwick
+20  ~/dev/git/fork/ChadwickBureau/chadwick/doc
+21  ~/dev/git/fork/ChadwickBureau/chadwick/src
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick | Mon Oct 28 17:28:14 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2284 > popd -3
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc ~/dev/git/fork/ChadwickBureau/chadwick/src
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick | Mon Oct 28 17:28:26 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2285 > dv
+ 0  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick
+ 1  ~/dev/git/fork/ChadwickBureau/chadwick/src/python
+ 2  ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist
+ 3  ~/dev/git/fork/ChadwickBureau/obituaries
+ 4  ~/dev/git/fork/ChadwickBureau/vitals
+ 5  ~/dev/git/fork/ChadwickBureau/identlink
+ 6  ~/dev/git/fork/ChadwickBureau/ident
+ 7  ~/dev/git/fork/ChadwickBureau/researchers
+ 8  ~/dev/git/fork/ChadwickBureau/register
+ 9  ~/dev/git/fork/ChadwickBureau
+10  ~/dev/git/fork
+11  /usr/local/lib
+12  /usr/local/bin
+13  /usr/local
+14  ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular
+15  ~/dev/git/fork/ChadwickBureau/retrosheet/rosters
+16  ~/dev/git/fork/ChadwickBureau/retrosheet/event
+17  ~/dev/git/fork/ChadwickBureau/retrosheet
+18  ~/dev/git/fork/ChadwickBureau/chadwick
+19  ~/dev/git/fork/ChadwickBureau/chadwick/doc
+20  ~/dev/git/fork/ChadwickBureau/chadwick/src
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick | Mon Oct 28 17:28:27 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2286 > go0
+~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc
+total 56
+drwxrwxr-x 6 marksa marksa  4096 Oct 11 14:51 python
+drwxrwxr-x 4 marksa marksa  4096 Oct 11 10:34 cwtools
+drwxrwxr-x 4 marksa marksa  4096 Oct 11 10:34 cwlib
+-rw-rw-r-- 1 marksa marksa 19590 Oct 11 10:34 Makefile
+-rw-rw-r-- 1 marksa marksa 19127 Oct 11 10:33 Makefile.in
+-rw-rw-r-- 1 marksa marksa   985 Oct 11 07:40 Makefile.am
+~/dev/git/fork/ChadwickBureau/chadwick/src | Mon Oct 28 17:28:39 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2287 > go cwlib/
+~/dev/git/fork/ChadwickBureau/chadwick/src/cwlib ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc
+total 872
+drwxrwxr-x 2 marksa marksa   4096 Oct 11 10:34 .libs
+-rw-rw-r-- 1 marksa marksa    958 Oct 11 10:34 libchadwick.la
+drwxrwxr-x 2 marksa marksa   4096 Oct 11 10:34 .deps
+-rw-rw-r-- 1 marksa marksa    285 Oct 11 10:34 roster.lo
+-rw-rw-r-- 1 marksa marksa  32088 Oct 11 10:34 roster.o
+-rw-rw-r-- 1 marksa marksa    282 Oct 11 10:34 parse.lo
+-rw-rw-r-- 1 marksa marksa 106376 Oct 11 10:34 parse.o
+-rw-rw-r-- 1 marksa marksa    279 Oct 11 10:34 lint.lo
+-rw-rw-r-- 1 marksa marksa  27160 Oct 11 10:34 lint.o
+-rw-rw-r-- 1 marksa marksa    285 Oct 11 10:34 league.lo
+-rw-rw-r-- 1 marksa marksa  15344 Oct 11 10:34 league.o
+-rw-rw-r-- 1 marksa marksa    291 Oct 11 10:34 gameiter.lo
+-rw-rw-r-- 1 marksa marksa  82640 Oct 11 10:34 gameiter.o
+-rw-rw-r-- 1 marksa marksa    279 Oct 11 10:34 game.lo
+-rw-rw-r-- 1 marksa marksa  92888 Oct 11 10:34 game.o
+-rw-rw-r-- 1 marksa marksa    279 Oct 11 10:34 file.lo
+-rw-rw-r-- 1 marksa marksa  14752 Oct 11 10:34 file.o
+-rw-rw-r-- 1 marksa marksa    276 Oct 11 10:34 box.lo
+-rw-rw-r-- 1 marksa marksa 109680 Oct 11 10:34 box.o
+-rw-rw-r-- 1 marksa marksa    279 Oct 11 10:34 book.lo
+-rw-rw-r-- 1 marksa marksa  24736 Oct 11 10:34 book.o
+-rw-rw-r-- 1 marksa marksa  22357 Oct 11 10:34 Makefile
+-rw-rw-r-- 1 marksa marksa  22702 Oct 11 10:33 Makefile.in
+-rw-rw-r-- 1 marksa marksa  60701 Oct 11 07:40 parse.c
+-rw-rw-r-- 1 marksa marksa   4262 Oct 11 07:40 parse.h
+-rw-rw-r-- 1 marksa marksa   7400 Oct 11 07:40 roster.c
+-rw-rw-r-- 1 marksa marksa   4109 Oct 11 07:40 roster.h
+-rw-rw-r-- 1 marksa marksa   6305 Oct 11 07:40 book.c
+-rw-rw-r-- 1 marksa marksa   3705 Oct 11 07:40 book.h
+-rw-rw-r-- 1 marksa marksa  49507 Oct 11 07:40 box.c
+-rw-rw-r-- 1 marksa marksa   5504 Oct 11 07:40 box.h
+-rw-rw-r-- 1 marksa marksa   1210 Oct 11 07:40 chadwick.h
+-rw-rw-r-- 1 marksa marksa   4882 Oct 11 07:40 file.c
+-rw-rw-r-- 1 marksa marksa   1671 Oct 11 07:40 file.h
+-rw-rw-r-- 1 marksa marksa  26185 Oct 11 07:40 game.c
+-rw-rw-r-- 1 marksa marksa   6506 Oct 11 07:40 game.h
+-rw-rw-r-- 1 marksa marksa  29308 Oct 11 07:40 gameiter.c
+-rw-rw-r-- 1 marksa marksa   5117 Oct 11 07:40 gameiter.h
+-rw-rw-r-- 1 marksa marksa   3016 Oct 11 07:40 league.c
+-rw-rw-r-- 1 marksa marksa   2370 Oct 11 07:40 league.h
+-rw-rw-r-- 1 marksa marksa   4843 Oct 11 07:40 lint.c
+-rw-rw-r-- 1 marksa marksa   1351 Oct 11 07:40 Makefile.am
+~/dev/git/fork/ChadwickBureau/chadwick/src/cwlib | Mon Oct 28 17:28:43 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2288 > rt
+~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc
+total 56
+drwxrwxr-x 6 marksa marksa  4096 Oct 11 14:51 python
+drwxrwxr-x 4 marksa marksa  4096 Oct 11 10:34 cwtools
+drwxrwxr-x 4 marksa marksa  4096 Oct 11 10:34 cwlib
+-rw-rw-r-- 1 marksa marksa 19590 Oct 11 10:34 Makefile
+-rw-rw-r-- 1 marksa marksa 19127 Oct 11 10:33 Makefile.in
+-rw-rw-r-- 1 marksa marksa   985 Oct 11 07:40 Makefile.am
+~/dev/git/fork/ChadwickBureau/chadwick/src | Mon Oct 28 17:28:48 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2289 > go cwtools/
+~/dev/git/fork/ChadwickBureau/chadwick/src/cwtools ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc
+total 1840
+-rwxrwxr-x 1 marksa marksa   6300 Oct 11 10:34 cwdaily
+drwxrwxr-x 2 marksa marksa   4096 Oct 11 10:34 .libs
+-rw-rw-r-- 1 marksa marksa 297936 Oct 11 10:34 cwdaily.o
+drwxrwxr-x 2 marksa marksa   4096 Oct 11 10:34 .deps
+-rwxrwxr-x 1 marksa marksa   6280 Oct 11 10:34 cwsub
+-rw-rw-r-- 1 marksa marksa  57072 Oct 11 10:34 cwsub.o
+-rwxrwxr-x 1 marksa marksa   6290 Oct 11 10:34 cwgame
+-rw-rw-r-- 1 marksa marksa 319264 Oct 11 10:34 cwgame.o
+-rwxrwxr-x 1 marksa marksa   6300 Oct 11 10:34 cwevent
+-rw-rw-r-- 1 marksa marksa 296768 Oct 11 10:34 cwevent.o
+-rwxrwxr-x 1 marksa marksa   6320 Oct 11 10:34 cwcomment
+-rw-rw-r-- 1 marksa marksa  44624 Oct 11 10:34 cwcomment.o
+-rwxrwxr-x 1 marksa marksa   6280 Oct 11 10:34 cwbox
+-rw-rw-r-- 1 marksa marksa  22104 Oct 11 10:34 xmlwrite.o
+-rw-rw-r-- 1 marksa marksa 176056 Oct 11 10:34 cwboxsml.o
+-rw-rw-r-- 1 marksa marksa  76112 Oct 11 10:34 cwboxxml.o
+-rw-rw-r-- 1 marksa marksa  47976 Oct 11 10:34 cwtools.o
+-rw-rw-r-- 1 marksa marksa 122120 Oct 11 10:34 cwbox.o
+-rw-rw-r-- 1 marksa marksa  22979 Oct 11 10:34 Makefile
+-rw-rw-r-- 1 marksa marksa  23358 Oct 11 10:33 Makefile.in
+-rw-rw-r-- 1 marksa marksa  30589 Oct 11 07:40 cwdaily.c
+-rw-rw-r-- 1 marksa marksa  61763 Oct 11 07:40 cwevent.c
+-rw-rw-r-- 1 marksa marksa  60308 Oct 11 07:40 cwgame.c
+-rw-rw-r-- 1 marksa marksa   9442 Oct 11 07:40 cwsub.c
+-rw-rw-r-- 1 marksa marksa   9003 Oct 11 07:40 cwtools.c
+-rw-rw-r-- 1 marksa marksa   4309 Oct 11 07:40 xmlwrite.c
+-rw-rw-r-- 1 marksa marksa   4748 Oct 11 07:40 xmlwrite.h
+-rw-rw-r-- 1 marksa marksa  24167 Oct 11 07:40 cwbox.c
+-rw-rw-r-- 1 marksa marksa  52760 Oct 11 07:40 cwboxsml.c
+-rw-rw-r-- 1 marksa marksa  14885 Oct 11 07:40 cwboxxml.c
+-rw-rw-r-- 1 marksa marksa   6986 Oct 11 07:40 cwcomment.c
+-rw-rw-r-- 1 marksa marksa   1691 Oct 11 07:40 Makefile.am
+~/dev/git/fork/ChadwickBureau/chadwick/src/cwtools | Mon Oct 28 17:28:50 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2290 > file cwevent
+cwevent: Bourne-Again shell script, ASCII text executable
+~/dev/git/fork/ChadwickBureau/chadwick/src/cwtools | Mon Oct 28 17:29:01 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2291 > vi cwevent
+~/dev/git/fork/ChadwickBureau/chadwick/src/cwtools | Mon Oct 28 17:29:49 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2292 > cat cwevent |wc -l
+210
+~/dev/git/fork/ChadwickBureau/chadwick/src/cwtools | Mon Oct 28 17:30:00 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2293 > go
+~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/cwtools ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc
+total 56
+drwxrwxr-x 4 marksa marksa  4096 Oct 28 17:29 cwtools
+drwxrwxr-x 6 marksa marksa  4096 Oct 11 14:51 python
+drwxrwxr-x 4 marksa marksa  4096 Oct 11 10:34 cwlib
+-rw-rw-r-- 1 marksa marksa 19590 Oct 11 10:34 Makefile
+-rw-rw-r-- 1 marksa marksa 19127 Oct 11 10:33 Makefile.in
+-rw-rw-r-- 1 marksa marksa   985 Oct 11 07:40 Makefile.am
+~/dev/git/fork/ChadwickBureau/chadwick/src | Mon Oct 28 17:30:08 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2294 > go python/
+~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/cwtools ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc
+total 24
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 dist
+drwxrwxr-x 6 marksa marksa 4096 Oct 11 14:51 build
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 chadwick.egg-info
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:46 chadwick
+-rw-rw-r-- 1 marksa marksa   57 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa 1959 Oct 11 07:40 setup.py
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Tue Oct 29 15:40:21 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2295 > py36 setup.py 
+usage: setup.py [global_opts] cmd1 [cmd1_opts] [cmd2 [cmd2_opts] ...]
+   or: setup.py --help [cmd1 cmd2 ...]
+   or: setup.py --help-commands
+   or: setup.py cmd --help
+
+error: no commands supplied
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Tue Oct 29 15:40:30 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2296 > py36 setup.py --help
+Common commands: (see '--help-commands' for more)
+
+  setup.py build      will build the package underneath 'build/'
+  setup.py install    will install the package
+
+Global options:
+  --verbose (-v)      run verbosely (default)
+  --quiet (-q)        run quietly (turns verbosity off)
+  --dry-run (-n)      don't actually do anything
+  --help (-h)         show detailed help message
+  --no-user-cfg       ignore pydistutils.cfg in your home directory
+  --command-packages  list of packages that provide distutils commands
+
+Information display options (just display information, ignore any commands)
+  --help-commands     list all available commands
+  --name              print package name
+  --version (-V)      print package version
+  --fullname          print <package name>-<version>
+  --author            print the author's name
+  --author-email      print the author's email address
+  --maintainer        print the maintainer's name
+  --maintainer-email  print the maintainer's email address
+  --contact           print the maintainer's name if known, else the author's
+  --contact-email     print the maintainer's email address if known, else the
+                      author's
+  --url               print the URL for this package
+  --license           print the license of the package
+  --licence           alias for --license
+  --description       print the package description
+  --long-description  print the long package description
+  --platforms         print the list of platforms
+  --classifiers       print the list of classifiers
+  --keywords          print the list of keywords
+  --provides          print the list of packages/modules provided
+  --requires          print the list of packages/modules required
+  --obsoletes         print the list of packages/modules made obsolete
+
+usage: setup.py [global_opts] cmd1 [cmd1_opts] [cmd2 [cmd2_opts] ...]
+   or: setup.py --help [cmd1 cmd2 ...]
+   or: setup.py --help-commands
+   or: setup.py cmd --help
+
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Tue Oct 29 15:40:53 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2297 > lt
+total 24K
+drwxrwxr-x 2 marksa marksa 4.0K Oct 11 14:51 dist
+drwxrwxr-x 6 marksa marksa 4.0K Oct 11 14:51 build
+drwxrwxr-x 2 marksa marksa 4.0K Oct 11 14:51 chadwick.egg-info
+drwxrwxr-x 2 marksa marksa 4.0K Oct 11 14:46 chadwick
+-rw-rw-r-- 1 marksa marksa   57 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa 2.0K Oct 11 07:40 setup.py
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Tue Oct 29 15:41:05 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2298 > go build/
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/build ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/cwtools ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc
+total 16
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 bdist.linux-x86_64
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:46 cwlib
+drwxrwxr-x 3 marksa marksa 4096 Oct 11 14:46 temp.linux-x86_64-3.6
+drwxrwxr-x 3 marksa marksa 4096 Oct 11 14:46 lib.linux-x86_64-3.6
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/build | Tue Oct 29 15:41:09 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2299 > go
+~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/build ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/cwtools ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc
+total 24
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 dist
+drwxrwxr-x 6 marksa marksa 4096 Oct 11 14:51 build
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 chadwick.egg-info
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:46 chadwick
+-rw-rw-r-- 1 marksa marksa   57 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa 1959 Oct 11 07:40 setup.py
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Tue Oct 29 15:41:17 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2300 > py36 setup.py build
+running build
+running build_py
+running build_ext
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Tue Oct 29 15:41:32 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2301 > ltf
+total 24
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 dist
+drwxrwxr-x 6 marksa marksa 4096 Oct 11 14:51 build
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 chadwick.egg-info
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:46 chadwick
+-rw-rw-r-- 1 marksa marksa   57 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa 1959 Oct 11 07:40 setup.py
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Tue Oct 29 15:41:36 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2302 > go build/
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/build ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/build ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/cwtools ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc
+total 16
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 bdist.linux-x86_64
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:46 cwlib
+drwxrwxr-x 3 marksa marksa 4096 Oct 11 14:46 temp.linux-x86_64-3.6
+drwxrwxr-x 3 marksa marksa 4096 Oct 11 14:46 lib.linux-x86_64-3.6
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/build | Tue Oct 29 15:41:39 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2303 > go cwlib/
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/build/cwlib ~/dev/git/fork/ChadwickBureau/chadwick/src/python/build ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/build ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/cwtools ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc
+total 500
+-rw-rw-r-- 1 marksa marksa  31696 Oct 11 14:46 roster.o
+-rw-rw-r-- 1 marksa marksa 102080 Oct 11 14:46 parse.o
+-rw-rw-r-- 1 marksa marksa  28168 Oct 11 14:46 lint.o
+-rw-rw-r-- 1 marksa marksa  15024 Oct 11 14:46 league.o
+-rw-rw-r-- 1 marksa marksa  82224 Oct 11 14:46 gameiter.o
+-rw-rw-r-- 1 marksa marksa  93600 Oct 11 14:46 game.o
+-rw-rw-r-- 1 marksa marksa  14912 Oct 11 14:46 file.o
+-rw-rw-r-- 1 marksa marksa 108824 Oct 11 14:46 box.o
+-rw-rw-r-- 1 marksa marksa  24464 Oct 11 14:46 book.o
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/build/cwlib | Tue Oct 29 15:41:47 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2304 > rt
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/build ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/build ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/cwtools ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc
+total 16
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 bdist.linux-x86_64
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:46 cwlib
+drwxrwxr-x 3 marksa marksa 4096 Oct 11 14:46 temp.linux-x86_64-3.6
+drwxrwxr-x 3 marksa marksa 4096 Oct 11 14:46 lib.linux-x86_64-3.6
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/build | Tue Oct 29 15:41:51 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2305 > rt
+~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/build ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/cwtools ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc
+total 24
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 dist
+drwxrwxr-x 6 marksa marksa 4096 Oct 11 14:51 build
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 chadwick.egg-info
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:46 chadwick
+-rw-rw-r-- 1 marksa marksa   57 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa 1959 Oct 11 07:40 setup.py
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Tue Oct 29 15:41:51 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2305 > py36 setup.py install
+running install
+running bdist_egg
+running egg_info
+writing chadwick.egg-info/PKG-INFO
+writing dependency_links to chadwick.egg-info/dependency_links.txt
+writing top-level names to chadwick.egg-info/top_level.txt
+reading manifest file 'chadwick.egg-info/SOURCES.txt'
+writing manifest file 'chadwick.egg-info/SOURCES.txt'
+installing library code to build/bdist.linux-x86_64/egg
+running install_lib
+running build_py
+running build_ext
+creating build/bdist.linux-x86_64/egg
+creating build/bdist.linux-x86_64/egg/chadwick
+copying build/lib.linux-x86_64-3.6/chadwick/__init__.py -> build/bdist.linux-x86_64/egg/chadwick
+copying build/lib.linux-x86_64-3.6/chadwick/_libchadwick.cpython-36m-x86_64-linux-gnu.so -> build/bdist.linux-x86_64/egg/chadwick
+copying build/lib.linux-x86_64-3.6/chadwick/libchadwick.py -> build/bdist.linux-x86_64/egg/chadwick
+byte-compiling build/bdist.linux-x86_64/egg/chadwick/__init__.py to __init__.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/chadwick/libchadwick.py to libchadwick.cpython-36.pyc
+creating stub loader for chadwick/_libchadwick.cpython-36m-x86_64-linux-gnu.so
+byte-compiling build/bdist.linux-x86_64/egg/chadwick/_libchadwick.py to _libchadwick.cpython-36.pyc
+creating build/bdist.linux-x86_64/egg/EGG-INFO
+copying chadwick.egg-info/PKG-INFO -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying chadwick.egg-info/SOURCES.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying chadwick.egg-info/dependency_links.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying chadwick.egg-info/top_level.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+writing build/bdist.linux-x86_64/egg/EGG-INFO/native_libs.txt
+zip_safe flag not set; analyzing archive contents...
+chadwick.__pycache__._libchadwick.cpython-36: module references __file__
+chadwick.__pycache__.libchadwick.cpython-36: module references __file__
+creating 'dist/chadwick-0.7.2-py3.6-linux-x86_64.egg' and adding 'build/bdist.linux-x86_64/egg' to it
+removing 'build/bdist.linux-x86_64/egg' (and everything under it)
+Processing chadwick-0.7.2-py3.6-linux-x86_64.egg
+removing '/usr/local/lib/python3.6/dist-packages/chadwick-0.7.2-py3.6-linux-x86_64.egg' (and everything under it)
+creating /usr/local/lib/python3.6/dist-packages/chadwick-0.7.2-py3.6-linux-x86_64.egg
+Extracting chadwick-0.7.2-py3.6-linux-x86_64.egg to /usr/local/lib/python3.6/dist-packages
+chadwick 0.7.2 is already the active version in easy-install.pth
+
+Installed /usr/local/lib/python3.6/dist-packages/chadwick-0.7.2-py3.6-linux-x86_64.egg
+Processing dependencies for chadwick==0.7.2
+Finished processing dependencies for chadwick==0.7.2
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Tue Oct 29 15:42:05 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2306 > ltf
+total 24
+drwxrwxr-x 2 marksa marksa 4096 Oct 29 15:42 chadwick.egg-info
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 dist
+drwxrwxr-x 6 marksa marksa 4096 Oct 11 14:51 build
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:46 chadwick
+-rw-rw-r-- 1 marksa marksa   57 Oct 11 07:40 .gitignore
+-rw-rw-r-- 1 marksa marksa 1959 Oct 11 07:40 setup.py
+~/dev/git/fork/ChadwickBureau/chadwick/src/python | Tue Oct 29 15:42:24 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2307 > go build/
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/build ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/build ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/cwtools ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc
+total 16
+drwxrwxr-x 2 marksa marksa 4096 Oct 29 15:42 bdist.linux-x86_64
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:46 cwlib
+drwxrwxr-x 3 marksa marksa 4096 Oct 11 14:46 temp.linux-x86_64-3.6
+drwxrwxr-x 3 marksa marksa 4096 Oct 11 14:46 lib.linux-x86_64-3.6
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/build | Tue Oct 29 15:42:27 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2308 > go lib.linux-x86_64-3.6/
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/build/lib.linux-x86_64-3.6 ~/dev/git/fork/ChadwickBureau/chadwick/src/python/build ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/build ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/cwtools ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc
+total 4
+drwxrwxr-x 2 marksa marksa 4096 Oct 11 14:51 chadwick
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/build/lib.linux-x86_64-3.6 | Tue Oct 29 15:42:31 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2309 > go chadwick/
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/build/lib.linux-x86_64-3.6/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python/build/lib.linux-x86_64-3.6 ~/dev/git/fork/ChadwickBureau/chadwick/src/python/build ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/build ~/dev/git/fork/ChadwickBureau/chadwick/src ~/dev/git/fork/ChadwickBureau/chadwick/src/cwtools ~/dev/git/fork/ChadwickBureau/chadwick/src/python/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/src/python ~/dev/git/fork/ChadwickBureau/chadwick/src/python/dist ~/dev/git/fork/ChadwickBureau/obituaries ~/dev/git/fork/ChadwickBureau/vitals ~/dev/git/fork/ChadwickBureau/identlink ~/dev/git/fork/ChadwickBureau/ident ~/dev/git/fork/ChadwickBureau/researchers ~/dev/git/fork/ChadwickBureau/register ~/dev/git/fork/ChadwickBureau ~/dev/git/fork /usr/local/lib /usr/local/bin /usr/local ~/dev/git/fork/ChadwickBureau/retrosheet/event/regular ~/dev/git/fork/ChadwickBureau/retrosheet/rosters ~/dev/git/fork/ChadwickBureau/retrosheet/event ~/dev/git/fork/ChadwickBureau/retrosheet ~/dev/git/fork/ChadwickBureau/chadwick ~/dev/git/fork/ChadwickBureau/chadwick/doc
+total 2072
+-rwxrwxr-x 1 marksa marksa 1932792 Oct 11 14:46 _libchadwick.cpython-36m-x86_64-linux-gnu.so
+-rw-rw-r-- 1 marksa marksa  183600 Oct 11 14:46 libchadwick.py
+-rw-rw-r-- 1 marksa marksa    1210 Oct 11 07:40 __init__.py
+~/dev/git/fork/ChadwickBureau/chadwick/src/python/build/lib.linux-x86_64-3.6/chadwick | Tue Oct 29 15:42:33 | marksa@Ares-A717-72G | bash 4.4.20 | (master)
+2310 >
