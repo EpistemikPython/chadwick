@@ -3,7 +3,7 @@ import os
 import chadwick
 from ctypes import *
 
-print(sys.path)
+# print(sys.path)
 # cdll.LoadLibrary("libc.so.6")
 libc = CDLL("libc.so.6")
 print(libc.fdopen)
@@ -50,3 +50,5 @@ try:
         print("NO first game.")
 except Exception as e:
     print(F"Exception: {repr(e)}")
+
+exit()
