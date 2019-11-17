@@ -20,8 +20,11 @@
 *.exe
 *.x
 # find <dir/>* -type l >> .gitignore
+Baseball
+ChadwickBureau
 event
 regular
 retrosheet
-cw-retrosheet
-documents
+cw-*
+cwb-*
+doc*s*
