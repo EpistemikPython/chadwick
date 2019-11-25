@@ -21,10 +21,10 @@
 *.x
 # find <dir/>* -type l >> .gitignore
 Baseball
-ChadwickBureau
+Chadwick*
 event
 regular
-retrosheet
+[Rr]etrosheet
 cw-*
 cwb-*
 doc*s*

@@ -1,65 +1,101 @@
 #/bin/bash
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 2015 2015*.ev* > C:\Retrosheet\data\parsed\games2015.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 2014 2014*.ev* > C:\Retrosheet\data\parsed\games2014.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 2013 2013*.ev* > C:\Retrosheet\data\parsed\games2013.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 2012 2012*.ev* > C:\Retrosheet\data\parsed\games2012.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 2011 2011*.ev* > C:\Retrosheet\data\parsed\games2011.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 2010 2010*.ev* > C:\Retrosheet\data\parsed\games2010.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 2009 2009*.ev* > C:\Retrosheet\data\parsed\games2009.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 2008 2008*.ev* > C:\Retrosheet\data\parsed\games2008.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 2007 2007*.ev* > C:\Retrosheet\data\parsed\games2007.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 2006 2006*.ev* > C:\Retrosheet\data\parsed\games2006.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 2005 2005*.ev* > C:\Retrosheet\data\parsed\games2005.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 2004 2004*.ev* > C:\Retrosheet\data\parsed\games2004.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 2003 2003*.ev* > C:\Retrosheet\data\parsed\games2003.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 2002 2002*.ev* > C:\Retrosheet\data\parsed\games2002.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 2001 2001*.ev* > C:\Retrosheet\data\parsed\games2001.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 2000 2000*.ev* > C:\Retrosheet\data\parsed\games2000.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1999 1999*.ev* > C:\Retrosheet\data\parsed\games1999.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1998 1998*.ev* > C:\Retrosheet\data\parsed\games1998.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1997 1997*.ev* > C:\Retrosheet\data\parsed\games1997.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1996 1996*.ev* > C:\Retrosheet\data\parsed\games1996.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1995 1995*.ev* > C:\Retrosheet\data\parsed\games1995.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1994 1994*.ev* > C:\Retrosheet\data\parsed\games1994.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1993 1993*.ev* > C:\Retrosheet\data\parsed\games1993.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1992 1992*.ev* > C:\Retrosheet\data\parsed\games1992.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1991 1991*.ev* > C:\Retrosheet\data\parsed\games1991.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1990 1990*.ev* > C:\Retrosheet\data\parsed\games1990.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1989 1989*.ev* > C:\Retrosheet\data\parsed\games1989.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1988 1988*.ev* > C:\Retrosheet\data\parsed\games1988.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1987 1987*.ev* > C:\Retrosheet\data\parsed\games1987.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1986 1986*.ev* > C:\Retrosheet\data\parsed\games1986.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1985 1985*.ev* > C:\Retrosheet\data\parsed\games1985.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1984 1984*.ev* > C:\Retrosheet\data\parsed\games1984.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1983 1983*.ev* > C:\Retrosheet\data\parsed\games1983.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1982 1982*.ev* > C:\Retrosheet\data\parsed\games1982.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1981 1981*.ev* > C:\Retrosheet\data\parsed\games1981.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1980 1980*.ev* > C:\Retrosheet\data\parsed\games1980.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1979 1979*.ev* > C:\Retrosheet\data\parsed\games1979.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1978 1978*.ev* > C:\Retrosheet\data\parsed\games1978.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1977 1977*.ev* > C:\Retrosheet\data\parsed\games1977.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1976 1976*.ev* > C:\Retrosheet\data\parsed\games1976.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1975 1975*.ev* > C:\Retrosheet\data\parsed\games1975.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1974 1974*.ev* > C:\Retrosheet\data\parsed\games1974.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1973 1973*.ev* > C:\Retrosheet\data\parsed\games1973.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1972 1972*.ev* > C:\Retrosheet\data\parsed\games1972.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1971 1971*.ev* > C:\Retrosheet\data\parsed\games1971.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1970 1970*.ev* > C:\Retrosheet\data\parsed\games1970.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1969 1969*.ev* > C:\Retrosheet\data\parsed\games1969.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1968 1968*.ev* > C:\Retrosheet\data\parsed\games1968.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1967 1967*.ev* > C:\Retrosheet\data\parsed\games1967.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1966 1966*.ev* > C:\Retrosheet\data\parsed\games1966.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1965 1965*.ev* > C:\Retrosheet\data\parsed\games1965.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1964 1964*.ev* > C:\Retrosheet\data\parsed\games1964.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1963 1963*.ev* > C:\Retrosheet\data\parsed\games1963.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1962 1962*.ev* > C:\Retrosheet\data\parsed\games1962.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1961 1961*.ev* > C:\Retrosheet\data\parsed\games1961.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1960 1960*.ev* > C:\Retrosheet\data\parsed\games1960.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1959 1959*.ev* > C:\Retrosheet\data\parsed\games1959.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1958 1958*.ev* > C:\Retrosheet\data\parsed\games1958.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1957 1957*.ev* > C:\Retrosheet\data\parsed\games1957.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1956 1956*.ev* > C:\Retrosheet\data\parsed\games1956.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1955 1955*.ev* > C:\Retrosheet\data\parsed\games1955.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1954 1954*.ev* > C:\Retrosheet\data\parsed\games1954.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1953 1953*.ev* > C:\Retrosheet\data\parsed\games1953.csv
-C:\Retrosheet\common\programs\cwgame -f 0-83 -y 1952 1952*.ev* > C:\Retrosheet\data\parsed\games1952.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2018 2018*.EV* > /home/marksa/dev/Chadwick/data/games2018.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2017 2017*.EV* > /home/marksa/dev/Chadwick/data/games2017.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2016 2016*.EV* > /home/marksa/dev/Chadwick/data/games2016.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2015 2015*.EV* > /home/marksa/dev/Chadwick/data/games2015.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2014 2014*.EV* > /home/marksa/dev/Chadwick/data/games2014.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2013 2013*.EV* > /home/marksa/dev/Chadwick/data/games2013.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2012 2012*.EV* > /home/marksa/dev/Chadwick/data/games2012.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2011 2011*.EV* > /home/marksa/dev/Chadwick/data/games2011.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2010 2010*.EV* > /home/marksa/dev/Chadwick/data/games2010.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2009 2009*.EV* > /home/marksa/dev/Chadwick/data/games2009.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2008 2008*.EV* > /home/marksa/dev/Chadwick/data/games2008.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2007 2007*.EV* > /home/marksa/dev/Chadwick/data/games2007.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2006 2006*.EV* > /home/marksa/dev/Chadwick/data/games2006.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2005 2005*.EV* > /home/marksa/dev/Chadwick/data/games2005.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2004 2004*.EV* > /home/marksa/dev/Chadwick/data/games2004.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2003 2003*.EV* > /home/marksa/dev/Chadwick/data/games2003.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2002 2002*.EV* > /home/marksa/dev/Chadwick/data/games2002.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2001 2001*.EV* > /home/marksa/dev/Chadwick/data/games2001.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 2000 2000*.EV* > /home/marksa/dev/Chadwick/data/games2000.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1999 1999*.EV* > /home/marksa/dev/Chadwick/data/games1999.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1998 1998*.EV* > /home/marksa/dev/Chadwick/data/games1998.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1997 1997*.EV* > /home/marksa/dev/Chadwick/data/games1997.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1996 1996*.EV* > /home/marksa/dev/Chadwick/data/games1996.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1995 1995*.EV* > /home/marksa/dev/Chadwick/data/games1995.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1994 1994*.EV* > /home/marksa/dev/Chadwick/data/games1994.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1993 1993*.EV* > /home/marksa/dev/Chadwick/data/games1993.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1992 1992*.EV* > /home/marksa/dev/Chadwick/data/games1992.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1991 1991*.EV* > /home/marksa/dev/Chadwick/data/games1991.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1990 1990*.EV* > /home/marksa/dev/Chadwick/data/games1990.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1989 1989*.EV* > /home/marksa/dev/Chadwick/data/games1989.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1988 1988*.EV* > /home/marksa/dev/Chadwick/data/games1988.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1987 1987*.EV* > /home/marksa/dev/Chadwick/data/games1987.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1986 1986*.EV* > /home/marksa/dev/Chadwick/data/games1986.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1985 1985*.EV* > /home/marksa/dev/Chadwick/data/games1985.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1984 1984*.EV* > /home/marksa/dev/Chadwick/data/games1984.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1983 1983*.EV* > /home/marksa/dev/Chadwick/data/games1983.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1982 1982*.EV* > /home/marksa/dev/Chadwick/data/games1982.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1981 1981*.EV* > /home/marksa/dev/Chadwick/data/games1981.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1980 1980*.EV* > /home/marksa/dev/Chadwick/data/games1980.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1979 1979*.EV* > /home/marksa/dev/Chadwick/data/games1979.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1978 1978*.EV* > /home/marksa/dev/Chadwick/data/games1978.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1977 1977*.EV* > /home/marksa/dev/Chadwick/data/games1977.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1976 1976*.EV* > /home/marksa/dev/Chadwick/data/games1976.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1975 1975*.EV* > /home/marksa/dev/Chadwick/data/games1975.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1974 1974*.EV* > /home/marksa/dev/Chadwick/data/games1974.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1973 1973*.EV* > /home/marksa/dev/Chadwick/data/games1973.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1972 1972*.EV* > /home/marksa/dev/Chadwick/data/games1972.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1971 1971*.EV* > /home/marksa/dev/Chadwick/data/games1971.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1970 1970*.EV* > /home/marksa/dev/Chadwick/data/games1970.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1969 1969*.EV* > /home/marksa/dev/Chadwick/data/games1969.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1968 1968*.EV* > /home/marksa/dev/Chadwick/data/games1968.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1967 1967*.EV* > /home/marksa/dev/Chadwick/data/games1967.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1966 1966*.EV* > /home/marksa/dev/Chadwick/data/games1966.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1965 1965*.EV* > /home/marksa/dev/Chadwick/data/games1965.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1964 1964*.EV* > /home/marksa/dev/Chadwick/data/games1964.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1963 1963*.EV* > /home/marksa/dev/Chadwick/data/games1963.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1962 1962*.EV* > /home/marksa/dev/Chadwick/data/games1962.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1961 1961*.EV* > /home/marksa/dev/Chadwick/data/games1961.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1960 1960*.EV* > /home/marksa/dev/Chadwick/data/games1960.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1959 1959*.EV* > /home/marksa/dev/Chadwick/data/games1959.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1958 1958*.EV* > /home/marksa/dev/Chadwick/data/games1958.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1957 1957*.EV* > /home/marksa/dev/Chadwick/data/games1957.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1956 1956*.EV* > /home/marksa/dev/Chadwick/data/games1956.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1955 1955*.EV* > /home/marksa/dev/Chadwick/data/games1955.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1954 1954*.EV* > /home/marksa/dev/Chadwick/data/games1954.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1953 1953*.EV* > /home/marksa/dev/Chadwick/data/games1953.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1952 1952*.EV* > /home/marksa/dev/Chadwick/data/games1952.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1951 1951*.EV* > /home/marksa/dev/Chadwick/data/games1951.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1950 1950*.EV* > /home/marksa/dev/Chadwick/data/games1950.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1949 1949*.EV* > /home/marksa/dev/Chadwick/data/games1949.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1948 1948*.EV* > /home/marksa/dev/Chadwick/data/games1948.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1947 1947*.EV* > /home/marksa/dev/Chadwick/data/games1947.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1946 1946*.EV* > /home/marksa/dev/Chadwick/data/games1946.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1945 1945*.EV* > /home/marksa/dev/Chadwick/data/games1945.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1944 1944*.EV* > /home/marksa/dev/Chadwick/data/games1944.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1943 1943*.EV* > /home/marksa/dev/Chadwick/data/games1943.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1942 1942*.EV* > /home/marksa/dev/Chadwick/data/games1942.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1941 1941*.EV* > /home/marksa/dev/Chadwick/data/games1941.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1940 1940*.EV* > /home/marksa/dev/Chadwick/data/games1940.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1939 1939*.EV* > /home/marksa/dev/Chadwick/data/games1939.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1938 1938*.EV* > /home/marksa/dev/Chadwick/data/games1938.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1937 1937*.EV* > /home/marksa/dev/Chadwick/data/games1937.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1936 1936*.EV* > /home/marksa/dev/Chadwick/data/games1936.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1935 1935*.EV* > /home/marksa/dev/Chadwick/data/games1935.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1934 1934*.EV* > /home/marksa/dev/Chadwick/data/games1934.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1933 1933*.EV* > /home/marksa/dev/Chadwick/data/games1933.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1932 1932*.EV* > /home/marksa/dev/Chadwick/data/games1932.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1931 1931*.EV* > /home/marksa/dev/Chadwick/data/games1931.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1930 1930*.EV* > /home/marksa/dev/Chadwick/data/games1930.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1929 1929*.EV* > /home/marksa/dev/Chadwick/data/games1929.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1928 1928*.EV* > /home/marksa/dev/Chadwick/data/games1928.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1927 1927*.EV* > /home/marksa/dev/Chadwick/data/games1927.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1926 1926*.EV* > /home/marksa/dev/Chadwick/data/games1926.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1925 1925*.EV* > /home/marksa/dev/Chadwick/data/games1925.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1924 1924*.EV* > /home/marksa/dev/Chadwick/data/games1924.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1923 1923*.EV* > /home/marksa/dev/Chadwick/data/games1923.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1922 1922*.EV* > /home/marksa/dev/Chadwick/data/games1922.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1921 1921*.EV* > /home/marksa/dev/Chadwick/data/games1921.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1920 1920*.EV* > /home/marksa/dev/Chadwick/data/games1920.csv
+cwgame -f 0-15,18,24-83 -x 0-59 -y 1919 1919*.EV* > /home/marksa/dev/Chadwick/data/games1919.csv
