@@ -4,8 +4,6 @@ MySQL - 5.1.28-rc-community : Database - retrosheet
 *********************************************************************
 */
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/'retrosheet' /*!40100 DEFAULT CHARACTER SET latin1 */;
-
 USE 'retrosheet';
 
 /*Table structure for table 'lkup_cd_bases' */

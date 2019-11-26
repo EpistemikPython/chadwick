@@ -4,8 +4,6 @@ MySQL - 5.1.28-rc-community : Database - retrosheet
 *********************************************************************
 */
 
-/* CREATE DATABASE 'retrosheet'; */
-
 USE 'retrosheet';
 
 /*Table structure for table 'lkup_id_person' */
