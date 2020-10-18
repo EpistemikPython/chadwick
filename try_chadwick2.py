@@ -1,8 +1,8 @@
 import ctypes
-import itertools
+from pychadwick import ChadwickLibrary as cwlib
+from pychadwick.chadwick import Chadwick
 
-from chadwick.libchadwick import *
-
+chadwick = Chadwick()
 
 positions = [
   "", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"
@@ -13,16 +13,16 @@ positions = [
 def cwbox_print_header(p_game, p_vis, p_home):
     # print( "%s %s %s" % (str(p_game),str(p_vis),str(p_home)) )
     dn_code = "?"
-    day_night = cw_game_info_lookup(p_game, "daynight")
+    day_night = cwlib.cw_game_info_lookup(p_game, "daynight")
     if day_night:
         dn_code = "D" if day_night == "day" else "N" if day_night == "night" else day_night
 
-    year, month, day = cw_game_info_lookup(p_game, "date").split('/')
-    game_number = cw_game_info_lookup(p_game, "number")
+    year, month, day = cwlib.cw_game_info_lookup(p_game, "date").split('/')
+    game_number = cwlib.cw_game_info_lookup(p_game, "number")
     game_number_str = "" if game_number == "0" else ", game %s".format(game_number)
     print("     Game of %s/%s/%s%s -- %s at %s (%s)" % ( month, day, year, game_number_str,
-                p_vis.city if p_vis else cw_game_info_lookup(p_game, "visteam"),
-                p_home.city if p_home else cw_game_info_lookup(p_game, "hometeam"),
+                p_vis.city if p_vis else cwlib.cw_game_info_lookup(p_game, "visteam"),
+                p_home.city if p_home else cwlib.cw_game_info_lookup(p_game, "hometeam"),
                 dn_code ))
     print("")
 
@@ -33,7 +33,7 @@ def cwbox_print_player(p_player, p_roster):
     bio = None # CWPlayer *
     name = p_player.name
     if p_roster:
-        bio = cw_roster_player_find(p_roster, p_player.player_id)
+        bio = cwlib.cw_roster_player_find(p_roster, p_player.player_id)
     if bio:
         name = bio.last_name + bio.first_name[0]
 
@@ -72,9 +72,9 @@ def cwbox_print_linescore(p_game, p_box, p_vis, p_home):
     for t in range(0,2):
         runs = 0
         if t == 0:
-            print("%-17s" % p_vis.city if p_vis else cw_game_info_lookup(p_game, "visteam"))
+            print("%-17s" % p_vis.city if p_vis else cwlib.cw_game_info_lookup(p_game, "visteam"))
         else:
-            print("%-17s" % p_home.city if p_home else cw_game_info_lookup(p_game, "hometeam"))
+            print("%-17s" % p_home.city if p_home else cwlib.cw_game_info_lookup(p_game, "hometeam"))
         for i in range(1,50):
             linescore = p_box.linescore
             print("linescore = {}".format(str(linescore)))
@@ -163,14 +163,14 @@ def cwbox_print_text(p_game, p_box, p_vis, p_home):
     h  = [0, 0]
     bi = [0, 0]
 
-    players.insert(0, cw_box_get_starter(p_box, 0, 1))
-    players.insert(1, cw_box_get_starter(p_box, 1, 1))
+    players.insert(0, cwlib.cw_box_get_starter(p_box, 0, 1))
+    players.insert(1, cwlib.cw_box_get_starter(p_box, 1, 1))
 
     cwbox_print_header(p_game, p_vis, p_home)
 
     print("  %-18s AB  R  H RBI    %-18s AB  R  H RBI" %
-          (p_vis.city if p_vis else cw_game_info_lookup(p_game, "visteam"),
-           p_home.city if p_home else cw_game_info_lookup(p_game, "hometeam")) )
+          (p_vis.city if p_vis else cwlib.cw_game_info_lookup(p_game, "visteam"),
+           p_home.city if p_home else cwlib.cw_game_info_lookup(p_game, "hometeam")) )
 
     while slots[0] <= 9 or slots[1] <= 9 :
         for t in range(0,2):
@@ -190,7 +190,7 @@ def cwbox_print_text(p_game, p_box, p_vis, p_home):
                     while slots[t] <= 9 and not players[t]:
                         slots[t] += 1
                         if slots[t] <= 9:
-                            players[t] = cw_box_get_starter(p_box, t, slots[t])
+                            players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
             else:
                 print("%-32s" % ""),
             print(" "),
@@ -208,11 +208,11 @@ def cwbox_print_text(p_game, p_box, p_vis, p_home):
     print("")
 
     for t in range(0, 2):
-        pitcher = cw_box_get_starting_pitcher(p_box, t) # CWBoxPitcher
+        pitcher = cwlib.cw_box_get_starting_pitcher(p_box, t) # CWBoxPitcher
         if t == 0:
-            print("  %-18s   IP  H  R ER BB SO" % p_vis.city if p_vis else cw_game_info_lookup(p_game, "visteam"))
+            print("  %-18s   IP  H  R ER BB SO" % p_vis.city if p_vis else cwlib.cw_game_info_lookup(p_game, "visteam"))
         else:
-            print("  %-18s   IP  H  R ER BB SO" % p_home.city if p_home else cw_game_info_lookup(p_game, "hometeam"))
+            print("  %-18s   IP  H  R ER BB SO" % p_home.city if p_home else cwlib.cw_game_info_lookup(p_game, "hometeam"))
         while pitcher:
             cwbox_print_pitcher(p_game, pitcher, (p_vis if (t == 0) else p_home), note_count)
             pitcher = pitcher.next
@@ -231,9 +231,14 @@ tor_1996_events = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/event/reg
 tor_1996_roster = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/rosters/TOR1996.ROS"
 cal_1996_roster = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/rosters/CAL1996.ROS"
 try:
-    with open(tor_1996_events, "r") as gfp:
-        print("type(gfp) = %s" % type(gfp))
-        g1 = read_game(gfp)
+    # chad = cw.Chadwick()
+    # with open(tor_1996_events) as gfp:
+    #     print("type(gfp) = %s" % type(gfp))
+    games = chadwick.games(tor_1996_events)
+    for g1 in games:
+        print(g1)
+        # chadwick.process_game_csv(game)
+        # g1 = chadwick.process_game(gfp)
         if g1:
             print("found a game.")
             print("type(g1) = %s" % type(g1))
@@ -242,24 +247,24 @@ try:
             away, at_home = g1.teams
             print("away = %s, home = %s" % (away,at_home))
 
-            visitor = cw_roster_create('CAL', 1996, 'AL', 'California', 'Angels')
+            visitor = cwlib.cw_roster_create('CAL', 1996, 'AL', 'California', 'Angels')
             with open(cal_1996_roster, "r") as rcfp:
-                cw_roster_read(visitor, rcfp)
+                cwlib.cw_roster_read(visitor, rcfp)
             print("type(visitor) = %s" % type(visitor))
-            home = cw_roster_create('TOR', 1996, 'AL', 'Toronto', 'Blue Jays')
+            home = cwlib.cw_roster_create('TOR', 1996, 'AL', 'Toronto', 'Blue Jays')
             with open(tor_1996_roster, "r") as rtfp:
-                cw_roster_read(home, rtfp)
+                cwlib.cw_roster_read(home, rtfp)
             print("type(home) = %s" % type(home))
 
             # cw_game_write(g1, sys.stdout)
 
             print("innings = %s" % g1.innings)
 
-            g1_it = cw_gameiter_create(g1)
+            g1_it = cwlib.cw_gameiter_create(g1)
             print("type(g1_it) = %s" % type(g1_it))
             print("g1_it.totals[1].lob = %s" % g1_it.totals[1].lob)
 
-            g1_b = cw_box_create(g1)
+            g1_b = cwlib.cw_box_create(g1)
             print("type(g1_b) = %s" % type(g1_b))
             # print("boxscore = %s" % g1._get_boxscore())
             cwbox_print_text(g1, g1_b, visitor, home)
@@ -267,16 +272,16 @@ try:
             for event in g1.events:
                 pass # print("event = %s" % repr(event))
 
-            g2 = read_game(gfp)
-            print("g2 = %s" % g2)
-        else:
-            print("NO game.")
-        g_first = cw_file_find_first_game(gfp)
-        if g_first:
-            print("found the first game = %d" % g_first)
-            print("type(g_first) = %s" % type(g_first))
-        else:
-            print("NO first game.")
+            # g2 = cwlib.read_game(gfp)
+            # print("g2 = %s" % g2)
+        # else:
+        #     print("NO game.")
+        # g_first = cwlib.cw_file_find_first_game(gfp)
+        # if g_first:
+        #     print("found the first game = %d" % g_first)
+        #     print("type(g_first) = %s" % type(g_first))
+        # else:
+        #     print("NO first game.")
 except Exception as e:
     print("Exception: %s" % str(e))
 

@@ -1,6 +1,5 @@
-import sys
 import os
-import chadwick
+from pychadwick.libutils import ChadwickLibrary as cwlib
 from ctypes import *
 
 # print(sys.path)
@@ -38,12 +37,12 @@ print(F"type(cp) = {type(cp)}")
 
 # newfp = pythonapi.PyFile_FromFd(pyf)
 try:
-    g = chadwick.read_game(cp)
+    g = cwlib.read_game(cp)
     if g:
         print("found a game.")
     else:
         print("NO game.")
-    g1 = chadwick.libchadwick.cw_file_find_first_game(fp)
+    g1 = cwlib.cw_file_find_first_game(fp)
     if g1:
         print("found the first game.")
     else:
