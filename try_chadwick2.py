@@ -1,8 +1,8 @@
-import ctypes
-from pychadwick import ChadwickLibrary as cwlib
-from pychadwick.chadwick import Chadwick
+
+from pychadwick.chadwick import *
 
 chadwick = Chadwick()
+cwlib = chadwick.libchadwick
 
 positions = [
   "", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"
@@ -235,42 +235,45 @@ try:
     # with open(tor_1996_events) as gfp:
     #     print("type(gfp) = %s" % type(gfp))
     games = chadwick.games(tor_1996_events)
-    for g1 in games:
-        print(g1)
+    for game in games:
+        print(game)
         # chadwick.process_game_csv(game)
         # g1 = chadwick.process_game(gfp)
-        if g1:
+        if game:
             print("found a game.")
-            print("type(g1) = %s" % type(g1))
-            print("g1 = %s" % g1)
+            print(F"type(game) = {type(game)}")
+            print(F"game = {game}")
 
-            away, at_home = g1.teams
-            print("away = %s, home = %s" % (away,at_home))
+            events = chadwick.process_game(game)
+            for event in events:
+                print(event)
+            # away, at_home = g1.teams
+            # print("away = %s, home = %s" % (away,at_home))
 
-            visitor = cwlib.cw_roster_create('CAL', 1996, 'AL', 'California', 'Angels')
-            with open(cal_1996_roster, "r") as rcfp:
-                cwlib.cw_roster_read(visitor, rcfp)
-            print("type(visitor) = %s" % type(visitor))
-            home = cwlib.cw_roster_create('TOR', 1996, 'AL', 'Toronto', 'Blue Jays')
-            with open(tor_1996_roster, "r") as rtfp:
-                cwlib.cw_roster_read(home, rtfp)
-            print("type(home) = %s" % type(home))
+            # visitor = pointer(CWRoster(cwlib.cw_roster_create('CAL', 1996, 'AL', 'California', 'Angels')))
+            # print(F"type(visitor) = {type(visitor)}")
+            # with chadwick.fopen(cal_1996_roster) as rcfp:
+            #     cwlib.cw_roster_read(visitor, rcfp)
+            # home = cwlib.cw_roster_create('TOR', 1996, 'AL', 'Toronto', 'Blue Jays')
+            # print(F"type(home) = {type(home)}")
+            # with chadwick.fopen(tor_1996_roster) as rtfp:
+            #     cwlib.cw_roster_read(home, rtfp)
+            #
+            # # cw_game_write(g1, sys.stdout)
+            #
+            # print(F"innings = {g1.innings}")
+            #
+            # g1_it = cwlib.cw_gameiter_create(g1)
+            # print(F"type(g1_it) = {type(g1_it)}")
+            # print(F"g1_it.totals[1].lob = {g1_it.totals[1].lob}")
+            #
+            # g1_b = cwlib.cw_box_create(g1)
+            # print(F"type(g1_b) = {type(g1_b)}")
+            # # print("boxscore = %s" % g1._get_boxscore())
+            # cwbox_print_text(g1, g1_b, visitor, home)
 
-            # cw_game_write(g1, sys.stdout)
-
-            print("innings = %s" % g1.innings)
-
-            g1_it = cwlib.cw_gameiter_create(g1)
-            print("type(g1_it) = %s" % type(g1_it))
-            print("g1_it.totals[1].lob = %s" % g1_it.totals[1].lob)
-
-            g1_b = cwlib.cw_box_create(g1)
-            print("type(g1_b) = %s" % type(g1_b))
-            # print("boxscore = %s" % g1._get_boxscore())
-            cwbox_print_text(g1, g1_b, visitor, home)
-
-            for event in g1.events:
-                pass # print("event = %s" % repr(event))
+            # for event in game.events:
+            #     pass # print("event = %s" % repr(event))
 
             # g2 = cwlib.read_game(gfp)
             # print("g2 = %s" % g2)
@@ -283,6 +286,6 @@ try:
         # else:
         #     print("NO first game.")
 except Exception as e:
-    print("Exception: %s" % str(e))
+    print(F"Exception: {repr(e)}")
 
 exit()
