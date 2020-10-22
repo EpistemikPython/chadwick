@@ -11,7 +11,7 @@ positions = [
 
 
 # void cwbox_print_header(CWGame *game, CWRoster *visitors, CWRoster *home)
-def try_cwbox_print_header(p_game, p_vis, str_vis_city, p_home, str_home_city):
+def try_cwbox_print_header(p_game:pointer, p_vis:pointer, str_vis_city, p_home:pointer, str_home_city):
     try:
         # print( "%s %s %s" % (str(p_game),str(p_vis),str(p_home)) )
 
@@ -36,17 +36,31 @@ def try_cwbox_print_header(p_game, p_vis, str_vis_city, p_home, str_home_city):
         print(F"game_number = {game_number}")
         game_number_str = "" if game_number == "0" else F", game {game_number}"
         print(F"game_number_str = {game_number_str}")
+
         vis_roster = p_vis.contents
         print(F"type(vis_roster) = {type(vis_roster)}")
-        # vis_city = vis_roster.city.contents
-        # vis_city = (c_char * 32).from_address(vis_roster.city)
-        vis_city = vis_roster.city[:len(str_vis_city)].decode(encoding='UTF-8').strip()
+        vis_city = vis_roster.city
         print(F"type(vis_city) = {type(vis_city)}")
         print(F"vis_city = {vis_city}")
+        vis_city_contents = vis_city.contents
+        print(F"type(vis_city_contents) = {type(vis_city_contents)}")
+        print(F"vis_city_contents = {vis_city_contents}")
+
+        vis_city_32 = vis_city[:32]
+        print(F"type(vis_city_32) = {type(vis_city_32)}")
+        print(F"vis_city_32 = {vis_city_32}")
+        vis_city_text = bytes_to_str(vis_city_32)
+        print(F"type(vis_city_text) = {type(vis_city_text)}")
+        print(F"vis_city_text = {vis_city_text}")
+
+        vis_city_decoded = vis_city[:len(str_vis_city)].decode(encoding='UTF-8').strip()
+        print(F"type(vis_city_decoded) = {type(vis_city_decoded)}")
+        print(F"vis_city_decoded = {vis_city_decoded}")
+
         home_roster = p_home.contents
         print(F"type(home_roster) = {type(home_roster)}")
         home_city = home_roster.city[:len(str_home_city)].decode(encoding='UTF-8').strip()
-        print(F"Game of {month}/{day}/{year}{game_number_str} -- {vis_city} @ {home_city} ({dn_code})\n")
+        print(F"Game of {month}/{day}/{year}{game_number_str} -- {vis_city_decoded} @ {home_city} ({dn_code})\n")
                 # -- {vis_roster.city if vis_roster else my_game_info_lookup(p_game, b'visteam')} \
                 # at {home_roster.city if home_roster else my_game_info_lookup(p_game, b'hometeam')} \
                 # ({dn_code})" )
@@ -318,7 +332,8 @@ def try_chadwick_py3_main():
                 print(box)
 
                 events = chadwick.process_game(game)
-                for event in events:
+                results = tuple(events)
+                for event in results[:5]:
                     print(event)
 
                 count += 1
@@ -350,6 +365,8 @@ def try_chadwick_py3_main():
 
                 try_cwbox_print_header(game, visitor, 'California', home, 'Toronto')
 
+                try_cwbox_print_linescore(game, box, visitor, home)
+
                 # # cw_game_write(g1, sys.stdout)
                 #
                 # print(F"innings = {g1.innings}")
@@ -378,6 +395,22 @@ def try_chadwick_py3_main():
             #     print("NO first game.")
     except Exception as ex:
         print(F"Exception: {repr(ex)}")
+
+
+def bytes_to_str(byt:bytes):
+    """Convert a c-type char array to a python string:
+        convert and concatenate the values until hit the null terminator"""
+    print(F"byt = {byt}")
+    print(F"type(byt) = {type(byt)}")
+    result = ""
+    for b in byt:
+        print(F"b = {b}")
+        print(F"type(b) = {type(b)}")
+        if b == 0:
+            value = result.strip()
+            print(F"bytes_to_str():value = {value}")
+            return value
+        result += chr(b)
 
 
 if __name__ == "__main__":
