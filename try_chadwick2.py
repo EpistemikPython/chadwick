@@ -1,8 +1,7 @@
 import sys
 import numpy as np
-from struct import *
-from pychadwick.chadwick import *
 # from pychadwick.box import CWBoxscore
+from pychadwick.chadwick import *
 
 chadwick = Chadwick()
 cwlib = chadwick.libchadwick
@@ -10,6 +9,9 @@ cwlib = chadwick.libchadwick
 positions = [
   "", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"
 ]
+
+#  2021-01-08: runs with Python3.8.5
+######################################
 
 
 # char * cw_game_info_lookup(CWGame * game, char * label);
@@ -104,7 +106,7 @@ def try_cwbox_print_linescore(p_game:pointer, p_box:pointer, p_vis:pointer, p_ho
         print(F"type(np_array) = {type(np_array)}")
         print(F"np_array = {np_array}")
 
-        array_pointer = ctypes.cast(linescore, ctypes.POINTER(c_int))
+        # array_pointer = ctypes.cast(linescore, ctypes.POINTER(c_int))
         # a = np.frombuffer(array_pointer.contents)
         # print(F"type(a) = {type(a)}")
         # print(F"a = {a}")
@@ -113,7 +115,7 @@ def try_cwbox_print_linescore(p_game:pointer, p_box:pointer, p_vis:pointer, p_ho
         print(F"addr_box = 0x{addr_box:x}")
         addr_ls = ctypes.addressof(linescore)
         print(F"addr_ls = 0x{addr_ls:x}")
-        array_type = ctypes.c_int * 50
+        # array_type = ctypes.c_int * 50
         # addr = ctypes.addressof(Data.contents)
         # array_ls = np.frombuffer(array_type.from_address(addr_ls))
         # print(F"type(array_ls) = {type(array_ls)}")
@@ -412,7 +414,7 @@ def try_chadwick_py3_main():
                 print(F"type(df) = {type(df)}")
                 print(df)
 
-                box = chadwick.cw_box_create(game)
+                box = cwlib.cw_box_create(game)
                 print(F"type(box) = {type(box)}")
                 print(box)
 
