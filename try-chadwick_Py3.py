@@ -16,6 +16,7 @@ positions = [
 
 # char * cw_game_info_lookup(CWGame * game, char * label);
 def my_game_info_lookup(game_ptr, label):
+    print("\n my_game_info_lookup():\n-------------------------")
     func = cwlib.cw_game_info_lookup
     func.restype = c_char_p
     func.argtypes = (POINTER(CWGame), c_char_p,)
@@ -27,10 +28,11 @@ def my_game_info_lookup(game_ptr, label):
 def try_cwbox_print_header(p_game:pointer, p_vis:pointer, p_home:pointer):
     try:
         # print( "%s %s %s" % (str(p_game),str(p_vis),str(p_home)) )
+        print("\n try_cwbox_print_header():\n-------------------------")
 
         dn_code = "?"
         day_night = my_game_info_lookup(p_game, b"daynight")
-        print(F"day_night = {day_night}")
+        print(F"\nday_night = {day_night}")
         if day_night:
             dn_code = "D" if day_night == "day" else "N" if day_night == "night" else day_night
         print(F"dn_code = {dn_code}")
@@ -46,7 +48,7 @@ def try_cwbox_print_header(p_game:pointer, p_vis:pointer, p_home:pointer):
         print(F"game_number_str = {game_number_str}")
 
         vis_roster = p_vis.contents
-        print(F"type(vis_roster) = {type(vis_roster)}")
+        print(F"\ntype(vis_roster) = {type(vis_roster)}")
         vis_city = vis_roster.city
         print(F"type(vis_city) = {type(vis_city)}")
         print(F"vis_city = {vis_city}")
@@ -66,7 +68,7 @@ def try_cwbox_print_header(p_game:pointer, p_vis:pointer, p_home:pointer):
         # print(F"vis_city_decoded = {vis_city_decoded}")
 
         home_roster = p_home.contents
-        print(F"type(home_roster) = {type(home_roster)}")
+        print(F"\ntype(home_roster) = {type(home_roster)}")
         home_city = home_roster.city
         home_city_32 = home_city[:32]
         home_city_text = bytes_to_str(home_city_32)
@@ -81,6 +83,8 @@ def try_cwbox_print_header(p_game:pointer, p_vis:pointer, p_home:pointer):
 # void cwbox_print_linescore(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
 def try_cwbox_print_linescore(p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer):
     # print( "%s %s %s %s" % (str(p_game),str(p_box),str(p_vis),str(p_home)) )
+    print("\n try_cwbox_print_linescore():\n----------------------------")
+
     i = 0
     for t in range(0,2):
         runs = 0
@@ -399,6 +403,7 @@ cal_1996_roster = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/rosters/C
 
 
 def try_chadwick_py3_main():
+    print("\n try_chadwick_py3_main():\n-------------------------")
     print(F"byteorder = {sys.byteorder}")
     try:
         count = 0
@@ -429,19 +434,18 @@ def try_chadwick_py3_main():
                 # print("away = %s, home = %s" % (away,at_home))
 
                 visitor = try_roster_create("CAL", 1996, 'AL', 'California', 'Angels')
-                print(F"type(visitor) = {type(visitor)}")
+                print(F"\ntype(visitor) = {type(visitor)}")
                 if not os.path.exists(cal_1996_roster):
                     raise FileNotFoundError(f"cannot find file {cal_1996_roster}")
                 vis_file_path = bytes(cal_1996_roster, "utf8")
                 print(F"type(vis_file_path) = {type(vis_file_path)}")
                 vis_fptr = chadwick.fopen(vis_file_path)
-                print(F"type(visitor) = {type(visitor)}")
                 print(F"type(vis_fptr) = {type(vis_fptr)}")
                 result = try_roster_read(visitor, vis_fptr)
                 print(f"visitor result = {result}")
 
                 home = try_roster_create('TOR', 1996, 'AL', 'Toronto', 'Blue Jays')
-                print(F"type(home) = {type(home)}")
+                print(F"\ntype(home) = {type(home)}")
                 if not os.path.exists(tor_1996_roster):
                     raise FileNotFoundError(f"cannot find file {tor_1996_roster}")
                 home_file_path = bytes(tor_1996_roster, "utf8")
@@ -487,6 +491,7 @@ def try_chadwick_py3_main():
 def bytes_to_str(byt:bytes):
     """Convert a c-type char array to a python string:
         convert and concatenate the values until hit the null terminator"""
+    print("\n bytes_to_str():\n----------------------")
     print(F"byt = {byt}")
     print(F"type(byt) = {type(byt)}")
     result = ""
