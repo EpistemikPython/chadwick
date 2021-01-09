@@ -1,5 +1,4 @@
 import sys
-import numpy as np
 # from pychadwick.box import CWBoxscore
 from pychadwick.chadwick import *
 
@@ -85,143 +84,56 @@ def try_cwbox_print_linescore(p_game:pointer, p_box:pointer, p_vis:pointer, p_ho
     # print( "%s %s %s %s" % (str(p_game),str(p_box),str(p_vis),str(p_home)) )
     print("\n try_cwbox_print_linescore():\n----------------------------")
 
-    i = 0
+    linescore = p_box.contents.linescore
+    print(F"linescore = {linescore}")
+    # linescore = < pychadwick.box.c_int_Array_2_Array_50 object at 0x7fde1fa69840 >
+    print(F"len linescore = {len(linescore)}")
+    # len linescore = 50
+
+    tuple_ls = tuple(linescore)
+    print(F"tuple linescore = {tuple_ls}")
+    itx = tuple_ls[0]
+    print(F"type(itx) = {type(itx)}")
+    print(F"len itx = {len(itx)}")
+    print(F"itx = {itx}")
+    print(F"itx[0] = {itx[0]}")
+    print(F"itx[1] = {itx[1]}")
+    for item in tuple_ls:
+        print(F"{item[0]}, {item[1]}")
+
     for t in range(0,2):
+        print(F"\nt = {t}")
         runs = 0
         if t == 0:
             print("%-17s" % bytes_to_str(p_vis.contents.city[:32]) if p_vis else my_game_info_lookup(p_game, "visteam"))
         else:
             print("%-17s" % bytes_to_str(p_home.contents.city[:32]) if p_home else my_game_info_lookup(p_game, "hometeam"))
-        linescore = p_box.contents.linescore
-        print(F"linescore = {linescore}")
-        # linescore = < pychadwick.box.c_int_Array_2_Array_50 object at 0x7fde1fa69840 >
-        print(F"len linescore = {len(linescore)}")
-        # len linescore = 50
 
-        # Exception: AttributeError("'c_int_Array_2_Array_50' object has no attribute 'contents'")
-        # ls_contents = linescore.contents
-        # print(F"ls_contents = {ls_contents}")
-
-        # unpacked_ls = unpack('50b', linescore)
-        # Exception: error('unpack requires a buffer of 50 bytes')
-        # print(F"unpacked linescore = {unpacked_ls}")
-
-        np_array = np.frombuffer(linescore, int, 42, 8)
-        print(F"type(np_array) = {type(np_array)}")
-        print(F"np_array = {np_array}")
-
-        # array_pointer = ctypes.cast(linescore, ctypes.POINTER(c_int))
-        # a = np.frombuffer(array_pointer.contents)
-        # print(F"type(a) = {type(a)}")
-        # print(F"a = {a}")
-
-        addr_box = ctypes.addressof(p_box)
-        print(F"addr_box = 0x{addr_box:x}")
-        addr_ls = ctypes.addressof(linescore)
-        print(F"addr_ls = 0x{addr_ls:x}")
-        # array_type = ctypes.c_int * 50
-        # addr = ctypes.addressof(Data.contents)
-        # array_ls = np.frombuffer(array_type.from_address(addr_ls))
-        # print(F"type(array_ls) = {type(array_ls)}")
-        # print(F"array_ls = {array_ls}")
-
-        # show = int(linescore)
-        # Exception: ValueError("invalid literal for int() with base 10:
-        # b'\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff
-        #   \\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00
-        #   \\x00\\x00\\x00\\x00\\x02\\x00\\x00\\x00
-        #   \\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00
-        #   \\x00\\x00\\x00\\x00\\x03\\x00\\x00\\x00
-        #   \\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00
-        #   \\x00\\x")
-
-        tuple_ls = tuple(linescore)
-        print(F"tuple linescore = {tuple_ls}")
-        for item in tuple_ls:
-            print(F"type(item) = {type(item)}")
-            print(F"len item = {len(item)}")
-            print(F"item = {item}")
-            try:
-                print(F"int(item) = {int(item)}")
-            except Exception as e:
-                print(F"int Exception = {repr(e)}")
-            # unpacked_item = unpack('h', bytes(item))
-            # print(F"unpacked item = {unpacked_item}")
-        for i in range(0,50):
-            # Exception: ValueError(
-            #     "invalid literal for int() with base 10:
-# b'\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00
-#   \\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x03\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x
-
-            #     b'\\xff\\xff\\xff\\xff
-            #       \\xff\\xff\\xff\\xff
-            #       \\x00\\x00\\x00\\x00
-            #       \\x00\\x00\\x00\\x00
-            #       \\x00\\x00\\x00\\x00
-            #       \\x02\\x00\\x00\\x00
-            #       \\x00\\x00\\x00\\x00
-            #       \\x00\\x00
-            #       \\x00\\x00
-            #       \\x00\\x00
-            #       \\x00\\x00
-            #       \\x03\\x00
-            #       \\x00\\x00
-            #       \\x00\\x00
-            #       \\x00\\x00
-            #       \\x00\\x00
-            #       \\x00\\x00
-            #       \\x00\\x
-            #     ")
-
-            def swig_to_str(p_base, p_form):
-                # base = int(p_base)
-                ty = ctypes.c_ubyte * 1
-
-                # for x in itertools.count():
-                v = ty.from_address(p_base[i])
-                if not v: return
-                p_form.append(v)
-                return v
-
-            score_list = list()
-            swig_to_str(linescore, score_list)
-            print("score_list = {}".format(score_list))
-
-            def swig_to_byte(b):
-                ty = ctypes.c_ubyte*1
-                print("ty = %s" % ty)
-                b_int = int(b)
-                print("b_int = 0x%x" % b_int)
-                v = ty.from_address(b_int)
-                print("v = {}".format(v))
-                # v2 = ty.from_address(v)
-                return v
-
-            byte_score = swig_to_byte(linescore)
-            print("byte_score = {}".format(str(byte_score)))
-            print("byte_score[0] = {}".format(str(byte_score[0])))
-            # print("byte_score[1] = {}".format(str(byte_score[1])))
-
-            score = linescore[i]
-            print("score = {}".format(score))
-            if score[0] < 0 and linescore[i][1] < 0:
-                break
-            if linescore[i][t] >= 10:
-                print("(%d)" % linescore[i][t])
-                runs += linescore[i][t]
-            elif linescore[i][t] >= 0:
-                print("%d" % linescore[i][t])
-                runs += linescore[i][t]
+        for ix in range(0,12):
+            print(F"\ni = {ix}")
+            score = linescore[ix]
+            print(F"linescore[{ix},{t}] = {linescore[ix][t]}")
+            # print(F"score = {score}")
+            print(F"score[{t}] = {score[t]}")
+            # print(F"score[1] = {score[1]}")
+            # if score[0] < 0:
+            #     continue
+            if linescore[ix][t] >= 10:
+                print(F"({linescore[ix][t]})")
+                runs += linescore[ix][t]
+            elif linescore[ix][t] >= 0:
+                print(F"{linescore[ix][t]}")
+                runs += linescore[ix][t]
             else:
                 print("x")
 
-            if i % 3 == 0:
+            if ix % 3 == 0:
                 print(" ")
 
-        if (i - 1) % 3 != 0:
-            print(" ")
+            if (ix - 1) % 3 != 0:
+                print(" ")
 
-        print("-- %2d\n" % runs)
+            print("-- %2d\n" % runs)
 
     outs_at_end = p_box.contents.outs_at_end
     if outs_at_end != 3:
@@ -234,6 +146,8 @@ def try_cwbox_print_linescore(p_game:pointer, p_box:pointer, p_vis:pointer, p_ho
 # void cwbox_print_text(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
 def try_cwbox_print_text(p_game, p_box, p_vis, p_home):
     # print( "cwbox_print_text(%s, %s, %s, %s)" % (str(p_game),str(p_box),str(p_vis),str(p_home)) )
+    print("\n try_cwbox_print_text():\n----------------------------")
+
     note_count = 0 # int
     slots = [1, 1] # array int[2]
     players = list() # array CWBoxPlayer[2]
@@ -309,6 +223,8 @@ def try_cwbox_print_text(p_game, p_box, p_vis, p_home):
 # void cwbox_print_player(CWBoxPlayer *player, CWRoster *roster)
 def try_cwbox_print_player(p_player, p_roster):
     # print( "%s %s" % (str(p_player),str(p_team)) )
+    print("\n try_cwbox_print_player():\n----------------------------")
+
     bio = None # CWPlayer *
     name = p_player.name
     if p_roster:
@@ -347,20 +263,24 @@ def try_cwbox_print_player(p_player, p_roster):
 # cwbox_print_pitcher_apparatus(boxscore)
 def try_cwbox_print_pitcher_apparatus(p_box):
     print( "%s" % (str(p_box)) )
+    print("\n try_cwbox_print_pitcher_apparatus():\n-------------------------")
 
 
 # cwbox_print_pitcher(game, pitcher, (visitors if (t == 0) else home), note_count)
 def try_cwbox_print_pitcher(p_game, p_pitcher, p_team, p_note):
     print( "%s %s %s %s" % (str(p_game),str(p_pitcher),str(p_team),str(p_note)) )
+    print("\n try_cwbox_print_pitcher():\n-------------------------")
 
 
 # cwbox_print_apparatus(game, boxscore, visitors, home)
 def try_cwbox_print_apparatus(p_game, p_box, p_vis, p_home):
     print( "%s %s %s %s" % (str(p_game),str(p_box),str(p_vis),str(p_home)) )
+    print("\n try_cwbox_print_apparatus():\n-------------------------")
 
 
 # CWGameIterator *cw_gameiter_create(CWGame *game);
 def try_gameiter_create(game_ptr):
+    print("\n try_gameiter_create():\n-------------------------")
     func = cwlib.cw_gameiter_create
     func.restype = POINTER(CWGameIterator)
     func.argtypes = (POINTER(CWGame),)
@@ -369,6 +289,7 @@ def try_gameiter_create(game_ptr):
 
 # CWBoxscore *cw_box_create(CWGame *game);
 def try_box_create(game_ptr):
+    print("\n try_box_create():\n-------------------------")
     func = cwlib.cw_box_create
     func.restype = POINTER(CWBoxscore)
     func.argtypes = (POINTER(CWGame),)
@@ -376,6 +297,7 @@ def try_box_create(game_ptr):
 
 
 def try_roster_create(team:str, year:int, league:str, city:str, nickname:str):
+    print("\n try_roster_create():\n-------------------------")
     team = bytes(team, "utf8")
     league = bytes(league, "utf8")
     city = bytes(city, "utf8")
@@ -391,6 +313,7 @@ def try_roster_create(team:str, year:int, league:str, city:str, nickname:str):
 
 # int cw_roster_read(CWRoster *roster, FILE *file);
 def try_roster_read(roster_ptr, file_handle):
+    print("\n try_roster_read():\n-------------------------")
     func = cwlib.cw_roster_read
     func.restype = c_int
     func.argtypes = (POINTER(CWRoster),ctypes.c_void_p,)
@@ -419,7 +342,7 @@ def try_chadwick_py3_main():
                 print(F"type(df) = {type(df)}")
                 print(df)
 
-                box = cwlib.cw_box_create(game)
+                box = try_box_create(game)
                 print(F"type(box) = {type(box)}")
                 print(box)
 
@@ -491,12 +414,12 @@ def try_chadwick_py3_main():
 def bytes_to_str(byt:bytes):
     """Convert a c-type char array to a python string:
         convert and concatenate the values until hit the null terminator"""
-    print("\n bytes_to_str():\n----------------------")
-    print(F"byt = {byt}")
-    print(F"type(byt) = {type(byt)}")
+    # print("\n bytes_to_str():\n----------------------")
+    # print(F"byt = {byt}")
+    # print(F"type(byt) = {type(byt)}")
     result = ""
     for b in byt:
-        print(F"b = {b}")
+        # print(F"b = {b}")
         # print(F"type(b) = {type(b)}")
         if b == 0:
             value = result.strip()
