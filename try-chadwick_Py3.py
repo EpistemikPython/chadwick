@@ -86,54 +86,36 @@ def try_cwbox_print_linescore(p_game:pointer, p_box:pointer, p_vis:pointer, p_ho
 
     linescore = p_box.contents.linescore
     print(F"linescore = {linescore}")
-    # linescore = < pychadwick.box.c_int_Array_2_Array_50 object at 0x7fde1fa69840 >
     print(F"len linescore = {len(linescore)}")
-    # len linescore = 50
-
-    tuple_ls = tuple(linescore)
-    print(F"tuple linescore = {tuple_ls}")
-    itx = tuple_ls[0]
-    print(F"type(itx) = {type(itx)}")
-    print(F"len itx = {len(itx)}")
-    print(F"itx = {itx}")
-    print(F"itx[0] = {itx[0]}")
-    print(F"itx[1] = {itx[1]}")
-    for item in tuple_ls:
-        print(F"{item[0]}, {item[1]}")
 
     for t in range(0,2):
-        print(F"\nt = {t}")
+        # print(F"\nt = {t}")
         runs = 0
         if t == 0:
-            print("%-17s" % bytes_to_str(p_vis.contents.city[:32]) if p_vis else my_game_info_lookup(p_game, "visteam"))
+            print(F"{bytes_to_str(p_vis.contents.city[:32]):13}" if p_vis
+                  else my_game_info_lookup(p_game, "visteam"), end = '')
         else:
-            print("%-17s" % bytes_to_str(p_home.contents.city[:32]) if p_home else my_game_info_lookup(p_game, "hometeam"))
+            print(F"{bytes_to_str(p_home.contents.city[:32]):13}" if p_home
+                  else my_game_info_lookup(p_game, "hometeam"), end = '')
 
         for ix in range(0,12):
-            print(F"\ni = {ix}")
-            score = linescore[ix]
-            print(F"linescore[{ix},{t}] = {linescore[ix][t]}")
-            # print(F"score = {score}")
-            print(F"score[{t}] = {score[t]}")
-            # print(F"score[1] = {score[1]}")
-            # if score[0] < 0:
-            #     continue
+            # print(F"\nix = {ix}")
             if linescore[ix][t] >= 10:
-                print(F"({linescore[ix][t]})")
+                print(F"({linescore[ix][t]})", end = '')
                 runs += linescore[ix][t]
             elif linescore[ix][t] >= 0:
-                print(F"{linescore[ix][t]}")
+                print(F"{linescore[ix][t]}", end = '')
                 runs += linescore[ix][t]
             else:
-                print("x")
+                print("x", end = '')
 
             if ix % 3 == 0:
-                print(" ")
+                print(" ", end = '')
 
-            if (ix - 1) % 3 != 0:
-                print(" ")
+            # if (ix - 1) % 3 != 0:
+            #     print(" ", end = '')
 
-            print("-- %2d\n" % runs)
+        print(F" -- {runs:2}")
 
     outs_at_end = p_box.contents.outs_at_end
     if outs_at_end != 3:
@@ -423,7 +405,7 @@ def bytes_to_str(byt:bytes):
         # print(F"type(b) = {type(b)}")
         if b == 0:
             value = result.strip()
-            print(F"bytes_to_str():value = {value}")
+            # print(F"bytes_to_str():value = {value}")
             return value
         result += chr(b)
 
