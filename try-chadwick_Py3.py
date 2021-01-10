@@ -24,7 +24,7 @@ def my_check_for_file(file_path:str):
 
 # char * cw_game_info_lookup(CWGame * game, char * label)
 def my_game_info_lookup(game_ptr, label):
-    print("\n my_game_info_lookup():\n-------------------------")
+    # print("\n my_game_info_lookup():\n-------------------------")
     func = cwlib.cw_game_info_lookup
     func.restype = c_char_p
     func.argtypes = ( POINTER(CWGame), c_char_p, )
@@ -94,36 +94,19 @@ def try_cwbox_print_header(p_game:pointer, p_vis:pointer, p_home:pointer):
 
         game_date = my_game_info_lookup(p_game, b"date")
         print(F"game date = {game_date}")
-        # print(F"type(game_date) = {type(game_date)}")
         year, month, day = game_date.split('/')
         print(F"year, month, day = {year}, {month}, {day}")
         game_number = my_game_info_lookup(p_game, b"number")
         print(F"game_number = {game_number}")
         game_number_str = "" if game_number == "0" else F", game #{game_number}"
-        # print(F"game_number_str = {game_number_str}")
 
-        vis_roster = p_vis.contents
-        # print(F"\ntype(vis_roster) = {type(vis_roster)}")
-        vis_city = vis_roster.city
-        # print(F"type(vis_city) = {type(vis_city)}")
-        print(F"vis_city = {vis_city}")
-        vis_city_contents = vis_city.contents
-        # print(F"type(vis_city_contents) = {type(vis_city_contents)}")
-        print(F"vis_city_contents = {vis_city_contents}")
+        vis_city = p_vis.contents.city
+        vis_city_text = bytes_to_str(vis_city[:32])
+        print(F"visitor = {vis_city_text}")
 
-        vis_city_32 = vis_city[:32]
-        # print(F"type(vis_city_32) = {type(vis_city_32)}")
-        print(F"vis_city_32 = {vis_city_32}")
-        vis_city_text = bytes_to_str(vis_city_32)
-        # print(F"type(vis_city_text) = {type(vis_city_text)}")
-        print(F"vis_city_text = {vis_city_text}")
-
-        home_roster = p_home.contents
-        # print(F"\ntype(home_roster) = {type(home_roster)}")
-        home_city = home_roster.city
-        home_city_32 = home_city[:32]
-        home_city_text = bytes_to_str(home_city_32)
-        print(F"home_city_text = {home_city_text}")
+        home_city = p_home.contents.city
+        home_city_text = bytes_to_str(home_city[:32])
+        print(F"home = {home_city_text}")
 
         print(F"\nGame of {month}/{day}/{year}{game_number_str} -- {vis_city_text} @ {home_city_text} ({dn_code})\n")
 
@@ -137,8 +120,8 @@ def try_cwbox_print_linescore(p_game:pointer, p_box:pointer, p_vis:pointer, p_ho
     print("\n try_cwbox_print_linescore():\n----------------------------")
 
     linescore = p_box.contents.linescore
-    print(F"linescore = {linescore}")
-    print(F"len linescore = {len(linescore)}")
+    # print(F"linescore = {linescore}")
+    # print(F"len linescore = {len(linescore)}")
 
     for t in range(0,2):
         # print(F"\nt = {t}")
@@ -163,9 +146,6 @@ def try_cwbox_print_linescore(p_game:pointer, p_box:pointer, p_vis:pointer, p_ho
 
             if ix % 3 == 0:
                 print(" ", end = '')
-
-            # if (ix - 1) % 3 != 0:
-            #     print(" ", end = '')
 
         print(F" -- {runs:2}")
 
@@ -295,7 +275,7 @@ def try_cwbox_print_player(p_player, p_roster):
 
 # CWRoster *cw_roster_create(char *team_id, int year, char *league, char *city, char *nickname)
 def try_roster_create(team:str, year:int, league:str, city:str, nickname:str):
-    print("\n try_roster_create():\n-------------------------")
+    # print("\n try_roster_create():\n-------------------------")
     team = bytes(team, "utf8")
     league = bytes(league, "utf8")
     city = bytes(city, "utf8")
@@ -337,59 +317,61 @@ def try_chadwick_py3_main():
     print(F"byteorder = {sys.byteorder}")
     try:
         # create and fill the visitor rosters
-        visitor = try_roster_create("CAL", 1996, "AL", "California", "Angels")
-        # print(F"type(visitor) = {type(visitor)}")
+        cal_roster = try_roster_create("CAL", 1996, "AL", "California", "Angels")
         if not os.path.exists(cal_1996_roster):
-            raise FileNotFoundError(F"cannot find file {cal_1996_roster}")
-        vis_file_path = bytes(cal_1996_roster, "utf8")
-        # print(F"type(vis_file_path) = {type(vis_file_path)}")
-        vis_fptr = chadwick.fopen(vis_file_path)
-        # print(F"type(vis_fptr) = {type(vis_fptr)}")
-        vis_roster_read_result = my_roster_read(visitor, vis_fptr)
-        print("visitor read result = " + ("Success." if vis_roster_read_result > 0 else "Failure!"))
+            raise FileNotFoundError(F"CANNOT find file {cal_1996_roster}!")
+        cal_fptr = chadwick.fopen( bytes(cal_1996_roster, "utf8") )
+        cal_roster_read_result = my_roster_read(cal_roster, cal_fptr)
+        print("CAL read result = " + ("Success." if cal_roster_read_result > 0 else "Failure!"))
+        sea_roster = try_roster_create("SEA", 1996, "AL", "Seattle", "Mariners")
+        if not os.path.exists(sea_1996_roster):
+            raise FileNotFoundError(F"CANNOT find file {sea_1996_roster}!")
+        sea_fptr = chadwick.fopen( bytes(sea_1996_roster, "utf8") )
+        sea_roster_read_result = my_roster_read(sea_roster, sea_fptr)
+        print("SEA read result = " + ("Success." if sea_roster_read_result > 0 else "Failure!"))
 
         # create and fill the home roster
         home = try_roster_create("TOR", 1996, "AL", "Toronto", "Blue Jays")
-        # print(F"type(home) = {type(home)}")
         if not os.path.exists(tor_1996_roster):
             raise FileNotFoundError(f"cannot find file {tor_1996_roster}")
-        home_file_path = bytes(tor_1996_roster, "utf8")
-        # print(F"type(home_file_path) = {type(home_file_path)}")
-        home_fptr = chadwick.fopen(home_file_path)
+        home_fptr = chadwick.fopen( bytes(tor_1996_roster, "utf8") )
         home_roster_read_result = my_roster_read(home, home_fptr)
-        print("home read result = " + ("Success." if home_roster_read_result > 0 else "Failure!"))
+        print("HOME read result = " + ("Success." if home_roster_read_result > 0 else "Failure!"))
 
         count = 0
         limit = 5
         games = chadwick.games(tor_1996_events)
         for game in games:
             if game and count < limit:
-                print("found a game.")
+                print("\n\nFound a game.")
                 # print(F"type(game) = {type(game)}")
                 print(F"game = {game}")
 
-                df = chadwick.game_to_dataframe(game)
-                print(F"\ntype(df) = {type(df)}")
-                print(df)
+                # df = chadwick.game_to_dataframe(game)
+                # print(F"\ntype(df) = {type(df)}")
+                # print(df)
 
                 box = my_box_create(game)
-                print(F"\ntype(box) = {type(box)}")
-                print(box)
+                # print(F"\ntype(box) = {type(box)}")
+                print(F"box = {box}")
 
                 events = chadwick.process_game(game)
                 results = tuple(events)
-                for event in results[:5]:
-                    print(event)
+                # for event in results[:5]:
+                #     print(F"event: GAME ID = {event['GAME_ID']}; AWAY TEAM = {event['AWAY_TEAM_ID']}")
+                away_team = results[count]['AWAY_TEAM_ID']
+                print(F"away team == {away_team}")
 
                 count += 1
 
+                visitor = cal_roster if away_team == "CAL" else sea_roster
                 try_cwbox_print_header(game, visitor, home)
 
                 try_cwbox_print_linescore(game, box, visitor, home)
 
                 # try_game_write(game)
 
-                print(F"innings = {game.contents.game_id}")
+                print(F"\ngame id = {game.contents.game_id}\n")
 
                 game_itr = cwlib.cw_gameiter_create(game)
                 print(F"type(game_itr) = {type(game_itr)}")
