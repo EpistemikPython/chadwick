@@ -20,6 +20,7 @@
 *.bin
 *.exe
 *.x
+*.txt
 # find <dir/>* -type l >> .gitignore
 Baseball
 Chadwick*
