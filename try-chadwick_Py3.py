@@ -1,4 +1,3 @@
-import sys
 # from pychadwick.box import CWBoxscore
 from pychadwick.chadwick import *
 
@@ -61,7 +60,7 @@ def my_box_create(game_ptr):
 
 # int cw_roster_read(CWRoster *roster, FILE *file)
 def my_roster_read(roster_ptr, file_handle):
-    print("\n my_roster_read():\n-------------------------")
+    # print("\n my_roster_read():\n-------------------------")
     func = cwlib.cw_roster_read
     func.restype = c_int
     func.argtypes = ( POINTER(CWRoster), ctypes.c_void_p, )
@@ -87,15 +86,15 @@ def try_cwbox_print_header(p_game:pointer, p_vis:pointer, p_home:pointer):
 
         dn_code = "?"
         day_night = my_game_info_lookup(p_game, b"daynight")
-        print(F"day_night = {day_night}")
+        # print(F"day_night = {day_night}")
         if day_night:
             dn_code = "D" if day_night == "day" else "N" if day_night == "night" else day_night
-        print(F"dn_code = {dn_code}")
+        # print(F"dn_code = {dn_code}")
 
         game_date = my_game_info_lookup(p_game, b"date")
         print(F"game date = {game_date}")
         year, month, day = game_date.split('/')
-        print(F"year, month, day = {year}, {month}, {day}")
+        # print(F"year, month, day = {year}, {month}, {day}")
         game_number = my_game_info_lookup(p_game, b"number")
         print(F"game_number = {game_number}")
         game_number_str = "" if game_number == "0" else F", game #{game_number}"
@@ -108,7 +107,7 @@ def try_cwbox_print_header(p_game:pointer, p_vis:pointer, p_home:pointer):
         home_city_text = bytes_to_str(home_city[:32])
         print(F"home = {home_city_text}")
 
-        print(F"\nGame of {month}/{day}/{year}{game_number_str} -- {vis_city_text} @ {home_city_text} ({dn_code})\n")
+        print(F"\nGame of {month}/{day}/{year}{game_number_str} -- {vis_city_text} @ {home_city_text} ({dn_code})")
 
     except Exception as tcph:
         print(F"try_cwbox_print_header() Exception: {repr(tcph)}")
@@ -308,25 +307,33 @@ def try_cwbox_print_apparatus(p_game, p_box, p_vis, p_home):
 
 tor_1996_events = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/event/regular/1996TOR.EVA"
 tor_1996_roster = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/rosters/TOR1996.ROS"
-cal_1996_roster = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/rosters/CAL1996.ROS"
-sea_1996_roster = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/rosters/SEA1996.ROS"
+
+CAL = "CAL"
+SEA = "SEA"
+roster_files = {
+    CAL : "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/rosters/CAL1996.ROS" ,
+    SEA : "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/rosters/SEA1996.ROS"
+}
 
 
-def try_chadwick_py3_main():
-    print("\n try_chadwick_py3_main():\n-------------------------")
-    print(F"byteorder = {sys.byteorder}")
+def main_chadwick_py3():
+    print("\n main_chadwick_py3():\n-------------------------")
+    # print(F"byteorder = {sys.byteorder}")
     try:
         # create and fill the visitor rosters
-        cal_roster = try_roster_create("CAL", 1996, "AL", "California", "Angels")
-        if not os.path.exists(cal_1996_roster):
-            raise FileNotFoundError(F"CANNOT find file {cal_1996_roster}!")
-        cal_fptr = chadwick.fopen( bytes(cal_1996_roster, "utf8") )
+        vis_rosters = {}
+        cal_roster = try_roster_create(CAL, 1996, "AL", "California", "Angels")
+        vis_rosters[CAL] = cal_roster
+        if not os.path.exists(roster_files[CAL]):
+            raise FileNotFoundError(F"CANNOT find file {roster_files[CAL]}!")
+        cal_fptr = chadwick.fopen( bytes(roster_files[CAL], "utf8") )
         cal_roster_read_result = my_roster_read(cal_roster, cal_fptr)
         print("CAL read result = " + ("Success." if cal_roster_read_result > 0 else "Failure!"))
         sea_roster = try_roster_create("SEA", 1996, "AL", "Seattle", "Mariners")
-        if not os.path.exists(sea_1996_roster):
-            raise FileNotFoundError(F"CANNOT find file {sea_1996_roster}!")
-        sea_fptr = chadwick.fopen( bytes(sea_1996_roster, "utf8") )
+        vis_rosters[SEA] = sea_roster
+        if not os.path.exists(roster_files[SEA]):
+            raise FileNotFoundError(F"CANNOT find file {roster_files[SEA]}!")
+        sea_fptr = chadwick.fopen( bytes(roster_files[SEA], "utf8") )
         sea_roster_read_result = my_roster_read(sea_roster, sea_fptr)
         print("SEA read result = " + ("Success." if sea_roster_read_result > 0 else "Failure!"))
 
@@ -339,21 +346,16 @@ def try_chadwick_py3_main():
         print("HOME read result = " + ("Success." if home_roster_read_result > 0 else "Failure!"))
 
         count = 0
-        limit = 5
+        limit = 6
         games = chadwick.games(tor_1996_events)
         for game in games:
             if game and count < limit:
                 print("\n\nFound a game.")
-                # print(F"type(game) = {type(game)}")
-                print(F"game = {game}")
-
-                # df = chadwick.game_to_dataframe(game)
-                # print(F"\ntype(df) = {type(df)}")
-                # print(df)
+                # print(F"game = {game}")
+                print(F"game id = {game.contents.game_id}")
 
                 box = my_box_create(game)
-                # print(F"\ntype(box) = {type(box)}")
-                print(F"box = {box}")
+                # print(F"box = {box}")
 
                 events = chadwick.process_game(game)
                 results = tuple(events)
@@ -361,22 +363,20 @@ def try_chadwick_py3_main():
                 #     print(F"event: GAME ID = {event['GAME_ID']}; AWAY TEAM = {event['AWAY_TEAM_ID']}")
                 away_team = results[count]['AWAY_TEAM_ID']
                 print(F"away team == {away_team}")
+                visitor = vis_rosters[away_team]
 
-                count += 1
-
-                visitor = cal_roster if away_team == "CAL" else sea_roster
                 try_cwbox_print_header(game, visitor, home)
 
                 try_cwbox_print_linescore(game, box, visitor, home)
 
                 # try_game_write(game)
 
-                print(F"\ngame id = {game.contents.game_id}\n")
+                # game_itr = cwlib.cw_gameiter_create(game)
+                # print(F"type(game_itr) = {type(game_itr)}")
+                # game_state = game_itr.contents.state
+                # print(F"type(game_state) = {type(game_state)}")
 
-                game_itr = cwlib.cw_gameiter_create(game)
-                print(F"type(game_itr) = {type(game_itr)}")
-                game_state = game_itr.contents.state
-                print(F"type(game_state) = {type(game_state)}")
+                count += 1
 
                 # g1_b = cwlib.cw_box_create(g1)
                 # print(F"type(g1_b) = {type(g1_b)}")
@@ -418,5 +418,5 @@ def bytes_to_str(byt:bytes):
 
 
 if __name__ == "__main__":
-    try_chadwick_py3_main()
+    main_chadwick_py3()
     exit()
