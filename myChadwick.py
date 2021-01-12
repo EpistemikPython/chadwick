@@ -170,7 +170,7 @@ class MyChadwickTools:
         home_city_text = CwHelper.bytes_to_str(home_city[:32])
         self.lgr.info(F"home = {home_city_text}")
 
-        print(F"\nGame of {month}/{day}/{year}{game_number_str} -- {vis_city_text} @ {home_city_text} ({dn_code})")
+        print(F"\nGame of {month}/{day}/{year}{game_number_str} -- {vis_city_text} @ {home_city_text} ({dn_code})\n")
 
     # void cwbox_print_linescore(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_linescore( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
@@ -351,6 +351,9 @@ class MyChadwickTools:
 
         roster = p_roster.contents
         pitcher = p_pitcher.contents
+        player_id = pitcher.player_id.decode("UTF8")
+        self.lgr.info(F"player id = {player_id}")
+        self.lgr.info(F"type(player id) = {type(player_id)}")
         if roster:
             bio = MyCwlib.cw_roster_player_find(p_roster, bytes(pitcher.player_id)).contents
 
@@ -362,13 +365,17 @@ class MyChadwickTools:
 
         game = p_game.contents
         wp = MyCwlib.cw_game_info_lookup(game, b"wp")
+        self.lgr.info(F"winning pitcher id = {wp}")
+        self.lgr.info(F"type(wp) = {type(wp)}")
         lp = MyCwlib.cw_game_info_lookup(game, b"lp")
+        self.lgr.info(F"losing pitcher id = {lp}")
         save = MyCwlib.cw_game_info_lookup(game, b"save")
-        if wp and wp != pitcher.player_id:
+        self.lgr.info(F"save pitcher id = {save}")
+        if wp and wp == player_id:
             name += " (W)"
-        elif lp and lp != pitcher.player_id:
+        elif lp and lp == player_id:
             name += " (L)"
-        elif save and save != pitcher.player_id:
+        elif save and save == player_id:
             name += " (S)"
 
         pitching = pitcher.pitching.contents
@@ -385,7 +392,7 @@ class MyChadwickTools:
             print("   ")
 
         if pitching.bb != -1:
-            print(F" {pitching.h:2}", end = '')
+            print(F" {pitching.bb:2}", end = '')
         else:
             print("   ")
 
@@ -401,9 +408,9 @@ class MyChadwickTools:
 # END class MyChadwickTools
 
 
-def main_chadwick_py3():
+def main_chadwick_py3(limit:int=10):
     lgr = logging
-    lgr.info(F"byteorder = {sys.byteorder}")
+    lgr.info(F"byteorder = {sys.byteorder}\nlimit = {limit}")
     try:
         # create and fill the visitor rosters
         vis_rosters = {}
@@ -432,7 +439,6 @@ def main_chadwick_py3():
 
         cwtools = MyChadwickTools()
         count = 0
-        limit = 6
         games = chadwick.games(tor_1996_events)
         for game in games:
             if game and count < limit:
@@ -453,7 +459,9 @@ def main_chadwick_py3():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level = logging.CRITICAL)
-    logging.info("main_chadwick_py3():\n----------------------------------")
-    main_chadwick_py3()
+    loglevel = sys.argv[1].strip().upper() if len(sys.argv) >= 1 else "INFO"
+    logging.basicConfig(level = loglevel)
+    logging.critical(F"main_chadwick_py3(): Level = {loglevel}\n--------------------------------------")
+    runlimit = int(sys.argv[2]) if len(sys.argv) >= 2 else 6
+    main_chadwick_py3(runlimit)
     exit()
