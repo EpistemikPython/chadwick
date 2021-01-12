@@ -1,5 +1,6 @@
-# from pychadwick.box import CWBoxscore
+from pychadwick.box import CWBoxPlayer
 from pychadwick.chadwick import *
+from pychadwick.roster import CWPlayer
 
 chadwick = Chadwick()
 cwlib = chadwick.libchadwick
@@ -65,6 +66,24 @@ def my_roster_read(roster_ptr, file_handle):
     func.restype = c_int
     func.argtypes = ( POINTER(CWRoster), ctypes.c_void_p, )
     return func(roster_ptr, file_handle)
+
+
+# CWPlayer *cw_roster_player_find(CWRoster *roster, char *player_id);
+def my_roster_player_find(roster_ptr, player_id):
+    # print("\n my_roster_player_find():\n-------------------------")
+    func = cwlib.cw_roster_player_find
+    func.restype = POINTER(CWPlayer)
+    func.argtypes = ( POINTER(CWRoster), c_char_p, )
+    return func(roster_ptr, player_id)
+
+
+# CWBoxPlayer *cw_box_get_starter(CWBoxscore *boxscore, int team, int slot)
+def my_get_starter(box_ptr, team, slot):
+    # print("\n my_get_starter():\n-------------------------")
+    func = cwlib.cw_box_get_starter
+    func.restype = POINTER(CWBoxPlayer)
+    func.argtypes = ( POINTER(CWBoxscore), c_int, c_int, )
+    return func(box_ptr, team, slot)
 
 
 def try_game_write(game):
@@ -169,27 +188,34 @@ def try_cwbox_print_text(p_game:pointer, p_box:pointer, p_vis:pointer, p_home:po
     h  = [0, 0]
     bi = [0, 0]
 
-    players.insert(0, cwlib.cw_box_get_starter(p_box, 0, 1))
+    player = my_get_starter(p_box, 0, 1)
+    print(F"type(player) = {type(player)}")
+    players.insert(0, player)
+    print(F"players[0] = {players[0]}")
     players.insert(1, cwlib.cw_box_get_starter(p_box, 1, 1))
+    print(F"players[1] = {players[1]}")
 
     try_cwbox_print_header(p_game, p_vis, p_home)
 
-    print("  %-18s AB  R  H RBI    %-18s AB  R  H RBI" %
-          (p_vis.city if p_vis else cwlib.cw_game_info_lookup(p_game, "visteam"),
-           p_home.city if p_home else cwlib.cw_game_info_lookup(p_game, "hometeam")) )
+    print(F"type(p_vis.contents.city) = {type(p_vis.contents.city)}")
+    vis_city = bytes_to_str(p_vis.contents.city[:32]) if p_vis else my_game_info_lookup(p_game, "visteam")
+    home_city = bytes_to_str(p_home.contents.city[:32]) if p_home else my_game_info_lookup(p_game, "hometeam")
+
+    print(F"{vis_city} AB  R  H RBI    {home_city} AB  R  H RBI    ")
 
     while slots[0] <= 9 or slots[1] <= 9 :
         for t in range(0,2):
             if slots[t] <= 9:
                 try_cwbox_print_player(players[t], p_vis if (t == 0) else p_home)
-                ab[t] += players[t].batting.ab
-                r[t]  += players[t].batting.r
-                h[t]  += players[t].batting.h
-                if players[t].batting.bi != -1:
-                    bi[t] += players[t].batting.bi
+                batting = players[t].contents.battiing.contents
+                ab[t] += batting.ab
+                r[t]  += batting.r
+                h[t]  += batting.h
+                if batting.bi != -1:
+                    bi[t] += batting.bi
                 else:
                     bi[t] = -1
-                players[t] = players[t].next
+                players[t] = players[t].contents.next
                 if not players[t]:
                     # In some National Association games, teams played with 8 players.
                     # This generalization allows for printing boxscores when some batting slots are empty.
@@ -216,9 +242,9 @@ def try_cwbox_print_text(p_game:pointer, p_box:pointer, p_vis:pointer, p_home:po
     for t in range(0, 2):
         pitcher = cwlib.cw_box_get_starting_pitcher(p_box, t) # CWBoxPitcher
         if t == 0:
-            print("  %-18s   IP  H  R ER BB SO" % p_vis.city if p_vis else cwlib.cw_game_info_lookup(p_game, "visteam"))
+            print("  %-18s   IP  H  R ER BB SO" % vis_city if p_vis else cwlib.cw_game_info_lookup(p_game, "visteam"))
         else:
-            print("  %-18s   IP  H  R ER BB SO" % p_home.city if p_home else cwlib.cw_game_info_lookup(p_game, "hometeam"))
+            print("  %-18s   IP  H  R ER BB SO" % home_city if p_home else cwlib.cw_game_info_lookup(p_game, "hometeam"))
         while pitcher:
             try_cwbox_print_pitcher(p_game, pitcher, (p_vis if (t == 0) else p_home), note_count)
             pitcher = pitcher.next
@@ -233,43 +259,63 @@ def try_cwbox_print_text(p_game:pointer, p_box:pointer, p_vis:pointer, p_home:po
 
 
 # void cwbox_print_player(CWBoxPlayer *player, CWRoster *roster)
-def try_cwbox_print_player(p_player, p_roster):
+def try_cwbox_print_player( p_player:pointer, p_roster:pointer ):
     # print( "%s %s" % (str(p_player),str(p_team)) )
     print("\n try_cwbox_print_player():\n----------------------------")
 
-    bio = None # CWPlayer *
-    name = p_player.name
+    bio = None # CWPlayer * bio = NULL;
+    # char name[256], posstr[256], outstr[256];
+    posstr = ""
+
+    print(F"type(p_roster) = {type(p_roster)}")
+    player = p_player.contents
+    print(F"type(player) = {type(player)}")
     if p_roster:
-        bio = cwlib.cw_roster_player_find(p_roster, p_player.player_id)
+        bio = my_roster_player_find(p_roster, bytes(player.player_id)).contents
+
+    print(F"type(bio) = {type(bio)}")
+    print(F"type(bio.last_name) = {type(bio.last_name)}")
+    print(F"type(bio.first_name) = {type(bio.first_name)}")
+    print(F"type(bio.last_name[:20]) = {type(bio.last_name[:20])}")
+    print(F"type(bio.first_name[:1]) = {type(bio.first_name[:1])}")
     if bio:
-        name = bio.last_name + bio.first_name[0]
+        name = bytes_to_str(bio.last_name[:20]) + " " + bytes_to_str(bio.first_name[:1])
+    else:
+        name = player.name
+    print(F"name = {name}")
 
-    posn_str = ""
-    if p_player.ph_inn > 0 and p_player._get_position(0) != 11:
-        posn_str = "ph"
-    elif p_player.pr_inn > 0 and p_player._get_position(0) != 12:
-        posn_str = "pr"
+    if player.ph_inn > 0 and player.positions[0] != 11:
+        posstr = "ph"
+    elif player.pr_inn > 0 and player.positions[0] != 12:
+        posstr = "pr"
 
-    for pos in range(0, p_player.num_positions):
-        if len(posn_str) > 0:
-            posn_str += "-"
-        posn_str += positions[p_player._get_position(pos)]
+    for pos in range(0, player.num_positions):
+        if len(posstr) > 0:
+            posstr += "-"
+        posstr += positions[player.positions[pos]]
 
-    posn_str_len = len(posn_str)
-    if len(posn_str) <= 10:
-        if len(posn_str) + len(name) > 18:
-            out_str = name[0:(18 - posn_str_len)] + ", "
+    if len(posstr) <= 10:
+        if len(posstr) + len(name) > 18:
+            outstr = name[:(18 - len(posstr))]
+            outstr += ", "
         else:
-            out_str = name + ", "
-        out_str += posn_str
+            outstr = name
+            outstr += ", "
+        outstr += posstr
     else:
         # When there are a lot of positions, can't do much sensibly...
-        out_str = name + ", " + positions[p_player._get_position(0)] + ",..."
+        outstr = name
+        outstr += ", "
+        outstr += positions[player.positions[0]]
+        outstr += ",..."
+    print(F"outstr = {outstr}")
 
-    if p_player.batting.bi != -1:
-        print("%-20s %2d %2d %2d %2d" % (out_str, p_player.batting.ab, p_player.batting.r, p_player.batting.h, p_player.batting.bi)),
+    batting = player.battiing.contents
+    print(F"type(batting) = {type(batting)}")
+    if batting.bi != -1:
+        print(F"{outstr:20} {batting.ab:2} {batting.r:2} {batting.h:2} {batting.bi:2}")
     else:
-        print("%-20s %2d %2d %2d   " % (out_str, p_player.batting.ab, p_player.batting.r, p_player.batting.h)),
+        print(F"{outstr:20} {batting.ab:2} {batting.r:2} {batting.h:2}")
 
 
 # CWRoster *cw_roster_create(char *team_id, int year, char *league, char *city, char *nickname)
@@ -289,19 +335,16 @@ def try_roster_create(team:str, year:int, league:str, city:str, nickname:str):
 
 # cwbox_print_pitcher_apparatus(boxscore)
 def try_cwbox_print_pitcher_apparatus(p_box):
-    print( "%s" % (str(p_box)) )
     print("\n try_cwbox_print_pitcher_apparatus():\n-------------------------")
 
 
 # cwbox_print_pitcher(game, pitcher, (visitors if (t == 0) else home), note_count)
 def try_cwbox_print_pitcher(p_game, p_pitcher, p_team, p_note):
-    print( "%s %s %s %s" % (str(p_game),str(p_pitcher),str(p_team),str(p_note)) )
     print("\n try_cwbox_print_pitcher():\n-------------------------")
 
 
 # cwbox_print_apparatus(game, boxscore, visitors, home)
 def try_cwbox_print_apparatus(p_game, p_box, p_vis, p_home):
-    print( "%s %s %s %s" % (str(p_game),str(p_box),str(p_vis),str(p_home)) )
     print("\n try_cwbox_print_apparatus():\n-------------------------")
 
 
@@ -376,18 +419,9 @@ def main_chadwick_py3():
                 # game_state = game_itr.contents.state
                 # print(F"type(game_state) = {type(game_state)}")
 
+                try_cwbox_print_text(game, box, visitor, home)
+
                 count += 1
-
-                # g1_b = cwlib.cw_box_create(g1)
-                # print(F"type(g1_b) = {type(g1_b)}")
-                # # print("boxscore = %s" % g1._get_boxscore())
-                # cwbox_print_text(g1, g1_b, visitor, home)
-
-                # for event in game.events:
-                #     pass # print("event = %s" % repr(event))
-
-                # g2 = cwlib.read_game(gfp)
-                # print("g2 = %s" % g2)
             # else:
             #     print("NO game.")
             # g_first = cwlib.cw_file_find_first_game(gfp)
@@ -400,19 +434,21 @@ def main_chadwick_py3():
         print(F"Exception: {repr(ex)}")
 
 
-def bytes_to_str(byt:bytes):
+def bytes_to_str(byt:bytes) -> str:
     """Convert a c-type char array to a python string:
         convert and concatenate the values until hit the null terminator"""
-    # print("\n bytes_to_str():\n----------------------")
-    # print(F"byt = {byt}")
-    # print(F"type(byt) = {type(byt)}")
+    print("\n bytes_to_str():\n----------------------")
+    print(F"byt = {byt}")
+    print(F"type(byt) = {type(byt)}")
     result = ""
+    if len(byt) == 1:
+        return chr(byt[0])
     for b in byt:
         # print(F"b = {b}")
         # print(F"type(b) = {type(b)}")
         if b == 0:
             value = result.strip()
-            # print(F"bytes_to_str():value = {value}")
+            print(F"bytes_to_str():value = {value}")
             return value
         result += chr(b)
 
