@@ -1,4 +1,4 @@
-from pychadwick.box import CWBoxPlayer
+from pychadwick.box import CWBoxPlayer, CWBoxPitcher
 from pychadwick.chadwick import *
 from pychadwick.roster import CWPlayer
 
@@ -86,6 +86,15 @@ def my_get_starter(box_ptr, team, slot):
     return func(box_ptr, team, slot)
 
 
+# CWBoxPitcher *cw_box_get_starting_pitcher(CWBoxscore *boxscore, int team)
+def my_get_starting_pitcher(box_ptr, team):
+    # print("\n my_get_starting_pitcher():\n-------------------------")
+    func = cwlib.cw_box_get_starting_pitcher
+    func.restype = POINTER(CWBoxPitcher)
+    func.argtypes = ( POINTER(CWBoxscore), c_int, )
+    return func(box_ptr, team)
+
+
 def try_game_write(game):
     print("\n try_game_write():\n-------------------------")
     cal_at_tor = "cal_at_tor_1996-001.txt"
@@ -146,10 +155,10 @@ def try_cwbox_print_linescore(p_game:pointer, p_box:pointer, p_vis:pointer, p_ho
         runs = 0
         if t == 0:
             print(F"{bytes_to_str(p_vis.contents.city[:32]):13}" if p_vis
-                  else my_game_info_lookup(p_game, "visteam"), end = '')
+                  else my_game_info_lookup(p_game, b"visteam"), end = '')
         else:
             print(F"{bytes_to_str(p_home.contents.city[:32]):13}" if p_home
-                  else my_game_info_lookup(p_game, "hometeam"), end = '')
+                  else my_game_info_lookup(p_game, b"hometeam"), end = '')
 
         for ix in range(1,10):
             # print(F"\nix = {ix}")
@@ -189,17 +198,17 @@ def try_cwbox_print_text(p_game:pointer, p_box:pointer, p_vis:pointer, p_home:po
     bi = [0, 0]
 
     player = my_get_starter(p_box, 0, 1)
-    print(F"type(player) = {type(player)}")
+    # print(F"type(player) = {type(player)}")
     players.insert(0, player)
-    print(F"players[0] = {players[0]}")
+    # print(F"players[0] = {players[0]}")
     players.insert(1, cwlib.cw_box_get_starter(p_box, 1, 1))
-    print(F"players[1] = {players[1]}")
+    # print(F"players[1] = {players[1]}")
 
     try_cwbox_print_header(p_game, p_vis, p_home)
 
     print(F"type(p_vis.contents.city) = {type(p_vis.contents.city)}")
-    vis_city = bytes_to_str(p_vis.contents.city[:32]) if p_vis else my_game_info_lookup(p_game, "visteam")
-    home_city = bytes_to_str(p_home.contents.city[:32]) if p_home else my_game_info_lookup(p_game, "hometeam")
+    vis_city = bytes_to_str(p_vis.contents.city[:32]) if p_vis else my_game_info_lookup(p_game, b"visteam")
+    home_city = bytes_to_str(p_home.contents.city[:32]) if p_home else my_game_info_lookup(p_game, b"hometeam")
 
     print(F"{vis_city} AB  R  H RBI    {home_city} AB  R  H RBI    ")
 
@@ -240,14 +249,15 @@ def try_cwbox_print_text(p_game:pointer, p_box:pointer, p_vis:pointer, p_home:po
     print("")
 
     for t in range(0, 2):
-        pitcher = cwlib.cw_box_get_starting_pitcher(p_box, t) # CWBoxPitcher
+        pitcher = my_get_starting_pitcher(p_box, t)
+        # print(F"type(pitcher) = {type(pitcher)}")
         if t == 0:
-            print("  %-18s   IP  H  R ER BB SO" % vis_city if p_vis else cwlib.cw_game_info_lookup(p_game, "visteam"))
+            print("  %-18s   IP  H  R ER BB SO" % vis_city if p_vis else my_game_info_lookup(p_game, "visteam"))
         else:
-            print("  %-18s   IP  H  R ER BB SO" % home_city if p_home else cwlib.cw_game_info_lookup(p_game, "hometeam"))
+            print("  %-18s   IP  H  R ER BB SO" % home_city if p_home else my_game_info_lookup(p_game, "hometeam"))
         while pitcher:
             try_cwbox_print_pitcher(p_game, pitcher, (p_vis if (t == 0) else p_home), note_count)
-            pitcher = pitcher.next
+            pitcher = pitcher.contents.next
         if t == 0:
             print("")
 
@@ -255,7 +265,7 @@ def try_cwbox_print_text(p_game:pointer, p_box:pointer, p_vis:pointer, p_home:po
     print("")
 
     try_cwbox_print_apparatus(p_game, p_box, p_vis, p_home)
-    print("\f")
+    print("")
 
 
 # void cwbox_print_player(CWBoxPlayer *player, CWRoster *roster)
@@ -267,22 +277,22 @@ def try_cwbox_print_player( p_player:pointer, p_roster:pointer ):
     # char name[256], posstr[256], outstr[256];
     posstr = ""
 
-    print(F"type(p_roster) = {type(p_roster)}")
+    # print(F"type(p_roster) = {type(p_roster)}")
     player = p_player.contents
-    print(F"type(player) = {type(player)}")
+    # print(F"type(player) = {type(player)}")
     if p_roster:
         bio = my_roster_player_find(p_roster, bytes(player.player_id)).contents
 
-    print(F"type(bio) = {type(bio)}")
-    print(F"type(bio.last_name) = {type(bio.last_name)}")
-    print(F"type(bio.first_name) = {type(bio.first_name)}")
-    print(F"type(bio.last_name[:20]) = {type(bio.last_name[:20])}")
-    print(F"type(bio.first_name[:1]) = {type(bio.first_name[:1])}")
+    # print(F"type(bio) = {type(bio)}")
+    # print(F"type(bio.last_name) = {type(bio.last_name)}")
+    # print(F"type(bio.first_name) = {type(bio.first_name)}")
+    # print(F"type(bio.last_name[:20]) = {type(bio.last_name[:20])}")
+    # print(F"type(bio.first_name[:1]) = {type(bio.first_name[:1])}")
     if bio:
         name = bytes_to_str(bio.last_name[:20]) + " " + bytes_to_str(bio.first_name[:1])
     else:
         name = player.name
-    print(F"name = {name}")
+    print(F"player name = {name}")
 
     if player.ph_inn > 0 and player.positions[0] != 11:
         posstr = "ph"
@@ -311,7 +321,7 @@ def try_cwbox_print_player( p_player:pointer, p_roster:pointer ):
     print(F"outstr = {outstr}")
 
     batting = player.battiing.contents
-    print(F"type(batting) = {type(batting)}")
+    # print(F"type(batting) = {type(batting)}")
     if batting.bi != -1:
         print(F"{outstr:20} {batting.ab:2} {batting.r:2} {batting.h:2} {batting.bi:2}")
     else:
@@ -338,9 +348,59 @@ def try_cwbox_print_pitcher_apparatus(p_box):
     print("\n try_cwbox_print_pitcher_apparatus():\n-------------------------")
 
 
-# cwbox_print_pitcher(game, pitcher, (visitors if (t == 0) else home), note_count)
-def try_cwbox_print_pitcher(p_game, p_pitcher, p_team, p_note):
+# void cwbox_print_pitcher(CWGame * game, CWBoxPitcher * pitcher, CWRoster * roster, int * note_count)
+def try_cwbox_print_pitcher(p_game, p_pitcher, p_roster, note_count):
     print("\n try_cwbox_print_pitcher():\n-------------------------")
+    # Output one pitcher's pitching line. The parameter 'note_count' keeps track of how many apparatus notes
+    # have been emitted (for pitchers who do not record an out in an inning)
+    markers = ["*", "+", "#"]
+    bio = None # CWPlayer *
+
+    roster = p_roster.contents
+    pitcher = p_pitcher.contents
+    if roster:
+        bio = my_roster_player_find(p_roster, bytes(pitcher.player_id)).contents
+
+    if bio:
+        name = bytes_to_str(bio.last_name[:20]) + " " + bytes_to_str(bio.first_name[:1])
+    else:
+        name = pitcher.name
+    print(F"pitcher name = {name}")
+
+    game = p_game.contents
+    # print(F"type(game) = {type(game)}")
+    wp = my_game_info_lookup(game, b"wp")
+    lp = my_game_info_lookup(game, b"lp")
+    save = my_game_info_lookup(game, b"save")
+    if wp and wp != pitcher.player_id:
+        name += " (W)"
+    elif lp and lp != pitcher.player_id:
+        name += " (L)"
+    elif save and save != pitcher.player_id:
+        name += " (S)"
+
+    pitching = pitcher.pitching.contents
+    if pitching.xbinn > 0 and pitching.xb > 0:
+        for i in range(0, note_count//3):
+            name += markers[note_count%3]
+        note_count += 1
+
+    print(F"{name:20} {pitching.outs//3:2}.{pitching.outs%3} {pitching.h:2} {pitching.r:2}", end = '')
+
+    if pitching.er != -1:
+        print(F" {pitching.er:2}", end = '')
+    else:
+        print("   ")
+
+    if pitching.bb != -1:
+        print(F" {pitching.h:2}", end = '')
+    else:
+        print("   ")
+
+    if pitching.so != -1:
+        print(F" {pitching.so:2}")
+    else:
+        print("   ")
 
 
 # cwbox_print_apparatus(game, boxscore, visitors, home)
@@ -437,9 +497,9 @@ def main_chadwick_py3():
 def bytes_to_str(byt:bytes) -> str:
     """Convert a c-type char array to a python string:
         convert and concatenate the values until hit the null terminator"""
-    print("\n bytes_to_str():\n----------------------")
-    print(F"byt = {byt}")
-    print(F"type(byt) = {type(byt)}")
+    # print("\n bytes_to_str():\n----------------------")
+    # print(F"byt = {byt}")
+    # print(F"type(byt) = {type(byt)}")
     result = ""
     if len(byt) == 1:
         return chr(byt[0])
@@ -448,7 +508,7 @@ def bytes_to_str(byt:bytes) -> str:
         # print(F"type(b) = {type(b)}")
         if b == 0:
             value = result.strip()
-            print(F"bytes_to_str():value = {value}")
+            # print(F"bytes_to_str():value = {value}")
             return value
         result += chr(b)
 
