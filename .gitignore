@@ -12,6 +12,7 @@
 **/json*/
 **/copy*/
 **/bin/
+/dev-cw
 *.py[cdo]
 *.out
 *.o
