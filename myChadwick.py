@@ -147,9 +147,23 @@ class MyChadwickTools:
         self.lgr = logging
         self.lgr.info(F"Start {self.__class__.__name__}")
 
+    # void cwbox_print_timeofgame(CWGame * game)
+    def print_time_of_game(self, p_game:pointer):
+        # Output the time of game
+        self.lgr.info("print_time_of_game():\n----------------------------------")
+        tog = int(MyCwlib.cwlib_game_info_lookup(p_game, b'timeofgame'))
+        if tog and tog > 0:
+            print(F"T -- {tog // 60}:{(tog % 60):2}")
+
+    # void cwbox_print_attendance(CWGame * game)
+    def print_attendance(self, p_game):
+        # Output the attendance
+        self.lgr.info("print_attendance():\n----------------------------------")
+        print(F"A -- {MyCwlib.cwlib_game_info_lookup(p_game, b'attendance')}")
+
     # void cwbox_print_header(CWGame *game, CWRoster *visitors, CWRoster *home)
     def print_header( self, p_game:pointer, p_vis:pointer, p_home:pointer ):
-        self.lgr.info("self.print_header():\n----------------------------------")
+        self.lgr.info("print_header():\n----------------------------------")
 
         dn_code = "?"
         day_night = MyCwlib.cwlib_game_info_lookup(p_game, b"daynight")
@@ -175,7 +189,7 @@ class MyChadwickTools:
 
     # void cwbox_print_linescore(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_linescore( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
-        self.lgr.info("self.print_linescore():\n----------------------------------")
+        self.lgr.info("print_linescore():\n----------------------------------")
 
         linescore = p_box.contents.linescore
         for t in range(0,2):
@@ -213,7 +227,7 @@ class MyChadwickTools:
     # char * cwbox_game_find_name(CWGame * game, char * player_id)
     def game_find_name(self, p_game:pointer, player_id:bytes) -> str:
         # Derive a player name from an appearance record in a game. Used when roster file is not available.
-        self.lgr.info("self.game_find_name():\n----------------------------------")
+        self.lgr.info("game_find_name():\n----------------------------------")
 
         app = p_game.contents.first_starter
         while app:
@@ -233,7 +247,7 @@ class MyChadwickTools:
 
 # void cwbox_print_text(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_text( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
-        self.lgr.info("self.print_text():\n----------------------------------")
+        self.lgr.info("print_text():\n----------------------------------")
 
         note_count = 0
         slots = [1, 1]
@@ -315,7 +329,7 @@ class MyChadwickTools:
 
     # void cwbox_print_player(CWBoxPlayer *player, CWRoster *roster)
     def print_player( self, p_player:POINTER(CWBoxPlayer), p_roster:POINTER(CWRoster) ):
-        self.lgr.info("self.print_player():\n----------------------------------")
+        self.lgr.info("print_player():\n----------------------------------")
 
         bio = None
         posstr = ""
@@ -366,7 +380,7 @@ class MyChadwickTools:
     # void cwbox_print_player_apparatus(CWGame *game, CWBoxEvent *list, int index, char *label, CWRoster *visitors, CWRoster *home)
     def print_player_apparatus(self, p_game, p_events, index, label, p_vis, p_home):
         # Generic output for list of events (2B, 3B, WP, etc.)
-        self.lgr.info("self.print_apparatus():\n----------------------------------")
+        self.lgr.info("print_player_apparatus():\n----------------------------------")
         if not p_events:
             return
         event = p_events.contents # CWBoxEvent*
@@ -428,7 +442,7 @@ class MyChadwickTools:
     # void cwbox_print_apparatus(CWGame * game, CWBoxscore * boxscore, CWRoster * visitors, CWRoster * home)
     def print_apparatus( self, p_game, p_box, p_vis, p_home ):
         # Output the apparatus (list of events and other miscellaneous game information)
-        self.lgr.info("self.print_apparatus():\n----------------------------------")
+        self.lgr.info("print_apparatus():\n----------------------------------")
 
         boxscore = p_box.contents
         self.print_player_apparatus(p_game, boxscore.err_list, 0, "E", p_vis, p_home)
@@ -446,8 +460,8 @@ class MyChadwickTools:
         self.print_player_apparatus(p_game, boxscore.wp_list, 0, "WP", p_vis, p_home)
         self.print_player_apparatus(p_game, boxscore.bk_list, 0, "Balk", p_vis, p_home)
         self.print_player_apparatus(p_game, boxscore.pb_list, 1, "PB", p_vis, p_home)
-        # cwbox_print_timeofgame(game)
-        # cwbox_print_attendance(game)
+        self.print_time_of_game(p_game)
+        self.print_attendance(p_game)
 
     # void cwbox_print_pitcher(CWGame * game, CWBoxPitcher * pitcher, CWRoster * roster, int * note_count)
     def print_pitcher( self, p_game, p_pitcher, p_roster, note_count ):
