@@ -12,6 +12,7 @@ SEA = "SEA"
 
 positions = ["", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"]
 
+RETROSHEET_FOLDER = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/"
 tor_1996_events = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/event/regular/1996TOR.EVA"
 tor_1996_roster = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/rosters/TOR1996.ROS"
 
@@ -21,35 +22,32 @@ roster_files = {
 }
 
 
-class CwHelper:
-    @staticmethod
-    def bytes_to_str(byt:bytes, maxlen:int=20) -> str:
-        """Convert a c-type char array to a python string:
-           convert and concatenate the values until hit the null terminator or the char limit"""
-        if len(byt) == 1:
-            return chr(byt[0])
-        result = ""
-        if len(byt) == 0:
-            return result
-        ct = 0
-        limit = 1 if maxlen <= 1 else min(maxlen, 1024)
-        for b in byt:
-            if b == 0:
-                return result.strip()
-            result += chr(b)
-            ct += 1
-            if ct == limit:
-                return result.strip()
+def bytes_to_str(byt:bytes, maxlen:int=20) -> str:
+    """Convert a c-type char array to a python string:
+       convert and concatenate the values until hit the null terminator or the char limit"""
+    if len(byt) == 1:
+        return chr(byt[0])
+    result = ""
+    if len(byt) == 0:
+        return result
+    ct = 0
+    limit = 1 if maxlen <= 1 else min(maxlen, 1024)
+    for b in byt:
+        if b == 0:
+            return result.strip()
+        result += chr(b)
+        ct += 1
+        if ct == limit:
+            return result.strip()
 
-    @staticmethod
-    def check_for_file(file_path:str, lgr:logging.Logger):
-        if not os.path.exists(file_path):
-            lgr.info(F"CANNOT find file {file_path}: try to create.")
-            try:
-                open(file_path, "w+").close()
-            except Exception as cfe:
-                raise OSError(F"CANNOT create file {file_path}: {repr(cfe)}")
-# END class CwHelper
+
+def check_for_file(file_path:str, lgr:logging.Logger):
+    if not os.path.exists(file_path):
+        lgr.info(F"CANNOT find file {file_path}: try to create.")
+        try:
+            open(file_path, "w+").close()
+        except Exception as cfe:
+            raise OSError(F"CANNOT create file {file_path}: {repr(cfe)}")
 
 
 class MyCwlib:
@@ -178,11 +176,11 @@ class MyChadwickTools:
         game_number_str = "" if game_number == "0" else F", game #{game_number}"
 
         vis_city = p_vis.contents.city
-        vis_city_text = CwHelper.bytes_to_str(vis_city[:32])
+        vis_city_text = bytes_to_str(vis_city[:32])
         self.lgr.info(F"visitor = {vis_city_text}")
 
         home_city = p_home.contents.city
-        home_city_text = CwHelper.bytes_to_str(home_city[:32])
+        home_city_text = bytes_to_str(home_city[:32])
         self.lgr.info(F"home = {home_city_text}")
 
         print(F"\nGame of {month}/{day}/{year}{game_number_str} -- {vis_city_text} @ {home_city_text} ({dn_code})\n")
@@ -195,10 +193,10 @@ class MyChadwickTools:
         for t in range(0,2):
             runs = 0
             if t == 0:
-                print(F"{CwHelper.bytes_to_str(p_vis.contents.city[:32],16):16}" if p_vis
+                print(F"{bytes_to_str(p_vis.contents.city[:32],16):16}" if p_vis
                       else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam"), end = '')
             else:
-                print(F"{CwHelper.bytes_to_str(p_home.contents.city[:32],16):16}" if p_home
+                print(F"{bytes_to_str(p_home.contents.city[:32],16):16}" if p_home
                       else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam"), end = '')
 
             # TODO: handle extra-innings games
@@ -266,9 +264,9 @@ class MyChadwickTools:
 
         self.print_header(p_game, p_vis, p_home)
 
-        vis_city = CwHelper.bytes_to_str(p_vis.contents.city[:32]) if p_vis \
+        vis_city = bytes_to_str(p_vis.contents.city[:32]) if p_vis \
                    else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
-        home_city = CwHelper.bytes_to_str(p_home.contents.city[:32]) if p_home \
+        home_city = bytes_to_str(p_home.contents.city[:32]) if p_home \
                     else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
 
         print(F"{vis_city:20} AB  R  H RBI    {home_city:20} AB  R  H RBI    ")
@@ -339,8 +337,8 @@ class MyChadwickTools:
             bio = MyCwlib.cwlib_roster_player_find(p_roster, player.player_id)
 
         if bio:
-            name = CwHelper.bytes_to_str(bio.contents.last_name[:20]) + " " \
-                   + CwHelper.bytes_to_str(bio.contents.first_name[:1],1)
+            name = bytes_to_str(bio.contents.last_name[:20]) + " " \
+                   + bytes_to_str(bio.contents.first_name[:1],1)
         else:
             name = player.name
         self.lgr.info(F"player name = {name}")
@@ -416,8 +414,8 @@ class MyChadwickTools:
             if count == 1:
                 # print("flag6")
                 if bio:
-                    print(F"{CwHelper.bytes_to_str(bio.contents.last_name[:20])} "
-                          F"{CwHelper.bytes_to_str(bio.contents.first_name[0][:1],1)}", end = '')
+                    print(F"{bytes_to_str(bio.contents.last_name[:20])} "
+                          F"{bytes_to_str(bio.contents.first_name[0][:1],1)}", end = '')
                 elif name:
                     print(F"{name}", end = '')
                 else:
@@ -425,12 +423,12 @@ class MyChadwickTools:
             else:
                 # print("flag7")
                 if bio:
-                    print(F"{CwHelper.bytes_to_str(bio.contents.last_name[:20])} "
-                          F"{CwHelper.bytes_to_str(bio.contents.first_name[0][:1],1)} {count}", end = '')
+                    print(F"{bytes_to_str(bio.contents.last_name[:20])} "
+                          F"{bytes_to_str(bio.contents.first_name[0][:1],1)} {count}", end = '')
                 elif name:
                     print(F"{name} {count}", end = '')
                 else:
-                    print(F"{CwHelper.bytes_to_str(event.players[index][:20])} {count}", end = '')
+                    print(F"{bytes_to_str(event.players[index][:20])} {count}", end = '')
             comma = 1
         print("")
         # NOTE: reset events.mark >> NEEDED in Python?
@@ -446,9 +444,9 @@ class MyChadwickTools:
 
         boxscore = p_box.contents
         self.print_player_apparatus(p_game, boxscore.err_list, 0, "E", p_vis, p_home)
-        # cwbox_print_double_play(game, boxscore, visitors, home)
-        # cwbox_print_triple_play(game, boxscore, visitors, home)
-        # cwbox_print_lob(p_game, boxscore, visitors, home)
+        self.print_double_plays(p_game, p_box, p_vis, p_home)
+        self.print_triple_plays(p_game, p_box, p_vis, p_home)
+        self.print_lob(p_game, p_box, p_vis, p_home)
         self.print_player_apparatus(p_game, boxscore.b2_list, 0, "2B", p_vis, p_home)
         self.print_player_apparatus(p_game, boxscore.b3_list, 0, "3B", p_vis, p_home)
         self.print_player_apparatus(p_game, boxscore.hr_list, 0, "HR", p_vis, p_home)
@@ -465,12 +463,11 @@ class MyChadwickTools:
 
     # void cwbox_print_pitcher(CWGame * game, CWBoxPitcher * pitcher, CWRoster * roster, int * note_count)
     def print_pitcher( self, p_game, p_pitcher, p_roster, note_count ):
-        self.lgr.info("self.print_pitcher():\n----------------------------------")
+        self.lgr.info("print_pitcher():\n----------------------------------")
         # Output one pitcher's pitching line. The parameter 'note_count' keeps track of how many apparatus notes
         # have been emitted (for pitchers who do not record an out in an inning)
         markers = ["*", "+", "#"]
         bio = None
-
         roster = p_roster.contents
         pitcher = p_pitcher.contents
         player_id = pitcher.player_id.decode("UTF8")
@@ -478,10 +475,9 @@ class MyChadwickTools:
         self.lgr.info(F"type(player id) = {type(player_id)}")
         if roster:
             bio = MyCwlib.cwlib_roster_player_find(p_roster, bytes(pitcher.player_id))
-
         if bio:
-            name = CwHelper.bytes_to_str(bio.contents.last_name[:20]) + " " \
-                   + CwHelper.bytes_to_str(bio.contents.first_name[:1],1)
+            name = bytes_to_str(bio.contents.last_name[:20]) + " " \
+                   + bytes_to_str(bio.contents.first_name[:1],1)
         else:
             name = pitcher.name
         self.lgr.info(F"pitcher name = {name}")
@@ -508,21 +504,61 @@ class MyChadwickTools:
             note_count += 1
 
         print(F"{name:20} {pitching.outs // 3:2}.{pitching.outs % 3} {pitching.h:2} {pitching.r:2}", end = '')
+        print(F" {pitching.er:2}", end = '') if pitching.er != -1 else print("   ", end = '')
+        print(F" {pitching.bb:2}", end = '') if pitching.bb != -1 else print("   ", end = '')
+        print(F" {pitching.so:2}") if pitching.so != -1 else print("   ")
 
-        if pitching.er != -1:
-            print(F" {pitching.er:2}", end = '')
-        else:
-            print("   ")
+    # Output the count of double plays by team
+    # void cwbox_print_double_play(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
+    def print_double_plays(self, p_game, p_box, p_vis, p_home):
+        self.lgr.info("print_double_plays():\n----------------------------------")
+        dp = p_box.contents.dp
+        if dp[0] == 0 and dp[1] == 0:
+            return
+        print("DP -- ", end = '')
+        vis_city = bytes_to_str(p_vis.contents.city[:32]) if p_vis \
+                   else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
+        home_city = bytes_to_str(p_home.contents.city[:32]) if p_home \
+                    else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
 
-        if pitching.bb != -1:
-            print(F" {pitching.bb:2}", end = '')
+        if dp[0] > 0 and dp[1] == 0:
+            print(F"{vis_city} {dp[0]}")
+        elif dp[0] == 0 and dp[1] > 0:
+            print(F"{home_city} {dp[1]}")
         else:
-            print("   ")
+            print(F"{vis_city} {dp[0]}, {home_city} {dp[1]}")
 
-        if pitching.so != -1:
-            print(F" {pitching.so:2}")
+    # Output the count of triple plays by team
+    # void cwbox_print_triple_play(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
+    def print_triple_plays(self, p_game, p_box, p_vis, p_home):
+        self.lgr.info("print_triple_plays():\n----------------------------------")
+        tp = p_box.contents.tp
+        if tp[0] == 0 and tp[1] == 0:
+            return
+        print("TP -- ", end = '')
+        vis_city = bytes_to_str(p_vis.contents.city[:32]) if p_vis \
+                   else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
+        home_city = bytes_to_str(p_home.contents.city[:32]) if p_home \
+                    else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
+        if tp[0] > 0 and tp[1] == 0:
+            print(F"{vis_city} {tp[0]}")
+        elif tp[0] == 0 and tp[1] > 0:
+            print(F"{home_city} {tp[1]}")
         else:
-            print("   ")
+            print(F"{vis_city} {tp[0]}, {home_city} {tp[1]}")
+
+    # Output the number of runners left on base
+    # void cwbox_print_lob(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
+    def print_lob(self, p_game, p_box, p_vis, p_home):
+        self.lgr.info("print_lob():\n----------------------------------")
+        lob = p_box.contents.lob
+        if lob[0] == 0 and lob[1] == 0:
+            return
+        vis_city = bytes_to_str(p_vis.contents.city[:32]) if p_vis \
+                   else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
+        home_city = bytes_to_str(p_home.contents.city[:32]) if p_home \
+                    else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
+        print(F"LOB -- {vis_city} {lob[0]}, {home_city} {lob[1]}")
 
     # void cwbox_print_pitcher_apparatus(CWBoxscore * boxscore)
     def print_pitcher_apparatus(self, p_box:pointer):
@@ -553,6 +589,7 @@ class MyChadwickTools:
 # END class MyChadwickTools
 
 
+# TODO: team and year as required parameters; month and day as optional parameters
 def main_chadwick_py3(limit:int=10):
     lgr = logging
     lgr.info(F"byteorder = {sys.byteorder}\nlimit = {limit}")
