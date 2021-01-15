@@ -3,6 +3,7 @@ from pychadwick.box import CWBoxPlayer, CWBoxPitcher
 from pychadwick.chadwick import *
 from pychadwick.roster import CWPlayer
 from ctypes import c_void_p
+from argparse import ArgumentParser
 
 chadwick = Chadwick()
 cwlib = chadwick.libchadwick
@@ -141,8 +142,8 @@ class MyCwlib:
 
 
 class MyChadwickTools:
-    def __init__(self):
-        self.lgr = logging
+    def __init__(self, logger):
+        self.lgr = logger
         self.lgr.info(F"Start {self.__class__.__name__}")
 
     # void cwbox_print_timeofgame(CWGame * game)
@@ -256,10 +257,10 @@ class MyChadwickTools:
         bi = [0, 0]
 
         player0 = MyCwlib.cwlib_box_get_starter(p_box, 0, 1)
-        self.lgr.info(F"type(player0) = {type(player0)}")
+        # self.lgr.info(F"type(player0) = {type(player0)}")
         players.insert(0, player0)
         player1 = MyCwlib.cwlib_box_get_starter(p_box, 1, 1)
-        self.lgr.info(F"type(player1) = {type(player1)}")
+        # self.lgr.info(F"type(player1) = {type(player1)}")
         players.insert(1, player1)
 
         self.print_header(p_game, p_vis, p_home)
@@ -589,10 +590,66 @@ class MyChadwickTools:
 # END class MyChadwickTools
 
 
+def process_args():
+    arg_parser = ArgumentParser(description="Print the boxscore from the retrosheet data for the specified team and date range",
+                                prog='main_chadwick_py3.py')
+    # required arguments
+    required = arg_parser.add_argument_group('REQUIRED')
+    required.add_argument('-t', '--team', required=True, help="retrosheet 3-character id for a team, e.g. TOR, CAL")
+    required.add_argument('-y', '--year', type=int, required=True, help="year to find the games to print out.")
+    # optional arguments
+    arg_parser.add_argument('-m', '--month', type=int, help="month to print out games: 3 to 10")
+    arg_parser.add_argument('-s', '--startday', type=int, help="starting day to print out game(s): 1 to 31")
+    arg_parser.add_argument('-e', '--endday', type=int, help="end day to print out games: 2 to 31")
+    arg_parser.add_argument('-l', '--level', default="INFO", help="set LEVEL of logging output")
+
+    return arg_parser
+
+
+def process_input_parameters(argx:list):
+    args = process_args().parse_args(argx)
+    loglevel = args.level
+    try:
+        getattr( logging, loglevel.strip().upper() )
+    except AttributeError as ae:
+        print(F"Problem with log level: {repr(ae)}")
+        loglevel = "INFO"
+
+    logging.basicConfig(level = loglevel)
+    logging.critical(F"process_input_parameters(): Level = {loglevel}\n--------------------------------------")
+    logging.info(F"args = \n{args}")
+
+    team = args.team if len(args.team) >= 3 else "TOR"
+    if len(team) > 3: team = team[:3]
+    logging.debug(F"team = {team}")
+
+    year = str(args.year) if 1871 <= args.year <= 2020 else "1993"
+    logging.debug(F"year = {year}")
+
+    month = str(args.month) if args.month and 3 <= args.month <= 10 else ""
+    logging.debug(F"month = {month}")
+
+    start = str(args.startday) if args.startday and 1 <= args.startday <= 31 else ""
+    logging.debug(F"start = {start}")
+
+    end = str(args.endday) if args.endday and 2 <= args.endday <= 31 else ""
+    logging.debug(F"end = {end}")
+
+    return team, year, month, start, end, loglevel
+
+
 # TODO: team and year as required parameters; month and day as optional parameters
-def main_chadwick_py3(limit:int=10):
-    lgr = logging
-    lgr.info(F"byteorder = {sys.byteorder}\nlimit = {limit}")
+def main_chadwick_py3(args:list):
+    log_name = "myChadwick"
+    lgr = logging.getLogger(log_name)
+
+    team, year, month, start, end, loglevel = process_input_parameters(args)
+
+    lgr.setLevel(loglevel)
+    lgr.debug(str(lgr.handlers))
+
+    limit = 1
+    lgr.info(F"byteorder = {sys.byteorder}; limit = {limit}")
     try:
         # create and fill the visitor rosters
         vis_rosters = {}
@@ -619,7 +676,7 @@ def main_chadwick_py3(limit:int=10):
         home_roster_read_result = MyCwlib.cwlib_roster_read(home, home_fptr)
         lgr.info("HOME read result = " + ("Success." if home_roster_read_result > 0 else "Failure!"))
 
-        cwtools = MyChadwickTools()
+        cwtools = MyChadwickTools(lgr)
         count = 0
         games = chadwick.games(tor_1996_events)
         for game in games:
@@ -641,9 +698,5 @@ def main_chadwick_py3(limit:int=10):
 
 
 if __name__ == "__main__":
-    loglevel = sys.argv[1].strip().upper() if len(sys.argv) >= 1 else "INFO"
-    logging.basicConfig(level = loglevel)
-    logging.critical(F"main_chadwick_py3(): Level = {loglevel}\n--------------------------------------")
-    runlimit = int(sys.argv[2]) if len(sys.argv) >= 2 else 6
-    main_chadwick_py3(runlimit)
+    main_chadwick_py3(sys.argv[1:])
     exit()
