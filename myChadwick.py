@@ -1,4 +1,5 @@
 import sys
+import csv
 from pychadwick.box import CWBoxPlayer, CWBoxPitcher
 from pychadwick.chadwick import *
 from pychadwick.roster import CWPlayer
@@ -8,23 +9,13 @@ from argparse import ArgumentParser
 chadwick = Chadwick()
 cwlib = chadwick.libchadwick
 
-CAL = "CAL"
-SEA = "SEA"
-
 positions = ["", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"]
 
 RETROSHEET_FOLDER = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/"
-tor_1996_events = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/event/regular/1996TOR.EVA"
-tor_1996_roster = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/rosters/TOR1996.ROS"
-
-roster_files = {
-    CAL:"/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/rosters/CAL1996.ROS",
-    SEA:"/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/rosters/SEA1996.ROS"
-}
 
 
-def bytes_to_str(byt:bytes, maxlen:int=20) -> str:
-    """Convert a c-type char array to a python string:
+def LP_c_char_to_str(byt:bytes, maxlen:int=20) -> str:
+    """Convert a C-type char array to a python string:
        convert and concatenate the values until hit the null terminator or the char limit"""
     if len(byt) == 1:
         return chr(byt[0])
@@ -42,30 +33,21 @@ def bytes_to_str(byt:bytes, maxlen:int=20) -> str:
             return result.strip()
 
 
-def check_for_file(file_path:str, lgr:logging.Logger):
-    if not os.path.exists(file_path):
-        lgr.info(F"CANNOT find file {file_path}: try to create.")
-        try:
-            open(file_path, "w+").close()
-        except Exception as cfe:
-            raise OSError(F"CANNOT create file {file_path}: {repr(cfe)}")
-
-
 class MyCwlib:
     # char * cw_game_info_lookup(CWGame * game, char * label)
     @staticmethod
     def cwlib_game_info_lookup(game_ptr:POINTER(CWGame), label:bytes) -> str:
-        # lgr.info("\n cwlib_game_info_lookup():\n-------------------------")
+        logging.debug("\n cwlib_game_info_lookup():\n-------------------------")
         func = cwlib.cw_game_info_lookup
         func.restype = c_char_p
         func.argtypes = (POINTER(CWGame), c_char_p,)
         result = func(game_ptr, label)
-        return result.decode(encoding = 'UTF-8')
+        return result.decode(encoding='UTF-8')
 
     # void cw_game_write(CWGame *game, FILE *file)
     @staticmethod
     def cwlib_game_write(game_ptr:POINTER(CWGame), file_ptr:c_void_p):
-        # lgr.info("\n cwlib_game_write():\n-------------------------")
+        logging.debug("\n cwlib_game_write():\n-------------------------")
         func = cwlib.cw_game_write
         func.restype = None
         func.argtypes = (POINTER(CWGame), c_void_p,)
@@ -74,7 +56,7 @@ class MyCwlib:
     # CWGameIterator *cw_gameiter_create(CWGame *game)
     @staticmethod
     def cwlib_gameiter_create(game_ptr:POINTER(CWGame)) -> POINTER(CWGameIterator):
-        # lgr.info("\n cwlib_gameiter_create():\n-------------------------")
+        logging.debug("\n cwlib_gameiter_create():\n-------------------------")
         func = cwlib.cw_gameiter_create
         func.restype = POINTER(CWGameIterator)
         func.argtypes = (POINTER(CWGame),)
@@ -83,7 +65,7 @@ class MyCwlib:
     # CWBoxscore *cw_box_create(CWGame *game)
     @staticmethod
     def cwlib_box_create(game_ptr:POINTER(CWGame)) -> POINTER(CWBoxscore):
-        # lgr.info("\n cwlib_box_create():\n-------------------------")
+        logging.debug("\n cwlib_box_create():\n-------------------------")
         func = cwlib.cw_box_create
         func.restype = POINTER(CWBoxscore)
         func.argtypes = (POINTER(CWGame),)
@@ -92,7 +74,7 @@ class MyCwlib:
     # CWRoster *cw_roster_create(char *team_id, int year, char *league, char *city, char *nickname)
     @staticmethod
     def cwlib_roster_create(team:str, year:int, league:str, city:str, nickname:str) -> POINTER(CWRoster):
-        # self.lgr.info("\n cwlib_roster_create():\n-------------------------")
+        logging.debug("\n cwlib_roster_create():\n-------------------------")
         bteam = bytes(team, "utf8")
         bleague = bytes(league, "utf8")
         bcity = bytes(city, "utf8")
@@ -106,7 +88,7 @@ class MyCwlib:
     # int cw_roster_read(CWRoster *roster, FILE *file)
     @staticmethod
     def cwlib_roster_read(roster_ptr:POINTER(CWRoster), file_handle:c_void_p) -> int:
-        # lgr.info("\n cwlib_roster_read():\n-------------------------")
+        logging.debug("\n cwlib_roster_read():\n-------------------------")
         func = cwlib.cw_roster_read
         func.restype = c_int
         func.argtypes = (POINTER(CWRoster), c_void_p,)
@@ -115,7 +97,7 @@ class MyCwlib:
     # CWPlayer *cw_roster_player_find(CWRoster *roster, char *player_id)
     @staticmethod
     def cwlib_roster_player_find(roster_ptr:POINTER(CWRoster), player_id:bytes) -> POINTER(CWPlayer):
-        # lgr.info("\n cwlib_roster_player_find():\n-------------------------")
+        logging.debug("\n cwlib_roster_player_find():\n-------------------------")
         func = cwlib.cw_roster_player_find
         func.restype = POINTER(CWPlayer)
         func.argtypes = (POINTER(CWRoster), c_char_p,)
@@ -124,7 +106,7 @@ class MyCwlib:
     # CWBoxPlayer *cw_box_get_starter(CWBoxscore *boxscore, int team, int slot)
     @staticmethod
     def cwlib_box_get_starter(box_ptr:POINTER(CWBoxscore), team:int, slot:int) -> POINTER(CWBoxPlayer):
-        logging.info(" cwlib_box_get_starter():\n-------------------------")
+        logging.debug(" cwlib_box_get_starter():\n-------------------------")
         func = cwlib.cw_box_get_starter
         func.restype = POINTER(CWBoxPlayer)
         func.argtypes = (POINTER(CWBoxscore), c_int, c_int,)
@@ -133,7 +115,7 @@ class MyCwlib:
     # CWBoxPitcher *cw_box_get_starting_pitcher(CWBoxscore *boxscore, int team)
     @staticmethod
     def cwlib_box_get_starting_pitcher(box_ptr:POINTER(CWBoxscore), team:int) -> POINTER(CWBoxPitcher):
-        logging.info("\n cwlib_box_get_starting_pitcher():\n-------------------------")
+        logging.debug("\n cwlib_box_get_starting_pitcher():\n-------------------------")
         func = cwlib.cw_box_get_starting_pitcher
         func.restype = POINTER(CWBoxPitcher)
         func.argtypes = (POINTER(CWBoxscore), c_int,)
@@ -145,10 +127,12 @@ class MyChadwickTools:
     def __init__(self, logger):
         self.lgr = logger
         self.lgr.info(F"Start {self.__class__.__name__}")
+        self.rosters = {}
+        self.roster_files = {}
+        self.event_files = {}
 
     # void cwbox_print_timeofgame(CWGame * game)
     def print_time_of_game(self, p_game:pointer):
-        # Output the time of game
         self.lgr.info("print_time_of_game():\n----------------------------------")
         tog = int(MyCwlib.cwlib_game_info_lookup(p_game, b'timeofgame'))
         if tog and tog > 0:
@@ -156,7 +140,6 @@ class MyChadwickTools:
 
     # void cwbox_print_attendance(CWGame * game)
     def print_attendance(self, p_game):
-        # Output the attendance
         self.lgr.info("print_attendance():\n----------------------------------")
         print(F"A -- {MyCwlib.cwlib_game_info_lookup(p_game, b'attendance')}")
 
@@ -177,11 +160,11 @@ class MyChadwickTools:
         game_number_str = "" if game_number == "0" else F", game #{game_number}"
 
         vis_city = p_vis.contents.city
-        vis_city_text = bytes_to_str(vis_city[:32])
+        vis_city_text = LP_c_char_to_str(vis_city[:32])
         self.lgr.info(F"visitor = {vis_city_text}")
 
         home_city = p_home.contents.city
-        home_city_text = bytes_to_str(home_city[:32])
+        home_city_text = LP_c_char_to_str(home_city[:32])
         self.lgr.info(F"home = {home_city_text}")
 
         print(F"\nGame of {month}/{day}/{year}{game_number_str} -- {vis_city_text} @ {home_city_text} ({dn_code})\n")
@@ -194,10 +177,10 @@ class MyChadwickTools:
         for t in range(0,2):
             runs = 0
             if t == 0:
-                print(F"{bytes_to_str(p_vis.contents.city[:32],16):16}" if p_vis
+                print(F"{LP_c_char_to_str(p_vis.contents.city[:32], 16):16}" if p_vis
                       else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam"), end = '')
             else:
-                print(F"{bytes_to_str(p_home.contents.city[:32],16):16}" if p_home
+                print(F"{LP_c_char_to_str(p_home.contents.city[:32], 16):16}" if p_home
                       else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam"), end = '')
 
             # TODO: handle extra-innings games
@@ -231,7 +214,7 @@ class MyChadwickTools:
         app = p_game.contents.first_starter
         while app:
             if app.player_id == player_id:
-                return app.name.decode(encoding = 'UTF-8')
+                return app.name.decode(encoding='UTF-8')
             app = app.next
 
         event = p_game.contents.first_event
@@ -239,7 +222,7 @@ class MyChadwickTools:
             app = event.contents.first_sub
             while app:
                 if app.player_id == player_id:
-                    return app.name.decode(encoding = 'UTF-8')
+                    return app.name.decode(encoding='UTF-8')
                 app = app.next
             event = event.next
         return ""
@@ -257,17 +240,16 @@ class MyChadwickTools:
         bi = [0, 0]
 
         player0 = MyCwlib.cwlib_box_get_starter(p_box, 0, 1)
-        # self.lgr.info(F"type(player0) = {type(player0)}")
+        self.lgr.debug(F"type(player0) = {type(player0)}")
         players.insert(0, player0)
         player1 = MyCwlib.cwlib_box_get_starter(p_box, 1, 1)
-        # self.lgr.info(F"type(player1) = {type(player1)}")
+        self.lgr.debug(F"type(player1) = {type(player1)}")
         players.insert(1, player1)
 
         self.print_header(p_game, p_vis, p_home)
 
-        vis_city = bytes_to_str(p_vis.contents.city[:32]) if p_vis \
-                   else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
-        home_city = bytes_to_str(p_home.contents.city[:32]) if p_home \
+        vis_city = LP_c_char_to_str(p_vis.contents.city[:32]) if p_vis else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
+        home_city = LP_c_char_to_str(p_home.contents.city[:32]) if p_home \
                     else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
 
         print(F"{vis_city:20} AB  R  H RBI    {home_city:20} AB  R  H RBI    ")
@@ -338,8 +320,7 @@ class MyChadwickTools:
             bio = MyCwlib.cwlib_roster_player_find(p_roster, player.player_id)
 
         if bio:
-            name = bytes_to_str(bio.contents.last_name[:20]) + " " \
-                   + bytes_to_str(bio.contents.first_name[:1],1)
+            name = LP_c_char_to_str(bio.contents.last_name[:20]) + " " + LP_c_char_to_str(bio.contents.first_name[:1], 1)
         else:
             name = player.name
         self.lgr.info(F"player name = {name}")
@@ -378,11 +359,11 @@ class MyChadwickTools:
 
     # void cwbox_print_player_apparatus(CWGame *game, CWBoxEvent *list, int index, char *label, CWRoster *visitors, CWRoster *home)
     def print_player_apparatus(self, p_game, p_events, index, label, p_vis, p_home):
-        # Generic output for list of events (2B, 3B, WP, etc.)
+        # Generic output for list of events (2B, 3B, WP, etc)
         self.lgr.info("print_player_apparatus():\n----------------------------------")
         if not p_events:
             return
-        event = p_events.contents # CWBoxEvent*
+        event = p_events.contents
         comma = 0
         print(F"{label} -- ", end = '')
         while event:
@@ -390,46 +371,39 @@ class MyChadwickTools:
             bio = None
             name = ""
             count = 0
-            # print("flag1")
             if event.mark > 0:
                 event = event.next.contents if event.next else None
-                # print("flag2")
                 continue
             while search_event:
                 if event.players[index] == search_event.players[index]:
                     count += 1
                     search_event.mark = 1
-                    # print("flag3")
                 search_event = search_event.next.contents if search_event.next else None
 
-            # print("flag4")
             if p_vis:
                 bio = MyCwlib.cwlib_roster_player_find(p_vis, event.players[index])
             if not bio and p_home:
                 bio = MyCwlib.cwlib_roster_player_find(p_home, event.players[index])
             if not bio:
                 name = self.game_find_name(p_game, event.players[index])
-            # print("flag5")
             if comma:
                 print(", ", end = '')
             if count == 1:
-                # print("flag6")
                 if bio:
-                    print(F"{bytes_to_str(bio.contents.last_name[:20])} "
-                          F"{bytes_to_str(bio.contents.first_name[0][:1],1)}", end = '')
+                    print(F"{LP_c_char_to_str(bio.contents.last_name[:20])} "
+                          F"{LP_c_char_to_str(bio.contents.first_name[0][:1], 1)}", end = '')
                 elif name:
                     print(F"{name}", end = '')
                 else:
                     print(F"{event.players[index]}", end = '')
             else:
-                # print("flag7")
                 if bio:
-                    print(F"{bytes_to_str(bio.contents.last_name[:20])} "
-                          F"{bytes_to_str(bio.contents.first_name[0][:1],1)} {count}", end = '')
+                    print(F"{LP_c_char_to_str(bio.contents.last_name[:20])} "
+                          F"{LP_c_char_to_str(bio.contents.first_name[0][:1], 1)} {count}", end = '')
                 elif name:
                     print(F"{name} {count}", end = '')
                 else:
-                    print(F"{bytes_to_str(event.players[index][:20])} {count}", end = '')
+                    print(F"{LP_c_char_to_str(event.players[index][:20])} {count}", end = '')
             comma = 1
         print("")
         # NOTE: reset events.mark >> NEEDED in Python?
@@ -477,8 +451,8 @@ class MyChadwickTools:
         if roster:
             bio = MyCwlib.cwlib_roster_player_find(p_roster, bytes(pitcher.player_id))
         if bio:
-            name = bytes_to_str(bio.contents.last_name[:20]) + " " \
-                   + bytes_to_str(bio.contents.first_name[:1],1)
+            name = LP_c_char_to_str(bio.contents.last_name[:20]) + " " \
+                   + LP_c_char_to_str(bio.contents.first_name[:1], 1)
         else:
             name = pitcher.name
         self.lgr.info(F"pitcher name = {name}")
@@ -509,7 +483,6 @@ class MyChadwickTools:
         print(F" {pitching.bb:2}", end = '') if pitching.bb != -1 else print("   ", end = '')
         print(F" {pitching.so:2}") if pitching.so != -1 else print("   ")
 
-    # Output the count of double plays by team
     # void cwbox_print_double_play(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_double_plays(self, p_game, p_box, p_vis, p_home):
         self.lgr.info("print_double_plays():\n----------------------------------")
@@ -517,10 +490,8 @@ class MyChadwickTools:
         if dp[0] == 0 and dp[1] == 0:
             return
         print("DP -- ", end = '')
-        vis_city = bytes_to_str(p_vis.contents.city[:32]) if p_vis \
-                   else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
-        home_city = bytes_to_str(p_home.contents.city[:32]) if p_home \
-                    else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
+        vis_city = LP_c_char_to_str(p_vis.contents.city[:32]) if p_vis else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
+        home_city = LP_c_char_to_str(p_home.contents.city[:32]) if p_home else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
 
         if dp[0] > 0 and dp[1] == 0:
             print(F"{vis_city} {dp[0]}")
@@ -529,7 +500,6 @@ class MyChadwickTools:
         else:
             print(F"{vis_city} {dp[0]}, {home_city} {dp[1]}")
 
-    # Output the count of triple plays by team
     # void cwbox_print_triple_play(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_triple_plays(self, p_game, p_box, p_vis, p_home):
         self.lgr.info("print_triple_plays():\n----------------------------------")
@@ -537,9 +507,9 @@ class MyChadwickTools:
         if tp[0] == 0 and tp[1] == 0:
             return
         print("TP -- ", end = '')
-        vis_city = bytes_to_str(p_vis.contents.city[:32]) if p_vis \
+        vis_city = LP_c_char_to_str(p_vis.contents.city[:32]) if p_vis \
                    else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
-        home_city = bytes_to_str(p_home.contents.city[:32]) if p_home \
+        home_city = LP_c_char_to_str(p_home.contents.city[:32]) if p_home \
                     else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
         if tp[0] > 0 and tp[1] == 0:
             print(F"{vis_city} {tp[0]}")
@@ -548,16 +518,15 @@ class MyChadwickTools:
         else:
             print(F"{vis_city} {tp[0]}, {home_city} {tp[1]}")
 
-    # Output the number of runners left on base
     # void cwbox_print_lob(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_lob(self, p_game, p_box, p_vis, p_home):
         self.lgr.info("print_lob():\n----------------------------------")
         lob = p_box.contents.lob
         if lob[0] == 0 and lob[1] == 0:
             return
-        vis_city = bytes_to_str(p_vis.contents.city[:32]) if p_vis \
+        vis_city = LP_c_char_to_str(p_vis.contents.city[:32]) if p_vis \
                    else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
-        home_city = bytes_to_str(p_home.contents.city[:32]) if p_home \
+        home_city = LP_c_char_to_str(p_home.contents.city[:32]) if p_home \
                     else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
         print(F"LOB -- {vis_city} {lob[0]}, {home_city} {lob[1]}")
 
@@ -568,7 +537,7 @@ class MyChadwickTools:
 
         markers = ["*", "+", "#"]
         count = t = 0
-        pitcher = MyCwlib.cwlib_box_get_starting_pitcher(p_box, t) # CWBoxPitcher *
+        pitcher = MyCwlib.cwlib_box_get_starting_pitcher(p_box, t)
         while pitcher:
             pitching = pitcher.contents.pitching.contents
             if pitching.xbinn > 0 and pitching.xb > 0:
@@ -646,49 +615,66 @@ def main_chadwick_py3(args:list):
     team, year, month, start, end, loglevel = process_input_parameters(args)
 
     lgr.setLevel(loglevel)
-    lgr.debug(str(lgr.handlers))
+    lgr.debug( str(lgr.handlers) )
+    lgr.critical(F"team = {team}; year = {year}")
 
-    limit = 1
-    lgr.info(F"byteorder = {sys.byteorder}; limit = {limit}")
+    cwtools = MyChadwickTools(lgr)
+    # TODO:
+    # year (####): find and parse the file 'TEAM####' to get the information on each team needed for a roster
+    # team (&&&): with 'year', need to find the roster file &&&####.ROS to load, and the file ####&&&.EV[N|A]
+    #             to find the events needed to build the boxscores
+    # ALSO: depending on the time frame, may actually need ALL the roster files and ALL the event files to find
+    #       the players and games requested
+    # month, start, end: need to construct the date-strings for each possible game to print out
+
     try:
-        # create and fill the visitor rosters
-        vis_rosters = {}
-        cal_roster = MyCwlib.cwlib_roster_create(CAL, 1996, "AL", "California", "Angels")
-        vis_rosters[CAL] = cal_roster
-        if not os.path.exists(roster_files[CAL]):
-            raise FileNotFoundError(F"CANNOT find file {roster_files[CAL]}!")
-        cal_fptr = chadwick.fopen( bytes(roster_files[CAL], "utf8") )
-        cal_roster_read_result = MyCwlib.cwlib_roster_read(cal_roster, cal_fptr)
-        lgr.info("CAL read result = " + ("Success." if cal_roster_read_result > 0 else "Failure!"))
-        sea_roster = MyCwlib.cwlib_roster_create("SEA", 1996, "AL", "Seattle", "Mariners")
-        vis_rosters[SEA] = sea_roster
-        if not os.path.exists(roster_files[SEA]):
-            raise FileNotFoundError(F"CANNOT find file {roster_files[SEA]}!")
-        sea_fptr = chadwick.fopen( bytes(roster_files[SEA], "utf8") )
-        sea_roster_read_result = MyCwlib.cwlib_roster_read(sea_roster, sea_fptr)
-        lgr.info("SEA read result = " + ("Success." if sea_roster_read_result > 0 else "Failure!"))
+        team_file_name = RETROSHEET_FOLDER + "event/regular/" + "TEAM" + year
+        lgr.info(F"team file name = {team_file_name}")
+        with open(team_file_name, newline = '') as csvfile:
+            teamreader = csv.reader(csvfile)
+            for row in teamreader:
+                rteam = row[0]
+                lgr.info(F"Found team {rteam}")
+                if rteam == team:
+                    lgr.info(F"\t-- league is {row[1]}L; city is {row[2]}; nickname is {row[3]}")
+                # create the rosters
+                cwtools.rosters[rteam] = MyCwlib.cwlib_roster_create(rteam, int(year), row[1]+"L", row[2], row[3])
+                roster_file = RETROSHEET_FOLDER + "rosters/" + rteam + year + ".ROS"
+                lgr.info(F"roster file name = {roster_file}")
+                if not os.path.exists(roster_file):
+                    raise FileNotFoundError(F"CANNOT find file {roster_file}!")
+                roster_fptr = chadwick.fopen( bytes(roster_file, "utf8") )
+                # fill the rosters
+                roster_read_result = MyCwlib.cwlib_roster_read(cwtools.rosters[rteam], roster_fptr)
+                lgr.info("roster read result = " + ("Success." if roster_read_result > 0 else "Failure!"))
+                chadwick.fclose(roster_fptr)
+                event_file = RETROSHEET_FOLDER + "event/regular/" + year + rteam + ".EV" + row[1]
+                if not os.path.exists(event_file):
+                    raise FileNotFoundError(F"CANNOT find file {event_file}!")
+                # store the event file paths
+                cwtools.event_files[rteam] = event_file
 
-        # create and fill the home roster
-        home = MyCwlib.cwlib_roster_create("TOR", 1996, "AL", "Toronto", "Blue Jays")
-        if not os.path.exists(tor_1996_roster):
-            raise FileNotFoundError(f"cannot find file {tor_1996_roster}")
-        home_fptr = chadwick.fopen( bytes(tor_1996_roster, "utf8") )
-        home_roster_read_result = MyCwlib.cwlib_roster_read(home, home_fptr)
-        lgr.info("HOME read result = " + ("Success." if home_roster_read_result > 0 else "Failure!"))
+        for item in cwtools.rosters.values():
+            lgr.debug(item)
+        for item in cwtools.event_files.values():
+            lgr.debug(item)
 
-        cwtools = MyChadwickTools(lgr)
+        limit = 6
         count = 0
-        games = chadwick.games(tor_1996_events)
+        games = chadwick.games( cwtools.event_files[team] )
         for game in games:
-            if game and count < limit:
-                lgr.info("\tFound a game.")
-                lgr.info(F"game id = {game.contents.game_id}")
+            if count < limit:
+                game_id = game.contents.game_id.decode(encoding = 'UTF-8')
+                lgr.critical(F" Found game id = {game_id}")
 
                 box = MyCwlib.cwlib_box_create(game)
                 events = chadwick.process_game(game)
                 results = tuple(events)
+
+                home_team = results[count]['HOME_TEAM_ID']
+                home = cwtools.rosters[home_team]
                 away_team = results[count]['AWAY_TEAM_ID']
-                visitor = vis_rosters[away_team]
+                visitor = cwtools.rosters[away_team]
 
                 cwtools.print_text(game, box, visitor, home)
 
