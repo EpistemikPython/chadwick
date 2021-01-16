@@ -128,15 +128,17 @@ class MyChadwickTools:
         self.lgr = logger
         self.lgr.info(F"Start {self.__class__.__name__}")
         self.rosters = {}
-        self.roster_files = {}
         self.event_files = {}
+        self.games = {}
 
     # void cwbox_print_timeofgame(CWGame * game)
     def print_time_of_game(self, p_game:pointer):
         self.lgr.info("print_time_of_game():\n----------------------------------")
         tog = int(MyCwlib.cwlib_game_info_lookup(p_game, b'timeofgame'))
         if tog and tog > 0:
-            print(F"T -- {tog // 60}:{(tog % 60):2}")
+            minutes = str(tog % 60)
+            if len(minutes) == 1: minutes = "0" + minutes
+            print(F"T -- {tog // 60}:{minutes}")
 
     # void cwbox_print_attendance(CWGame * game)
     def print_attendance(self, p_game):
@@ -447,7 +449,7 @@ class MyChadwickTools:
         pitcher = p_pitcher.contents
         player_id = pitcher.player_id.decode("UTF8")
         self.lgr.info(F"player id = {player_id}")
-        self.lgr.info(F"type(player id) = {type(player_id)}")
+        self.lgr.debug(F"type(player id) = {type(player_id)}")
         if roster:
             bio = MyCwlib.cwlib_roster_player_find(p_roster, bytes(pitcher.player_id))
         if bio:
@@ -460,7 +462,7 @@ class MyChadwickTools:
         game = p_game.contents
         wp = MyCwlib.cwlib_game_info_lookup(game, b"wp")
         self.lgr.info(F"winning pitcher id = {wp}")
-        self.lgr.info(F"type(wp) = {type(wp)}")
+        self.lgr.debug(F"type(wp) = {type(wp)}")
         lp = MyCwlib.cwlib_game_info_lookup(game, b"lp")
         self.lgr.info(F"losing pitcher id = {lp}")
         save = MyCwlib.cwlib_game_info_lookup(game, b"save")
@@ -474,7 +476,7 @@ class MyChadwickTools:
 
         pitching = pitcher.pitching.contents
         if pitching.xbinn > 0 and pitching.xb > 0:
-            for i in range(0, note_count // 3):
+            for i in range(0, (note_count // 3)+1):
                 name += markers[note_count % 3]
             note_count += 1
 
@@ -533,28 +535,32 @@ class MyChadwickTools:
     # void cwbox_print_pitcher_apparatus(CWBoxscore * boxscore)
     def print_pitcher_apparatus(self, p_box:pointer):
         # Output the pitching apparatus (list of pitchers who did not record an out in an inning)
-        self.lgr.info("self.print_pitcher_apparatus():\n----------------------------------")
+        self.lgr.info("print_pitcher_apparatus():\n----------------------------------")
 
         markers = ["*", "+", "#"]
+        # print(F"markers[0] = {markers[0]}")
         count = t = 0
-        pitcher = MyCwlib.cwlib_box_get_starting_pitcher(p_box, t)
-        while pitcher:
-            pitching = pitcher.contents.pitching.contents
-            if pitching.xbinn > 0 and pitching.xb > 0:
-                print("  ")
-                for i in range(0, count // 3):
-                    print(F"{markers[count % 3]}")
-                print(F" Pitched to {pitching.xb} batter{'' if pitching.xb == 1 else 's'} in {pitching.xbinn}", end = '')
-                if pitching.xbinn % 10 == 1 and pitching.xbinn != 11:
-                    print("st")
-                elif pitching.xbinn % 10 == 2 and pitching.xbinn != 12:
-                    print("nd")
-                elif pitching.xbinn % 10 == 3 and pitching.xbinn != 13:
-                    print("rd")
-                else:
-                    print("th")
-                count += 1
-            pitcher = pitcher.contents.next
+        for t in range(0, 2):
+            pitcher = MyCwlib.cwlib_box_get_starting_pitcher(p_box, t)
+            while pitcher:
+                pitching = pitcher.contents.pitching.contents
+                if pitching.xbinn > 0 and pitching.xb > 0:
+                    print("  ", end = '')
+                    cm3 = count // 3
+                    # print(F"count // 3 = {cm3}")
+                    for i in range(0, (count // 3)+1):
+                        print(F"{markers[count % 3]}", end = '')
+                    print(F" Pitched to {pitching.xb} batter{'' if pitching.xb == 1 else 's'} in {pitching.xbinn}", end = '')
+                    if pitching.xbinn % 10 == 1 and pitching.xbinn != 11:
+                        print("st")
+                    elif pitching.xbinn % 10 == 2 and pitching.xbinn != 12:
+                        print("nd")
+                    elif pitching.xbinn % 10 == 3 and pitching.xbinn != 13:
+                        print("rd")
+                    else:
+                        print("th")
+                    count += 1
+                pitcher = pitcher.contents.next
 
 # END class MyChadwickTools
 
@@ -565,12 +571,13 @@ def process_args():
     # required arguments
     required = arg_parser.add_argument_group('REQUIRED')
     required.add_argument('-t', '--team', required=True, help="retrosheet 3-character id for a team, e.g. TOR, CAL")
-    required.add_argument('-y', '--year', type=int, required=True, help="year to find the games to print out.")
+    required.add_argument('-y', '--year', type=int, required=True, help="year to find regular season games to print out.")
     # optional arguments
     arg_parser.add_argument('-m', '--month', type=int, help="month to print out games: 3 to 10")
-    arg_parser.add_argument('-s', '--startday', type=int, help="starting day to print out game(s): 1 to 31")
-    arg_parser.add_argument('-e', '--endday', type=int, help="end day to print out games: 2 to 31")
+    arg_parser.add_argument('-s', '--startday', type=int, help="start day of specified month to print out game(s): 1 to 31")
+    arg_parser.add_argument('-e', '--endday', type=int, help="end day of specified month to print out games: 2 to 31")
     arg_parser.add_argument('-l', '--level', default="INFO", help="set LEVEL of logging output")
+    # TODO: playoff flag
 
     return arg_parser
 
@@ -590,24 +597,26 @@ def process_input_parameters(argx:list):
 
     team = args.team if len(args.team) >= 3 else "TOR"
     if len(team) > 3: team = team[:3]
-    logging.debug(F"team = {team}")
+    logging.warning(F"team = {team}")
 
     year = str(args.year) if 1871 <= args.year <= 2020 else "1993"
-    logging.debug(F"year = {year}")
+    logging.warning(F"year = {year}")
 
     month = str(args.month) if args.month and 3 <= args.month <= 10 else ""
-    logging.debug(F"month = {month}")
+    if len(month) == 1: month = "0" + month
+    logging.warning(F"month = {month}")
 
     start = str(args.startday) if args.startday and 1 <= args.startday <= 31 else ""
-    logging.debug(F"start = {start}")
+    if len(start) == 1: start = "0" + start
+    logging.warning(F"start = {start}")
 
     end = str(args.endday) if args.endday and 2 <= args.endday <= 31 else ""
-    logging.debug(F"end = {end}")
+    if len(end) == 1: end = "0" + end
+    logging.warning(F"end = {end}")
 
     return team, year, month, start, end, loglevel
 
 
-# TODO: team and year as required parameters; month and day as optional parameters
 def main_chadwick_py3(args:list):
     log_name = "myChadwick"
     lgr = logging.getLogger(log_name)
@@ -659,28 +668,61 @@ def main_chadwick_py3(args:list):
         for item in cwtools.event_files.values():
             lgr.debug(item)
 
-        limit = 6
-        count = 0
-        games = chadwick.games( cwtools.event_files[team] )
-        for game in games:
-            if count < limit:
+        smonth_id = "03"
+        emonth_id = "10"
+        sday_id = "01"
+        eday_id = "31"
+        if month:
+            if start:
+                sday_id = start
+                eday_id = start if not end or end < start else end
+            smonth_id = emonth_id = month
+        start_id = year + smonth_id + sday_id
+        lgr.info(F"start id = {start_id}")
+        end_id = year + emonth_id + eday_id
+        lgr.info(F"end id = {end_id}")
+        # limit = 10
+        # count = 0
+        for evteam in cwtools.event_files:
+            lgr.info(F"team = {evteam}")
+
+            cwgames = chadwick.games( cwtools.event_files[evteam] )
+            for game in cwgames:
+                # if count < limit:
                 game_id = game.contents.game_id.decode(encoding = 'UTF-8')
-                lgr.critical(F" Found game id = {game_id}")
+                lgr.info(F" Found game id = {game_id}")
+                game_date = game_id[3:11]
+                lgr.debug(F" game date = {game_date}")
+                # print(F"start id <= game date = {start_id <= game_date}")
+                # print(F"end id >= game date = {end_id >= game_date}")
 
-                box = MyCwlib.cwlib_box_create(game)
-                events = chadwick.process_game(game)
-                results = tuple(events)
+                if end_id >= game_date >= start_id:
+                    results = tuple( chadwick.process_game(game) )
+                    home_team = results[0]['HOME_TEAM_ID']
+                    away_team = results[0]['AWAY_TEAM_ID']
+                    if home_team == team or away_team == team:
+                        lgr.warning(F" Found game id = {game_id}")
+                        cwtools.games[game_id[3:]] = game
 
-                home_team = results[count]['HOME_TEAM_ID']
-                home = cwtools.rosters[home_team]
-                away_team = results[count]['AWAY_TEAM_ID']
-                visitor = cwtools.rosters[away_team]
+        sorted_games = sorted( cwtools.games.keys() )
+        # print(sorted_games)
+        for key in sorted_games:
+            game = cwtools.games[key]
+            box = MyCwlib.cwlib_box_create(game)
+            events = chadwick.process_game(game)
+            results = tuple(events)
+            # print(results)
 
-                cwtools.print_text(game, box, visitor, home)
+            home_team = results[0]['HOME_TEAM_ID']
+            home = cwtools.rosters[home_team]
+            away_team = results[0]['AWAY_TEAM_ID']
+            visitor = cwtools.rosters[away_team]
 
-                count += 1
+            cwtools.print_text(game, box, visitor, home)
+
+            # count += 1
     except Exception as ex:
-        lgr.warning(F"Exception: {repr(ex)}")
+        lgr.exception(F"Exception: {repr(ex)}")
 
 
 if __name__ == "__main__":
