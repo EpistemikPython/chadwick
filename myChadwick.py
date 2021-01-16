@@ -185,8 +185,7 @@ class MyChadwickTools:
                 print(F"{LP_c_char_to_str(p_home.contents.city[:32], 16):16}" if p_home
                       else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam"), end = '')
 
-            # TODO: handle extra-innings games
-            for ix in range(1,10):
+            for ix in range(1,30):
                 if linescore[ix][t] >= 10:
                     print(F"({linescore[ix][t]})", end = '')
                     runs += linescore[ix][t]
@@ -194,7 +193,14 @@ class MyChadwickTools:
                     print(F"{linescore[ix][t]}", end = '')
                     runs += linescore[ix][t]
                 else:
-                    print("x", end = '')
+                    if t == 0:
+                        break
+                    else:
+                        if linescore[ix][0] < 0:
+                            break
+                        else:
+                            print("x ", end = '')
+                            break
 
                 if ix % 3 == 0:
                     print(" ", end = '')
@@ -538,16 +544,13 @@ class MyChadwickTools:
         self.lgr.info("print_pitcher_apparatus():\n----------------------------------")
 
         markers = ["*", "+", "#"]
-        # print(F"markers[0] = {markers[0]}")
-        count = t = 0
+        count = 0
         for t in range(0, 2):
             pitcher = MyCwlib.cwlib_box_get_starting_pitcher(p_box, t)
             while pitcher:
                 pitching = pitcher.contents.pitching.contents
                 if pitching.xbinn > 0 and pitching.xb > 0:
                     print("  ", end = '')
-                    cm3 = count // 3
-                    # print(F"count // 3 = {cm3}")
                     for i in range(0, (count // 3)+1):
                         print(F"{markers[count % 3]}", end = '')
                     print(F" Pitched to {pitching.xb} batter{'' if pitching.xb == 1 else 's'} in {pitching.xbinn}", end = '')
@@ -628,14 +631,6 @@ def main_chadwick_py3(args:list):
     lgr.critical(F"team = {team}; year = {year}")
 
     cwtools = MyChadwickTools(lgr)
-    # TODO:
-    # year (####): find and parse the file 'TEAM####' to get the information on each team needed for a roster
-    # team (&&&): with 'year', need to find the roster file &&&####.ROS to load, and the file ####&&&.EV[N|A]
-    #             to find the events needed to build the boxscores
-    # ALSO: depending on the time frame, may actually need ALL the roster files and ALL the event files to find
-    #       the players and games requested
-    # month, start, end: need to construct the date-strings for each possible game to print out
-
     try:
         team_file_name = RETROSHEET_FOLDER + "event/regular/" + "TEAM" + year
         lgr.info(F"team file name = {team_file_name}")
@@ -668,6 +663,7 @@ def main_chadwick_py3(args:list):
         for item in cwtools.event_files.values():
             lgr.debug(item)
 
+        # get the start and end dates
         smonth_id = "03"
         emonth_id = "10"
         sday_id = "01"
@@ -681,20 +677,16 @@ def main_chadwick_py3(args:list):
         lgr.info(F"start id = {start_id}")
         end_id = year + emonth_id + eday_id
         lgr.info(F"end id = {end_id}")
-        # limit = 10
-        # count = 0
+
+        # get all the games for the requested team in the supplied date range
         for evteam in cwtools.event_files:
             lgr.info(F"team = {evteam}")
-
             cwgames = chadwick.games( cwtools.event_files[evteam] )
             for game in cwgames:
-                # if count < limit:
                 game_id = game.contents.game_id.decode(encoding = 'UTF-8')
                 lgr.info(F" Found game id = {game_id}")
                 game_date = game_id[3:11]
                 lgr.debug(F" game date = {game_date}")
-                # print(F"start id <= game date = {start_id <= game_date}")
-                # print(F"end id >= game date = {end_id >= game_date}")
 
                 if end_id >= game_date >= start_id:
                     results = tuple( chadwick.process_game(game) )
@@ -704,14 +696,13 @@ def main_chadwick_py3(args:list):
                         lgr.warning(F" Found game id = {game_id}")
                         cwtools.games[game_id[3:]] = game
 
+        # sort the games and print out the information
         sorted_games = sorted( cwtools.games.keys() )
-        # print(sorted_games)
         for key in sorted_games:
             game = cwtools.games[key]
             box = MyCwlib.cwlib_box_create(game)
             events = chadwick.process_game(game)
             results = tuple(events)
-            # print(results)
 
             home_team = results[0]['HOME_TEAM_ID']
             home = cwtools.rosters[home_team]
@@ -719,8 +710,6 @@ def main_chadwick_py3(args:list):
             visitor = cwtools.rosters[away_team]
 
             cwtools.print_text(game, box, visitor, home)
-
-            # count += 1
     except Exception as ex:
         lgr.exception(F"Exception: {repr(ex)}")
 
