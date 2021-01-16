@@ -130,6 +130,7 @@ class MyChadwickTools:
         self.rosters = {}
         self.event_files = {}
         self.games = {}
+        self.note_count = 0
 
     # void cwbox_print_timeofgame(CWGame * game)
     def print_time_of_game(self, p_game:pointer):
@@ -235,11 +236,11 @@ class MyChadwickTools:
             event = event.next
         return ""
 
-# void cwbox_print_text(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
+    # void cwbox_print_text(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_text( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
         self.lgr.info("print_text():\n----------------------------------")
 
-        note_count = 0
+        self.note_count = 0
         slots = [1, 1]
         players = list()
         ab = [0, 0]
@@ -305,7 +306,7 @@ class MyChadwickTools:
             else:
                 print(F"  {home_city:18}   IP  H  R ER BB SO")
             while pitcher:
-                self.print_pitcher(p_game, pitcher, (p_vis if (t == 0) else p_home), note_count)
+                self.print_pitcher( p_game, pitcher, (p_vis if (t == 0) else p_home) )
                 pitcher = pitcher.contents.next
             if t == 0:
                 print("")
@@ -445,11 +446,11 @@ class MyChadwickTools:
         self.print_attendance(p_game)
 
     # void cwbox_print_pitcher(CWGame * game, CWBoxPitcher * pitcher, CWRoster * roster, int * note_count)
-    def print_pitcher( self, p_game, p_pitcher, p_roster, note_count ):
+    def print_pitcher( self, p_game, p_pitcher, p_roster ):
         self.lgr.info("print_pitcher():\n----------------------------------")
         # Output one pitcher's pitching line. The parameter 'note_count' keeps track of how many apparatus notes
         # have been emitted (for pitchers who do not record an out in an inning)
-        markers = ["*", "+", "#"]
+        markers = ['*', '+', '#']
         bio = None
         roster = p_roster.contents
         pitcher = p_pitcher.contents
@@ -482,9 +483,9 @@ class MyChadwickTools:
 
         pitching = pitcher.pitching.contents
         if pitching.xbinn > 0 and pitching.xb > 0:
-            for i in range(0, (note_count // 3)+1):
-                name += markers[note_count % 3]
-            note_count += 1
+            for i in range(0, (self.note_count // 3)+1):
+                name += markers[self.note_count % 3]
+            self.note_count += 1
 
         print(F"{name:20} {pitching.outs // 3:2}.{pitching.outs % 3} {pitching.h:2} {pitching.r:2}", end = '')
         print(F" {pitching.er:2}", end = '') if pitching.er != -1 else print("   ", end = '')
@@ -543,7 +544,7 @@ class MyChadwickTools:
         # Output the pitching apparatus (list of pitchers who did not record an out in an inning)
         self.lgr.info("print_pitcher_apparatus():\n----------------------------------")
 
-        markers = ["*", "+", "#"]
+        markers = ['*', '+', '#']
         count = 0
         for t in range(0, 2):
             pitcher = MyCwlib.cwlib_box_get_starting_pitcher(p_box, t)
