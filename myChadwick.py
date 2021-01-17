@@ -17,14 +17,14 @@ RETROSHEET_FOLDER = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/"
 def c_char_p_to_str(lpcc:c_char_p, maxlen:int=20) -> str:
     """Convert a C-type char array to a python string:
        convert and concatenate the values until hit the null terminator or the char limit"""
-    bytez = lpcc[:maxlen]
+    limit = 1 if maxlen <= 1 else min(maxlen, 256)
+    bytez = lpcc[:limit]
     result = ""
     if len(bytez) == 0:
         return result
     if len(bytez) == 1:
         return chr(bytez[0])
     ct = 0
-    limit = 1 if maxlen <= 1 else min(maxlen, 256)
     for b in bytez:
         if b == 0:
             return result.strip()
@@ -217,24 +217,24 @@ class MyChadwickTools:
                 print(F"  {outs_at_end} out{'' if outs_at_end == 1 else 's'} when winning run scored.")
 
     # char * cwbox_game_find_name(CWGame * game, char * player_id)
-    def game_find_name(self, p_game:pointer, player_id:bytes) -> str:
+    def game_find_name(self, p_game:pointer, player_id:c_char_p) -> str:
         # Derive a player name from an appearance record in a game. Used when roster file is not available.
         self.lgr.info("game_find_name():\n----------------------------------")
 
         app = p_game.contents.first_starter
         while app:
-            if app.player_id == player_id:
-                return app.name.decode(encoding='UTF-8')
-            app = app.next
+            if c_char_p_to_str(app.contents.player_id) == c_char_p_to_str(player_id):
+                return c_char_p_to_str(app.contents.name)
+            app = p_game.contents.next.contents.first_starter
 
         event = p_game.contents.first_event
         while event:
             app = event.contents.first_sub
             while app:
-                if app.player_id == player_id:
-                    return app.name.decode(encoding='UTF-8')
-                app = app.next
-            event = event.next
+                if c_char_p_to_str(app.contents.player_id) == c_char_p_to_str(player_id):
+                    return c_char_p_to_str(app.contents.name)
+                app = p_game.contents.next.contents.first_sub
+            event = p_game.contents.next.contents.first_event
         return ""
 
     # void cwbox_print_text(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
@@ -389,30 +389,34 @@ class MyChadwickTools:
                     search_event.mark = 1
                 search_event = search_event.next.contents if search_event.next else None
 
-            if p_vis:
-                bio = MyCwlib.cwlib_roster_player_find(p_vis, event.players[index])
-            if not bio and p_home:
-                bio = MyCwlib.cwlib_roster_player_find(p_home, event.players[index])
+            # if p_vis:
+            #     bio = MyCwlib.cwlib_roster_player_find(p_vis, event.players[index])
+            # if not bio and p_home:
+            #     bio = MyCwlib.cwlib_roster_player_find(p_home, event.players[index])
             if not bio:
-                name = self.game_find_name(p_game, event.players[index])
+                self.lgr.info(F"event.players[index] = {event.players[index]}")
+                self.lgr.info(F"type(event.players[index]) = {type(event.players[index])}")
+                # name = self.game_find_name(p_game, event.players[index])
+                name = event.players[index].decode('UTF8')
+                self.lgr.info(F"name = {name}")
             if comma:
                 print(", ", end = '')
             if count == 1:
                 if bio:
                     print(F"{c_char_p_to_str(bio.contents.last_name)} "
-                          F"{c_char_p_to_str(bio.contents.first_name[0], 1)}", end = '')
+                          F"{c_char_p_to_str(bio.contents.first_name[0],1)}", end = '')
                 elif name:
                     print(F"{name}", end = '')
                 else:
-                    print(F"{event.players[index]}", end = '')
+                    print(F"{event.players[index].decode('UTF8')}", end = '')
             else:
                 if bio:
                     print(F"{c_char_p_to_str(bio.contents.last_name)} "
-                          F"{c_char_p_to_str(bio.contents.first_name[0], 1)} {count}", end = '')
+                          F"{c_char_p_to_str(bio.contents.first_name[0],1)} {count}", end = '')
                 elif name:
                     print(F"{name} {count}", end = '')
                 else:
-                    print(F"{c_char_p_to_str(event.players[index])} {count}", end = '')
+                    print(F"{event.players[index].decode('UTF8')} {count}", end = '')
             comma = 1
         print("")
         # NOTE: reset events.mark >> NEEDED in Python?
@@ -548,18 +552,23 @@ class MyChadwickTools:
                     search_event.contents.mark = 1
                 search_event = search_event.contents.next
 
-            if p_vis:
-                batter = MyCwlib.cwlib_roster_player_find(p_vis, event.contents.players[0])
-            if not batter and p_home:
-                batter = MyCwlib.cwlib_roster_player_find(p_home, event.contents.players[0])
+            # if p_vis:
+            #     batter = MyCwlib.cwlib_roster_player_find(p_vis, event.contents.players[0])
+            # if not batter and p_home:
+            #     batter = MyCwlib.cwlib_roster_player_find(p_home, event.contents.players[0])
             if not batter:
-                batter_name = self.game_find_name(p_game, event.contents.players[0])
-            if p_vis:
-                pitcher = MyCwlib.cwlib_roster_player_find(p_vis, event.contents.players[1])
-            if not pitcher and p_home:
-                pitcher = MyCwlib.cwlib_roster_player_find(p_home, event.contents.players[1])
+                self.lgr.info(F"event.contents.players[0] = {event.contents.players[0]}")
+                self.lgr.info(F"type(event.contents.players[0]) = {type(event.contents.players[0])}")
+                # batter_name = self.game_find_name(p_game, event.contents.players[0])
+                batter_name = event.contents.players[0].decode('UTF8')
+                self.lgr.info(F"batter name = {batter_name}")
+            # if p_vis:
+            #     pitcher = MyCwlib.cwlib_roster_player_find(p_vis, event.contents.players[1])
+            # if not pitcher and p_home:
+            #     pitcher = MyCwlib.cwlib_roster_player_find(p_home, event.contents.players[1])
             if not pitcher:
-                pitcher_name = self.game_find_name(p_game, event.contents.players[1])
+                # pitcher_name = self.game_find_name(p_game, event.contents.players[1])
+                pitcher_name = event.contents.players[1].decode('UTF8')
             if comma: print(", ", end = '')
 
             if pitcher:
