@@ -142,7 +142,7 @@ class MyChadwickTools:
             print(F"T -- {tog // 60}:{minutes}")
 
     # void cwbox_print_attendance(CWGame * game)
-    def print_attendance(self, p_game):
+    def print_attendance(self, p_game:pointer):
         self.lgr.info("print_attendance():\n----------------------------------")
         print(F"A -- {MyCwlib.cwlib_game_info_lookup(p_game, b'attendance')}")
 
@@ -261,7 +261,7 @@ class MyChadwickTools:
         home_city = LP_c_char_to_str(p_home.contents.city[:32]) if p_home \
                     else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
 
-        print(F"{vis_city:20} AB  R  H RBI    {home_city:20} AB  R  H RBI    ")
+        print(F"  {vis_city:18} AB  R  H RBI      {home_city:18} AB  R  H RBI    ")
 
         while slots[0] <= 9 or slots[1] <= 9 :
             for t in range(0,2):
@@ -367,7 +367,7 @@ class MyChadwickTools:
             print(F"{outstr:20} {batting.ab:2} {batting.r:2} {batting.h:2}", end = '')
 
     # void cwbox_print_player_apparatus(CWGame *game, CWBoxEvent *list, int index, char *label, CWRoster *visitors, CWRoster *home)
-    def print_player_apparatus(self, p_game, p_events, index, label, p_vis, p_home):
+    def print_player_apparatus(self, p_game:pointer, p_events:pointer, index:int, label:str, p_vis:pointer, p_home:pointer):
         # Generic output for list of events (2B, 3B, WP, etc)
         self.lgr.info("print_player_apparatus():\n----------------------------------")
         if not p_events:
@@ -422,7 +422,7 @@ class MyChadwickTools:
             event = event.next.contents if event.next else None
 
     # void cwbox_print_apparatus(CWGame * game, CWBoxscore * boxscore, CWRoster * visitors, CWRoster * home)
-    def print_apparatus( self, p_game, p_box, p_vis, p_home ):
+    def print_apparatus( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
         # Output the apparatus (list of events and other miscellaneous game information)
         self.lgr.info("print_apparatus():\n----------------------------------")
 
@@ -438,7 +438,7 @@ class MyChadwickTools:
         self.print_player_apparatus(p_game, boxscore.cs_list, 0, "CS", p_vis, p_home)
         self.print_player_apparatus(p_game, boxscore.sh_list, 0, "SH", p_vis, p_home)
         self.print_player_apparatus(p_game, boxscore.sf_list, 0, "SF", p_vis, p_home)
-        # cwbox_print_hbp_apparatus(p_game, boxscore.hp_list, p_vis, p_home)
+        self.print_hbp(p_game, boxscore.hp_list, p_vis, p_home)
         self.print_player_apparatus(p_game, boxscore.wp_list, 0, "WP", p_vis, p_home)
         self.print_player_apparatus(p_game, boxscore.bk_list, 0, "Balk", p_vis, p_home)
         self.print_player_apparatus(p_game, boxscore.pb_list, 1, "PB", p_vis, p_home)
@@ -446,7 +446,7 @@ class MyChadwickTools:
         self.print_attendance(p_game)
 
     # void cwbox_print_pitcher(CWGame * game, CWBoxPitcher * pitcher, CWRoster * roster, int * note_count)
-    def print_pitcher( self, p_game, p_pitcher, p_roster ):
+    def print_pitcher( self, p_game:pointer, p_pitcher:pointer, p_roster:pointer ):
         self.lgr.info("print_pitcher():\n----------------------------------")
         # Output one pitcher's pitching line. The parameter 'note_count' keeps track of how many apparatus notes
         # have been emitted (for pitchers who do not record an out in an inning)
@@ -493,7 +493,7 @@ class MyChadwickTools:
         print(F" {pitching.so:2}") if pitching.so != -1 else print("   ")
 
     # void cwbox_print_double_play(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
-    def print_double_plays(self, p_game, p_box, p_vis, p_home):
+    def print_double_plays(self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer):
         self.lgr.info("print_double_plays():\n----------------------------------")
         dp = p_box.contents.dp
         if dp[0] == 0 and dp[1] == 0:
@@ -510,7 +510,7 @@ class MyChadwickTools:
             print(F"{vis_city} {dp[0]}, {home_city} {dp[1]}")
 
     # void cwbox_print_triple_play(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
-    def print_triple_plays(self, p_game, p_box, p_vis, p_home):
+    def print_triple_plays(self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer):
         self.lgr.info("print_triple_plays():\n----------------------------------")
         tp = p_box.contents.tp
         if tp[0] == 0 and tp[1] == 0:
@@ -527,8 +527,68 @@ class MyChadwickTools:
         else:
             print(F"{vis_city} {tp[0]}, {home_city} {tp[1]}")
 
+    # void cwbox_print_hbp_apparatus(CWGame *game, CWBoxEvent *list,  CWRoster *visitors, CWRoster *home)
+    def print_hbp(self, p_game:pointer, p_event:pointer, p_vis:pointer, p_home:pointer):
+        self.lgr.info("print_hbp():\n----------------------------------")
+        if not p_event:
+            return
+        event = p_event
+        comma = 0
+        print("HBP -- ", end = '')
+        while event:
+            search_event = event
+            batter = pitcher = None
+            batter_name = pitcher_name = ""
+            count = 0
+            if event.contents.mark > 0:
+                event = event.contents.next
+                continue
+
+            while search_event:
+                if event.contents.players[0] == search_event.contents.players[0] \
+                        and event.contents.players[1] == search_event.contents.players[1]:
+                    count += 1
+                    search_event.contents.mark = 1
+                search_event = search_event.contents.next
+
+            if p_vis:
+                batter = MyCwlib.cwlib_roster_player_find(p_vis, event.contents.players[0])
+            if not batter and p_home:
+                batter = MyCwlib.cwlib_roster_player_find(p_home, event.contents.players[0])
+            if not batter:
+                batter_name = self.game_find_name(p_game, event.contents.players[0])
+            if p_vis:
+                pitcher = MyCwlib.cwlib_roster_player_find(p_vis, event.contents.players[1])
+            if not pitcher and p_home:
+                pitcher = MyCwlib.cwlib_roster_player_find(p_home, event.contents.players[1])
+            if not pitcher:
+                pitcher_name = self.game_find_name(p_game, event.contents.players[1])
+            if comma: print(", ", end = '')
+
+            if pitcher:
+                print(F"by {LP_c_char_to_str(pitcher.contents.last_name[:20])} "
+                      F"{pitcher.contents.first_name[0].decode('UTF8')} ", end = '')
+            else:
+                print(F"by {pitcher_name if pitcher_name else LP_c_char_to_str(event.contents.players[1])} ", end = '')
+            if batter:
+                print(F"({LP_c_char_to_str(batter.contents.last_name[:20])} "
+                      F"{batter.contents.first_name[0].decode('UTF8')})", end = '')
+            else:
+                print(F"({batter_name if batter_name else LP_c_char_to_str(event.contents.players[0])})", end = '')
+            if count != 1:
+                print(" %d", count)
+
+            comma = 1
+
+        print("")
+        # NOTE: reset events.mark >> NEEDED in Python?
+        event = p_event
+        while event:
+            event.contents.mark = 0
+            event = event.contents.next
+
     # void cwbox_print_lob(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
-    def print_lob(self, p_game, p_box, p_vis, p_home):
+    def print_lob(self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer):
         self.lgr.info("print_lob():\n----------------------------------")
         lob = p_box.contents.lob
         if lob[0] == 0 and lob[1] == 0:
@@ -698,8 +758,7 @@ def main_chadwick_py3(args:list):
                         cwtools.games[game_id[3:]] = game
 
         # sort the games and print out the information
-        sorted_games = sorted( cwtools.games.keys() )
-        for key in sorted_games:
+        for key in sorted( cwtools.games.keys() ):
             game = cwtools.games[key]
             box = MyCwlib.cwlib_box_create(game)
             events = chadwick.process_game(game)
