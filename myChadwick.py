@@ -14,17 +14,18 @@ positions = ["", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph",
 RETROSHEET_FOLDER = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/"
 
 
-def LP_c_char_to_str(byt:bytes, maxlen:int=20) -> str:
+def c_char_p_to_str(lpcc:c_char_p, maxlen:int=20) -> str:
     """Convert a C-type char array to a python string:
        convert and concatenate the values until hit the null terminator or the char limit"""
-    if len(byt) == 1:
-        return chr(byt[0])
+    bytez = lpcc[:maxlen]
     result = ""
-    if len(byt) == 0:
+    if len(bytez) == 0:
         return result
+    if len(bytez) == 1:
+        return chr(bytez[0])
     ct = 0
-    limit = 1 if maxlen <= 1 else min(maxlen, 1024)
-    for b in byt:
+    limit = 1 if maxlen <= 1 else min(maxlen, 256)
+    for b in bytez:
         if b == 0:
             return result.strip()
         result += chr(b)
@@ -163,11 +164,11 @@ class MyChadwickTools:
         game_number_str = "" if game_number == "0" else F", game #{game_number}"
 
         vis_city = p_vis.contents.city
-        vis_city_text = LP_c_char_to_str(vis_city[:32])
+        vis_city_text = c_char_p_to_str(vis_city)
         self.lgr.info(F"visitor = {vis_city_text}")
 
         home_city = p_home.contents.city
-        home_city_text = LP_c_char_to_str(home_city[:32])
+        home_city_text = c_char_p_to_str(home_city)
         self.lgr.info(F"home = {home_city_text}")
 
         print(F"\nGame of {month}/{day}/{year}{game_number_str} -- {vis_city_text} @ {home_city_text} ({dn_code})\n")
@@ -180,10 +181,10 @@ class MyChadwickTools:
         for t in range(0,2):
             runs = 0
             if t == 0:
-                print(F"{LP_c_char_to_str(p_vis.contents.city[:32], 16):16}" if p_vis
+                print(F"{c_char_p_to_str(p_vis.contents.city, 16):16}" if p_vis
                       else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam"), end = '')
             else:
-                print(F"{LP_c_char_to_str(p_home.contents.city[:32], 16):16}" if p_home
+                print(F"{c_char_p_to_str(p_home.contents.city, 16):16}" if p_home
                       else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam"), end = '')
 
             for ix in range(1,30):
@@ -257,9 +258,8 @@ class MyChadwickTools:
 
         self.print_header(p_game, p_vis, p_home)
 
-        vis_city = LP_c_char_to_str(p_vis.contents.city[:32]) if p_vis else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
-        home_city = LP_c_char_to_str(p_home.contents.city[:32]) if p_home \
-                    else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
+        vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
+        home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
 
         print(F"  {vis_city:18} AB  R  H RBI      {home_city:18} AB  R  H RBI    ")
 
@@ -329,7 +329,7 @@ class MyChadwickTools:
             bio = MyCwlib.cwlib_roster_player_find(p_roster, player.player_id)
 
         if bio:
-            name = LP_c_char_to_str(bio.contents.last_name[:20]) + " " + LP_c_char_to_str(bio.contents.first_name[:1], 1)
+            name = c_char_p_to_str(bio.contents.last_name) + " " + c_char_p_to_str(bio.contents.first_name, 1)
         else:
             name = player.name
         self.lgr.info(F"player name = {name}")
@@ -399,20 +399,20 @@ class MyChadwickTools:
                 print(", ", end = '')
             if count == 1:
                 if bio:
-                    print(F"{LP_c_char_to_str(bio.contents.last_name[:20])} "
-                          F"{LP_c_char_to_str(bio.contents.first_name[0][:1], 1)}", end = '')
+                    print(F"{c_char_p_to_str(bio.contents.last_name)} "
+                          F"{c_char_p_to_str(bio.contents.first_name[0], 1)}", end = '')
                 elif name:
                     print(F"{name}", end = '')
                 else:
                     print(F"{event.players[index]}", end = '')
             else:
                 if bio:
-                    print(F"{LP_c_char_to_str(bio.contents.last_name[:20])} "
-                          F"{LP_c_char_to_str(bio.contents.first_name[0][:1], 1)} {count}", end = '')
+                    print(F"{c_char_p_to_str(bio.contents.last_name)} "
+                          F"{c_char_p_to_str(bio.contents.first_name[0], 1)} {count}", end = '')
                 elif name:
                     print(F"{name} {count}", end = '')
                 else:
-                    print(F"{LP_c_char_to_str(event.players[index][:20])} {count}", end = '')
+                    print(F"{c_char_p_to_str(event.players[index])} {count}", end = '')
             comma = 1
         print("")
         # NOTE: reset events.mark >> NEEDED in Python?
@@ -460,8 +460,7 @@ class MyChadwickTools:
         if roster:
             bio = MyCwlib.cwlib_roster_player_find(p_roster, bytes(pitcher.player_id))
         if bio:
-            name = LP_c_char_to_str(bio.contents.last_name[:20]) + " " \
-                   + LP_c_char_to_str(bio.contents.first_name[:1], 1)
+            name = c_char_p_to_str(bio.contents.last_name) + " " + c_char_p_to_str(bio.contents.first_name, 1)
         else:
             name = pitcher.name
         self.lgr.info(F"pitcher name = {name}")
@@ -499,8 +498,8 @@ class MyChadwickTools:
         if dp[0] == 0 and dp[1] == 0:
             return
         print("DP -- ", end = '')
-        vis_city = LP_c_char_to_str(p_vis.contents.city[:32]) if p_vis else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
-        home_city = LP_c_char_to_str(p_home.contents.city[:32]) if p_home else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
+        vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
+        home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
 
         if dp[0] > 0 and dp[1] == 0:
             print(F"{vis_city} {dp[0]}")
@@ -516,10 +515,8 @@ class MyChadwickTools:
         if tp[0] == 0 and tp[1] == 0:
             return
         print("TP -- ", end = '')
-        vis_city = LP_c_char_to_str(p_vis.contents.city[:32]) if p_vis \
-                   else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
-        home_city = LP_c_char_to_str(p_home.contents.city[:32]) if p_home \
-                    else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
+        vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
+        home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
         if tp[0] > 0 and tp[1] == 0:
             print(F"{vis_city} {tp[0]}")
         elif tp[0] == 0 and tp[1] > 0:
@@ -566,15 +563,15 @@ class MyChadwickTools:
             if comma: print(", ", end = '')
 
             if pitcher:
-                print(F"by {LP_c_char_to_str(pitcher.contents.last_name[:20])} "
+                print(F"by {c_char_p_to_str(pitcher.contents.last_name)} "
                       F"{pitcher.contents.first_name[0].decode('UTF8')} ", end = '')
             else:
-                print(F"by {pitcher_name if pitcher_name else LP_c_char_to_str(event.contents.players[1])} ", end = '')
+                print(F"by {pitcher_name if pitcher_name else c_char_p_to_str(event.contents.players[1])} ", end = '')
             if batter:
-                print(F"({LP_c_char_to_str(batter.contents.last_name[:20])} "
+                print(F"({c_char_p_to_str(batter.contents.last_name)} "
                       F"{batter.contents.first_name[0].decode('UTF8')})", end = '')
             else:
-                print(F"({batter_name if batter_name else LP_c_char_to_str(event.contents.players[0])})", end = '')
+                print(F"({batter_name if batter_name else c_char_p_to_str(event.contents.players[0])})", end = '')
             if count != 1:
                 print(" %d", count)
 
@@ -593,10 +590,8 @@ class MyChadwickTools:
         lob = p_box.contents.lob
         if lob[0] == 0 and lob[1] == 0:
             return
-        vis_city = LP_c_char_to_str(p_vis.contents.city[:32]) if p_vis \
-                   else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
-        home_city = LP_c_char_to_str(p_home.contents.city[:32]) if p_home \
-                    else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
+        vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
+        home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
         print(F"LOB -- {vis_city} {lob[0]}, {home_city} {lob[1]}")
 
     # void cwbox_print_pitcher_apparatus(CWBoxscore * boxscore)
