@@ -221,12 +221,15 @@ class MyChadwickTools:
         self.lgr.info("print_text():\n----------------------------------")
 
         self.note_count = 0
-        slots = [1, 1]
+        slots = [1,1]
         players = list()
-        ab = [0, 0]
-        r  = [0, 0]
-        h  = [0, 0]
-        bi = [0, 0]
+        ab = [0,0]
+        r  = [0,0]
+        h  = [0,0]
+        bi = [0,0]
+        pa = [0,0]
+        bb = [0,0]
+        so = [0,0]
 
         player0 = MyCwlib.cwlib_box_get_starter(p_box, 0, 1)
         self.lgr.debug(F"type(player0) = {type(player0)}")
@@ -240,16 +243,20 @@ class MyChadwickTools:
         vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
         home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
 
-        print(F"  {vis_city:18} AB  R  H RBI      {home_city:18} AB  R  H RBI    ")
+        print(F"  {vis_city:18} PA  AB   H  BB  SO  R RBI      {home_city:18} PA  AB   H  BB  SO  R RBI    ")
 
         while slots[0] <= 9 or slots[1] <= 9 :
             for t in range(0,2):
                 if slots[t] <= 9:
                     self.print_player(players[t], p_vis if (t == 0) else p_home)
+                    # NOTE: misspelling of 'battiing' in the python wrapper file
                     batting = players[t].contents.battiing.contents
                     ab[t] += batting.ab
                     r[t]  += batting.r
                     h[t]  += batting.h
+                    bb[t] += batting.bb
+                    pa[t] += batting.pa
+                    so[t] += batting.so
                     if batting.bi != -1:
                         bi[t] += batting.bi
                     else:
@@ -263,16 +270,18 @@ class MyChadwickTools:
                             if slots[t] <= 9:
                                 players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
                 else:
-                    print(F"{''.ljust(32)}", end = '')
+                    print(F"{''.ljust(45)}", end = '')
                 print("     ", end = ''),
             print("")
 
-        print(F"{''.ljust(20)} -- -- -- -- {''.ljust(24)} -- -- -- --")
+        print(F"{''.ljust(20)} --  --  --  --  -- -- -- {''.ljust(24)} --  --  --  --  -- -- --")
 
         if bi[0] == -1 or bi[1] == -1:
-            print(F"{''.ljust(20)} {ab[0]:2} {r[0]:2} {h[0]:2}    {''.ljust(24)} {ab[1]:2} {r[1]:2} {h[1]:2}")
+            print(F"{''.ljust(20)}{pa[0]:3}{ab[0]:4}{h[0]:4}{bb[0]:4}{so[0]:4}{r[0]:3}    "
+                  F"{''.ljust(24)}{pa[1]:3}{ab[1]:4}{h[1]:4}{bb[1]:4}{so[1]:4}{r[1]:3}")
         else:
-            print(F"{''.ljust(20)} {ab[0]:2} {r[0]:2} {h[0]:2} {bi[0]:2} {''.ljust(24)} {ab[1]:2} {r[1]:2} {h[1]:2} {bi[1]:2}")
+            print(F"{''.ljust(20)}{pa[0]:3}{ab[0]:4}{h[0]:4}{bb[0]:4}{so[0]:4}{r[0]:3}{bi[0]:3} "
+                  F"{''.ljust(24)}{pa[1]:3}{ab[1]:4}{h[1]:4}{bb[1]:4}{so[1]:4}{r[1]:3}{bi[1]:3}")
         print("")
 
         self.print_linescore(p_game, p_box, p_vis, p_home)
@@ -335,11 +344,14 @@ class MyChadwickTools:
 
         self.lgr.info(F"outstr = {outstr}")
 
+        # NOTE: misspelling of 'battiing' in the python wrapper file
         batting = player.battiing.contents
-        if batting.bi != -1:
-            print(F"{outstr:20} {batting.ab:2} {batting.r:2} {batting.h:2} {batting.bi:2}", end = '')
+        if batting.bi == -1:
+            print(F"{outstr:20}{batting.pa:3}{batting.ab:4}{batting.h:4}"
+                  F"{batting.bb:3}{batting.so:4}{batting.r:3}", end = '')
         else:
-            print(F"{outstr:20} {batting.ab:2} {batting.r:2} {batting.h:2}", end = '')
+            print(F"{outstr:20}{batting.pa:3}{batting.ab:4}{batting.h:4} "
+                  F"{batting.bb:3}{batting.so:4}{batting.r:3}{batting.bi:3}", end = '')
 
     # void
     # cwbox_print_player_apparatus(CWGame *game, CWBoxEvent *list, int index, char *label, CWRoster *visitors, CWRoster *home)
@@ -609,6 +621,7 @@ def process_args():
     required.add_argument('-t', '--team', required=True, help="retrosheet 3-character id for a team, e.g. TOR, CAL")
     required.add_argument('-y', '--year', type=int, required=True, help="year to find regular season games to print out.")
     # optional arguments
+    # TODO: replace month, startday, endday with start = mmdd and end = mmdd ?
     arg_parser.add_argument('-m', '--month', type=int, help="month to print out games: 3 to 10")
     arg_parser.add_argument('-s', '--startday', type=int, help="start day of specified month to print out game(s): 1 to 31")
     arg_parser.add_argument('-e', '--endday', type=int, help="end day of specified month to print out games: 2 to 31")
