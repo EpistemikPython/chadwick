@@ -1,3 +1,4 @@
+import datetime
 import sys
 import csv
 from pychadwick.box import CWBoxPlayer, CWBoxPitcher
@@ -5,6 +6,7 @@ from pychadwick.chadwick import *
 from pychadwick.roster import CWPlayer
 from ctypes import c_void_p
 from argparse import ArgumentParser
+from datetime import datetime as dt
 
 chadwick = Chadwick()
 cwlib = chadwick.libchadwick
@@ -658,6 +660,8 @@ def process_input_parameters(argx:list):
 
 def main_chadwick_py3(args:list):
     lgr = logging.getLogger("MyChadwick")
+    run_start_time = dt.now()
+    lgr.critical(F" Run Start time = {run_start_time.strftime('%Y-%m-%d_%H:%M:%S:%f')}")
 
     team, year, month, start, end, loglevel = process_input_parameters(args)
 
@@ -747,6 +751,9 @@ def main_chadwick_py3(args:list):
 
     except Exception as ex:
         lgr.exception(F"Exception: {repr(ex)}")
+
+    run_time = (dt.now() - run_start_time).total_seconds()
+    lgr.critical(F" Running time = {(run_time // 60)} minutes, {(run_time % 60)} seconds")
 
 
 if __name__ == "__main__":
