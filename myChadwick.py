@@ -211,10 +211,10 @@ class MyChadwickTools:
 
         outs_at_end = p_box.contents.outs_at_end
         if outs_at_end != 3:
-            if not p_box.contents.walk_off:
-                print(F"  {outs_at_end} out{'' if outs_at_end == 1 else 's'} when game ended.")
-            else:
+            if p_box.contents.walk_off:
                 print(F"  {outs_at_end} out{'' if outs_at_end == 1 else 's'} when winning run scored.")
+            else:
+                print(F"  {outs_at_end} out{'' if outs_at_end == 1 else 's'} when game ended.")
 
     # void cwbox_print_text(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_text( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
@@ -325,18 +325,14 @@ class MyChadwickTools:
 
         if len(posstr) <= 10:
             if len(posstr) + len(name) > 18:
-                outstr = name[:(18 - len(posstr))]
-                outstr += ", "
+                outstr = F"{name[:(18 - len(posstr))]}, "
             else:
-                outstr = name
-                outstr += ", "
+                outstr = F"{name}, "
             outstr += posstr
         else:
             # When there are a lot of positions, can't do much sensibly...
-            outstr = name
-            outstr += ", "
-            outstr += positions[player.positions[0]]
-            outstr += ",..."
+            outstr = F"{name}, {positions[player.positions[0]]}..."
+
         self.lgr.info(F"outstr = {outstr}")
 
         batting = player.battiing.contents
