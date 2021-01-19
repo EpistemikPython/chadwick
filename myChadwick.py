@@ -1,3 +1,18 @@
+##############################################################################################################################
+# coding=utf-8
+#
+# myChadwick.py -- Chadwick baseball tools coded in Python3
+#
+# Original C code Copyright (c) 2002-2020
+# Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
+#
+# Port to Python3 and modifications Copyright (c) 2019-2021 Mark Sattolo <epistemik@gmail.com>
+
+__author__       = "Mark Sattolo"
+__author_email__ = "epistemik@gmail.com"
+__created__ = "2019-11-07"
+__updated__ = "2021-01-18"
+
 import csv
 import sys
 from argparse import ArgumentParser
@@ -10,8 +25,8 @@ from pychadwick.roster import CWPlayer
 chadwick = Chadwick()
 cwlib = chadwick.libchadwick
 
-positions = ["", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"]
-markers = ['*', '+', '#']
+POSITIONS = ["", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"]
+MARKERS = ['*', '+', '#']
 
 RETROSHEET_FOLDER = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/"
 
@@ -173,7 +188,7 @@ class MyChadwickTools:
         home_city_text = c_char_p_to_str(home_city)
         self.lgr.info(F"home = {home_city_text}")
 
-        print(F"\nGame of {month}/{day}/{year}{game_number_str} -- {vis_city_text} @ {home_city_text} ({dn_code})\n")
+        print(F"\n\t\tGame of {month}/{day}/{year}{game_number_str} -- {vis_city_text} @ {home_city_text} ({dn_code})\n")
 
     # void cwbox_print_linescore(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_linescore( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
@@ -330,7 +345,7 @@ class MyChadwickTools:
         for pos in range(0, player.num_positions):
             if len(posstr) > 0:
                 posstr += "-"
-            posstr += positions[player.positions[pos]]
+            posstr += POSITIONS[player.positions[pos]]
 
         if len(posstr) <= 10:
             if len(posstr) + len(name) > 18:
@@ -340,7 +355,7 @@ class MyChadwickTools:
             outstr += posstr
         else:
             # When there are a lot of positions, can't do much sensibly...
-            outstr = F"{name}, {positions[player.positions[0]]}..."
+            outstr = F"{name}, {POSITIONS[player.positions[0]]}..."
 
         self.lgr.info(F"outstr = {outstr}")
 
@@ -471,7 +486,7 @@ class MyChadwickTools:
         pitching = pitcher.pitching.contents
         if pitching.xbinn > 0 and pitching.xb > 0:
             for i in range(0, (self.note_count // 3)+1):
-                name += markers[self.note_count % 3]
+                name += MARKERS[self.note_count % 3]
             self.note_count += 1
 
         print(F"{name:20} {pitching.outs // 3:2}.{pitching.outs % 3} {pitching.h:2} {pitching.r:2}", end = '')
@@ -597,7 +612,7 @@ class MyChadwickTools:
                 if pitching.xbinn > 0 and pitching.xb > 0:
                     print("  ", end = '')
                     for i in range(0, (count // 3)+1):
-                        print(F"{markers[count % 3]}", end = '')
+                        print(F"{MARKERS[count % 3]}", end = '')
                     print(F" Pitched to {pitching.xb} batter{'' if pitching.xb == 1 else 's'} in {pitching.xbinn}", end = '')
                     if pitching.xbinn % 10 == 1 and pitching.xbinn != 11:
                         print("st")
