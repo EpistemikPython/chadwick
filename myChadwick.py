@@ -29,6 +29,9 @@ POSITIONS = ["", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph",
 MARKERS = ['*', '+', '#']
 
 RETROSHEET_FOLDER = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/"
+ROSTERS_FOLDER = RETROSHEET_FOLDER + "rosters/"
+REGULAR_SEASON_FOLDER = RETROSHEET_FOLDER + "event/regular/"
+POST_SEASON_FOLDER = RETROSHEET_FOLDER + "event/post/"
 
 
 def c_char_p_to_str(lpcc:c_char_p, maxlen:int=20) -> str:
@@ -264,7 +267,7 @@ class MyChadwickTools:
             for t in range(0,2):
                 if slots[t] <= 9:
                     self.print_player(players[t], p_vis if (t == 0) else p_home)
-                    # NOTE: misspelling of 'battiing' in the python wrapper file
+                    # NOTE: misspelling 'battiing' in the python wrapper file
                     batting = players[t].contents.battiing.contents
                     ab[t] += batting.ab
                     r[t]  += batting.r
@@ -359,7 +362,7 @@ class MyChadwickTools:
 
         self.lgr.info(F"outstr = {outstr}")
 
-        # NOTE: misspelling of 'battiing' in the python wrapper file
+        # NOTE: misspelling 'battiing' in the python wrapper file
         batting = player.battiing.contents
         if batting.bi == -1:
             print(F"{outstr:20}{batting.pa:3}{batting.ab:4}{batting.h:4}"
@@ -579,9 +582,7 @@ class MyChadwickTools:
                 print(F"({batter_name if batter_name else c_char_p_to_str(event.contents.players[0])})", end = '')
             if count != 1:
                 print(" %d", count)
-
             comma = 1
-
         print("")
         # NOTE: reset events.mark >> NEEDED in Python?
         event = p_event
@@ -629,26 +630,25 @@ class MyChadwickTools:
 
 
 def process_args():
-    arg_parser = ArgumentParser(description="Print the boxscore from the retrosheet data for the specified team and date range",
+    arg_parser = ArgumentParser(description="Print boxscore(s) from retrosheet data for the specified team and date range",
                                 prog='main_chadwick_py3.py')
     # required arguments
     required = arg_parser.add_argument_group('REQUIRED')
-    required.add_argument('-t', '--team', required=True, help="retrosheet 3-character id for a team, e.g. TOR, CAL")
-    required.add_argument('-y', '--year', type=int, required=True, help="year to find regular season games to print out.")
+    required.add_argument('-t', '--team', required=True, help="Retrosheet 3-character id for a team, e.g. TOR, LAN")
+    required.add_argument('-y', '--year', type=int, required=True, help="year to find games to print out (yyyy)")
     # optional arguments
-    # TODO: replace month, startday, endday with start = mmdd and end = mmdd ?
-    arg_parser.add_argument('-m', '--month', type=int, help="month to print out games: 3 to 10")
-    arg_parser.add_argument('-s', '--startday', type=int, help="start day of specified month to print out game(s): 1 to 31")
-    arg_parser.add_argument('-e', '--endday', type=int, help="end day of specified month to print out games: 2 to 31")
+    arg_parser.add_argument('-s', '--start', help="start date to print out games (mmdd)")
+    arg_parser.add_argument('-e', '--end', help="end date to print out games (mmdd)")
+    arg_parser.add_argument('-p', '--post', action="store_true", help="find postseason games instead of regular season")
+    arg_parser.add_argument('-q', '--quiet', action="store_true", help="NO logging")
     arg_parser.add_argument('-l', '--level', default="INFO", help="set LEVEL of logging output")
-    # TODO: playoff flag
 
     return arg_parser
 
 
 def process_input_parameters(argx:list):
     args = process_args().parse_args(argx)
-    loglevel = args.level
+    loglevel = "CRITICAL" if args.quiet else args.level
     try:
         getattr( logging, loglevel.strip().upper() )
     except AttributeError as ae:
@@ -656,43 +656,51 @@ def process_input_parameters(argx:list):
         loglevel = "INFO"
 
     logging.basicConfig(level = loglevel)
-    logging.critical(F"process_input_parameters(): Level = {loglevel}\n--------------------------------------")
+    logging.warning(F"process_input_parameters(): Level = {loglevel}\n--------------------------------------")
     logging.info(F"args = \n{args}")
 
-    team = args.team if len(args.team) >= 3 else "TOR"
-    if len(team) > 3: team = team[:3]
+    # TODO: process 'postseason' flag
+
+    team = args.team.strip().upper() if args.team.isalpha() and len(args.team.strip()) >= 3 else "TOR"
+    if len(team) > 3:
+        team = team[:3]
     logging.warning(F"team = {team}")
 
     year = str(args.year) if 1871 <= args.year <= 2020 else "1993"
     logging.warning(F"year = {year}")
 
-    month = str(args.month) if args.month and 3 <= args.month <= 10 else ""
-    if len(month) == 1: month = "0" + month
-    logging.warning(F"month = {month}")
-
-    start = str(args.startday) if args.startday and 1 <= args.startday <= 31 else ""
-    if len(start) == 1: start = "0" + start
+    if args.start:
+        start = args.start.strip()
+        if not start.isdecimal() or not len(start) == 4:
+            start = "9999"
+    else:
+        start = "0301"
     logging.warning(F"start = {start}")
 
-    end = str(args.endday) if args.endday and 2 <= args.endday <= 31 else ""
-    if len(end) == 1: end = "0" + end
+    if args.end:
+        end = args.end.strip()
+        if not end.isdecimal() or not len(end) == 4:
+            end = "0000"
+    else:
+        end = "1031"
     logging.warning(F"end = {end}")
 
-    return team, year, month, start, end, loglevel
+    return team, year, start, end, loglevel
 
 
 def main_chadwick_py3(args:list):
     lgr = logging.getLogger("MyChadwick")
 
-    team, year, month, start, end, loglevel = process_input_parameters(args)
+    team, year, start, end, loglevel = process_input_parameters(args)
 
     lgr.setLevel(loglevel)
     lgr.debug( str(lgr.handlers) )
-    lgr.critical(F"team = {team}; year = {year}")
+    lgr.warning(F"team = {team}; year = {year}")
 
     cwtools = MyChadwickTools(lgr)
     try:
-        team_file_name = RETROSHEET_FOLDER + "event/regular/" + "TEAM" + year
+        # get the team files
+        team_file_name = REGULAR_SEASON_FOLDER + "TEAM" + year
         lgr.info(F"team file name = {team_file_name}")
         with open(team_file_name, newline = '') as csvfile:
             teamreader = csv.reader(csvfile)
@@ -703,19 +711,19 @@ def main_chadwick_py3(args:list):
                     lgr.info(F"\t-- league is {row[1]}L; city is {row[2]}; nickname is {row[3]}")
                 # create the rosters
                 cwtools.rosters[rteam] = MyCwlib.cwlib_roster_create(rteam, int(year), row[1]+"L", row[2], row[3])
-                roster_file = RETROSHEET_FOLDER + "rosters/" + rteam + year + ".ROS"
-                lgr.info(F"roster file name = {roster_file}")
+                roster_file = ROSTERS_FOLDER + rteam + year + ".ROS"
+                lgr.debug(F"roster file name = {roster_file}")
                 if not os.path.exists(roster_file):
-                    raise FileNotFoundError(F"CANNOT find file {roster_file}!")
+                    raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
                 roster_fptr = chadwick.fopen( bytes(roster_file, "utf8") )
                 # fill the rosters
                 roster_read_result = MyCwlib.cwlib_roster_read(cwtools.rosters[rteam], roster_fptr)
                 lgr.info("roster read result = " + ("Success." if roster_read_result > 0 else "Failure!"))
                 chadwick.fclose(roster_fptr)
-                event_file = RETROSHEET_FOLDER + "event/regular/" + year + rteam + ".EV" + row[1]
+                # find and store the event file paths
+                event_file = REGULAR_SEASON_FOLDER + year + rteam + ".EV" + row[1]
                 if not os.path.exists(event_file):
-                    raise FileNotFoundError(F"CANNOT find file {event_file}!")
-                # store the event file paths
+                    raise FileNotFoundError(F"CANNOT find event file {event_file}!")
                 cwtools.event_files[rteam] = event_file
 
         for item in cwtools.rosters.values():
@@ -723,30 +731,19 @@ def main_chadwick_py3(args:list):
         for item in cwtools.event_files.values():
             lgr.debug(item)
 
-        # get the start and end dates
-        smonth_id = "03"
-        emonth_id = "10"
-        sday_id = "01"
-        eday_id = "31"
-        if month:
-            if start:
-                sday_id = start
-                eday_id = start if not end or end < start else end
-            smonth_id = emonth_id = month
-        start_id = year + smonth_id + sday_id
+        start_id = year + start
         lgr.info(F"start id = {start_id}")
-        end_id = year + emonth_id + eday_id
+        end_id = year + end
         lgr.info(F"end id = {end_id}")
 
         # get all the games for the requested team in the supplied date range
         for evteam in cwtools.event_files:
-            lgr.info(F"team = {evteam}")
+            lgr.info(F"found events for team = {evteam}")
             cwgames = chadwick.games( cwtools.event_files[evteam] )
             for game in cwgames:
-                game_id = game.contents.game_id.decode(encoding = 'UTF-8')
-                lgr.info(F" Found game id = {game_id}")
+                game_id = game.contents.game_id.decode(encoding='UTF-8')
                 game_date = game_id[3:11]
-                lgr.debug(F" game date = {game_date}")
+                lgr.debug(F" Found game id = {game_id}; date = {game_date}")
 
                 if end_id >= game_date >= start_id:
                     results = tuple( chadwick.process_game(game) )
@@ -763,10 +760,10 @@ def main_chadwick_py3(args:list):
             events = chadwick.process_game(game)
             results = tuple(events)
 
-            home_team = results[0]['HOME_TEAM_ID']
-            home = cwtools.rosters[home_team]
             away_team = results[0]['AWAY_TEAM_ID']
             visitor = cwtools.rosters[away_team]
+            home_team = results[0]['HOME_TEAM_ID']
+            home = cwtools.rosters[home_team]
 
             cwtools.print_text(game, box, visitor, home)
 
@@ -776,8 +773,10 @@ def main_chadwick_py3(args:list):
 
 if __name__ == "__main__":
     run_start_time = dt.now()
-    logging.critical(F"Run Start time = {run_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    if '-q' not in sys.argv:
+        logging.critical(F"Run Start time = {run_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
     main_chadwick_py3(sys.argv[1:])
-    run_time = (dt.now() - run_start_time).total_seconds()
-    logging.critical(F" Running time = {(run_time // 60)} minutes, {(run_time % 60):2.3} seconds")
+    if '-q' not in sys.argv:
+        run_time = (dt.now() - run_start_time).total_seconds()
+        logging.critical(F" Running time = {(run_time // 60)} minutes, {(run_time % 60):2.3} seconds")
     exit()
