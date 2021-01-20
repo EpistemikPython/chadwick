@@ -293,13 +293,10 @@ class MyChadwickTools:
             print("")
 
         print(F"{''.ljust(20)} --  --  --  --  -- -- -- {''.ljust(24)} --  --  --  --  -- -- --")
-
-        if bi[0] == -1 or bi[1] == -1:
-            print(F"{''.ljust(20)}{pa[0]:3}{ab[0]:4}{h[0]:4}{bb[0]:4}{so[0]:4}{r[0]:3}    "
-                  F"{''.ljust(24)}{pa[1]:3}{ab[1]:4}{h[1]:4}{bb[1]:4}{so[1]:4}{r[1]:3}")
-        else:
-            print(F"{''.ljust(20)}{pa[0]:3}{ab[0]:4}{h[0]:4}{bb[0]:4}{so[0]:4}{r[0]:3}{bi[0]:3} "
-                  F"{''.ljust(24)}{pa[1]:3}{ab[1]:4}{h[1]:4}{bb[1]:4}{so[1]:4}{r[1]:3}{bi[1]:3}")
+        print(F"{''.ljust(20)}{pa[0]:3}{ab[0]:4}{h[0]:4}{bb[0]:4}{so[0]:4}{r[0]:3}", end = '')
+        print(F"{bi[0]:3} " if bi[0] >= 0 else "    ", end = '')
+        print(F"{''.ljust(24)}{pa[1]:3}{ab[1]:4}{h[1]:4}{bb[1]:4}{so[1]:4}{r[1]:3}", end = '')
+        print(F"{bi[1]:3} " if bi[1] >= 0 else "    ")
         print("")
 
         self.print_linescore(p_game, p_box, p_vis, p_home)
@@ -308,9 +305,9 @@ class MyChadwickTools:
         for t in range(0, 2):
             pitcher = MyCwlib.cwlib_box_get_starting_pitcher(p_box, t)
             if t == 0:
-                print(F"  {vis_city:18}   IP  H  R ER BB SO")
+                print(F"  {vis_city:18}   IP  H  R ER BB SO  TP TS GB FB")
             else:
-                print(F"  {home_city:18}   IP  H  R ER BB SO")
+                print(F"  {home_city:18}   IP  H  R ER BB SO  TP TS GB FB")
             while pitcher:
                 self.print_pitcher( p_game, pitcher, (p_vis if (t == 0) else p_home) )
                 pitcher = pitcher.contents.next
@@ -364,12 +361,9 @@ class MyChadwickTools:
 
         # NOTE: misspelling 'battiing' in the python wrapper file
         batting = player.battiing.contents
-        if batting.bi == -1:
-            print(F"{outstr:20}{batting.pa:3}{batting.ab:4}{batting.h:4}"
-                  F"{batting.bb:3}{batting.so:4}{batting.r:3}", end = '')
-        else:
-            print(F"{outstr:20}{batting.pa:3}{batting.ab:4}{batting.h:4} "
-                  F"{batting.bb:3}{batting.so:4}{batting.r:3}{batting.bi:3}", end = '')
+
+        print(F"{outstr:20}{batting.pa:3}{batting.ab:4}{batting.h:4}{batting.bb:4}{batting.so:4}{batting.r:3}", end = '')
+        print(F"{batting.bi:3}" if batting.bi >= 0 else "", end = '')
 
     # void
     # cwbox_print_player_apparatus(CWGame *game, CWBoxEvent *list, int index, char *label, CWRoster *visitors, CWRoster *home)
@@ -492,10 +486,15 @@ class MyChadwickTools:
                 name += MARKERS[self.note_count % 3]
             self.note_count += 1
 
+        # TODO: add pitches, strikes, gb, fb to pitcher printout
         print(F"{name:20} {pitching.outs // 3:2}.{pitching.outs % 3} {pitching.h:2} {pitching.r:2}", end = '')
-        print(F" {pitching.er:2}", end = '') if pitching.er != -1 else print("   ", end = '')
-        print(F" {pitching.bb:2}", end = '') if pitching.bb != -1 else print("   ", end = '')
-        print(F" {pitching.so:2}") if pitching.so != -1 else print("   ")
+        print(F"{pitching.er:3}" if pitching.er >= 0 else "   ", end = '')
+        print(F"{pitching.bb:3}" if pitching.bb >= 0 else "   ", end = '')
+        print(F"{pitching.so:3}" if pitching.so >= 0 else "   ", end = '')
+        print(F"{pitching.pitches:4}" if pitching.er >= 0 else "    ", end = '')
+        print(F"{pitching.strikes:3}" if pitching.bb >= 0 else "   ", end = '')
+        print(F"{pitching.gb:3}" if pitching.so >= 0 else "   ", end = '')
+        print(F"{pitching.fb:3}" if pitching.so >= 0 else "   ")
 
     # void cwbox_print_double_play(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_double_plays(self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer):
