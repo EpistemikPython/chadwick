@@ -11,7 +11,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-01-18"
+__updated__ = "2021-01-19"
 
 import csv
 import sys
@@ -147,7 +147,7 @@ class MyCwlib:
 class MyChadwickTools:
     def __init__(self, logger:logging.Logger):
         self.lgr = logger
-        self.lgr.info(F"Start {self.__class__.__name__}")
+        self.lgr.warning(F" Start {self.__class__.__name__}")
         self.rosters = {}
         self.event_files = {}
         self.games = {}
@@ -486,15 +486,14 @@ class MyChadwickTools:
                 name += MARKERS[self.note_count % 3]
             self.note_count += 1
 
-        # TODO: add pitches, strikes, gb, fb to pitcher printout
         print(F"{name:20} {pitching.outs // 3:2}.{pitching.outs % 3} {pitching.h:2} {pitching.r:2}", end = '')
         print(F"{pitching.er:3}" if pitching.er >= 0 else "   ", end = '')
         print(F"{pitching.bb:3}" if pitching.bb >= 0 else "   ", end = '')
         print(F"{pitching.so:3}" if pitching.so >= 0 else "   ", end = '')
-        print(F"{pitching.pitches:4}" if pitching.er >= 0 else "    ", end = '')
-        print(F"{pitching.strikes:3}" if pitching.bb >= 0 else "   ", end = '')
-        print(F"{pitching.gb:3}" if pitching.so >= 0 else "   ", end = '')
-        print(F"{pitching.fb:3}" if pitching.so >= 0 else "   ")
+        print(F"{pitching.pitches:4}" if pitching.pitches >= 0 else "    ", end = '')
+        print(F"{pitching.strikes:3}" if pitching.strikes >= 0 else "   ", end = '')
+        print(F"{pitching.gb:3}" if pitching.gb >= 0 else "   ", end = '')
+        print(F"{pitching.fb:3}" if pitching.fb >= 0 else "   ")
 
     # void cwbox_print_double_play(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_double_plays(self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer):
@@ -694,7 +693,7 @@ def main_chadwick_py3(args:list):
 
     lgr.setLevel(loglevel)
     lgr.debug( str(lgr.handlers) )
-    lgr.warning(F"team = {team}; year = {year}")
+    lgr.warning(F" team = {team}; year = {year}")
 
     cwtools = MyChadwickTools(lgr)
     try:
