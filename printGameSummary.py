@@ -1,7 +1,7 @@
 ##############################################################################################################################
 # coding=utf-8
 #
-# myChadwick.py -- Chadwick baseball tools coded in Python3
+# printGameSummary.py -- print a summary of baseball game or games using Retrosheet data
 #
 # Original C code Copyright (c) 2002-2020
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
@@ -11,7 +11,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-01-19"
+__updated__ = "2021-01-21"
 
 import csv
 import sys
@@ -36,14 +36,14 @@ class PrintGameSummary:
         self.lgr.info("print_header():\n----------------------------------")
 
         dn_code = "?"
-        day_night = MyCwlib.cwlib_game_info_lookup(p_game, b"daynight")
+        day_night = MyCwlib.game_info_lookup(p_game, b"daynight")
         if day_night:
             dn_code = "D" if day_night == "day" else "N" if day_night == "night" else day_night
 
-        game_date = MyCwlib.cwlib_game_info_lookup(p_game, b"date")
+        game_date = MyCwlib.game_info_lookup(p_game, b"date")
         self.lgr.info(F"game date = {game_date}")
         year, month, day = game_date.split('/')
-        game_number = MyCwlib.cwlib_game_info_lookup(p_game, b"number")
+        game_number = MyCwlib.game_info_lookup(p_game, b"number")
         self.lgr.info(F"game_number = {game_number}")
         game_number_str = "" if game_number == "0" else F", game #{game_number}"
 
@@ -66,10 +66,10 @@ class PrintGameSummary:
             runs = 0
             if t == 0:
                 print(F"{c_char_p_to_str(p_vis.contents.city, 16):16}" if p_vis
-                      else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam"), end = '')
+                      else MyCwlib.game_info_lookup(p_game, b"visteam"), end = '')
             else:
                 print(F"{c_char_p_to_str(p_home.contents.city, 16):16}" if p_home
-                      else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam"), end = '')
+                      else MyCwlib.game_info_lookup(p_game, b"hometeam"), end = '')
 
             for ix in range(1,32):
                 if linescore[ix][t] >= 10:
@@ -100,7 +100,7 @@ class PrintGameSummary:
 
     # void cwbox_print_text(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_game_summary( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
-        self.lgr.info("print_text():\n----------------------------------")
+        self.lgr.info("print_game_summary():\n----------------------------------")
 
         self.note_count = 0
         slots = [1,1]
@@ -113,17 +113,17 @@ class PrintGameSummary:
         bb = [0,0]
         so = [0,0]
 
-        player0 = MyCwlib.cwlib_box_get_starter(p_box, 0, 1)
+        player0 = MyCwlib.box_get_starter(p_box, 0, 1)
         self.lgr.debug(F"type(player0) = {type(player0)}")
         players.insert(0, player0)
-        player1 = MyCwlib.cwlib_box_get_starter(p_box, 1, 1)
+        player1 = MyCwlib.box_get_starter(p_box, 1, 1)
         self.lgr.debug(F"type(player1) = {type(player1)}")
         players.insert(1, player1)
 
         self.print_header(p_game, p_vis, p_home)
 
-        vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
-        home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
+        vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.game_info_lookup(p_game, b"visteam")
+        home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.game_info_lookup(p_game, b"hometeam")
 
         print(F"  {vis_city:18} PA  AB   H  BB  SO  R RBI      {home_city:18} PA  AB   H  BB  SO  R RBI    ")
 
@@ -167,7 +167,7 @@ class PrintGameSummary:
         print("")
 
         for t in range(0, 2):
-            pitcher = MyCwlib.cwlib_box_get_starting_pitcher(p_box, t)
+            pitcher = MyCwlib.box_get_starting_pitcher(p_box, t)
             if t == 0:
                 print(F"  {vis_city:18}   IP  H  R ER BB SO  TP TS GB FB")
             else:
@@ -246,8 +246,8 @@ def process_input_parameters(argx:list):
     return team, year, start, end, loglevel
 
 
-def main_chadwick_py3(args:list):
-    lgr = logging.getLogger("MyChadwick")
+def main_pgs(args:list):
+    lgr = logging.getLogger("PrintGameSummary")
 
     team, year, start, end, loglevel = process_input_parameters(args)
 
@@ -269,14 +269,14 @@ def main_chadwick_py3(args:list):
                 if rteam == team:
                     lgr.info(F"\t-- league is {row[1]}L; city is {row[2]}; nickname is {row[3]}")
                 # create the rosters
-                cwtools.rosters[rteam] = MyCwlib.cwlib_roster_create(rteam, int(year), row[1]+"L", row[2], row[3])
+                cwtools.rosters[rteam] = MyCwlib.roster_create(rteam, int(year), row[1]+"L", row[2], row[3])
                 roster_file = ROSTERS_FOLDER + rteam + year + ".ROS"
                 lgr.debug(F"roster file name = {roster_file}")
                 if not os.path.exists(roster_file):
                     raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
                 roster_fptr = chadwick.fopen( bytes(roster_file, "utf8") )
                 # fill the rosters
-                roster_read_result = MyCwlib.cwlib_roster_read(cwtools.rosters[rteam], roster_fptr)
+                roster_read_result = MyCwlib.roster_read(cwtools.rosters[rteam], roster_fptr)
                 lgr.info("roster read result = " + ("Success." if roster_read_result > 0 else "Failure!"))
                 chadwick.fclose(roster_fptr)
                 # find and store the event file paths
@@ -315,7 +315,7 @@ def main_chadwick_py3(args:list):
         # sort the games and print out the information
         for key in sorted( cwtools.games.keys() ):
             game = cwtools.games[key]
-            box = MyCwlib.cwlib_box_create(game)
+            box = MyCwlib.box_create(game)
             events = chadwick.process_game(game)
             results = tuple(events)
 
@@ -334,7 +334,7 @@ if __name__ == "__main__":
     run_start_time = dt.now()
     if '-q' not in sys.argv:
         logging.critical(F"Run Start time = {run_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-    main_chadwick_py3(sys.argv[1:])
+    main_pgs(sys.argv[1:])
     if '-q' not in sys.argv:
         run_time = (dt.now() - run_start_time).total_seconds()
         logging.critical(F" Running time = {(run_time // 60)} minutes, {(run_time % 60):2.3} seconds")

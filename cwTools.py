@@ -1,7 +1,7 @@
 ##############################################################################################################################
 # coding=utf-8
 #
-# myChadwick.py -- Chadwick baseball tools coded in Python3
+# cwTools.py -- Chadwick baseball tools coded in Python3
 #
 # Original C code Copyright (c) 2002-2020
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
@@ -11,7 +11,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-01-19"
+__updated__ = "2021-01-21"
 
 from pychadwick.box import CWBoxPlayer
 from pychadwick.chadwick import *
@@ -58,7 +58,7 @@ class MyChadwickTools:
     # void cwbox_print_timeofgame(CWGame * game)
     def print_time_of_game(self, p_game:pointer):
         self.lgr.info("print_time_of_game():\n----------------------------------")
-        tog = int(MyCwlib.cwlib_game_info_lookup(p_game, b'timeofgame'))
+        tog = int(MyCwlib.game_info_lookup(p_game, b'timeofgame'))
         if tog and tog > 0:
             minutes = str(tog % 60)
             if len(minutes) == 1: minutes = "0" + minutes
@@ -67,7 +67,7 @@ class MyChadwickTools:
     # void cwbox_print_attendance(CWGame * game)
     def print_attendance(self, p_game:pointer):
         self.lgr.info("print_attendance():\n----------------------------------")
-        print(F"A -- {MyCwlib.cwlib_game_info_lookup(p_game, b'attendance')}")
+        print(F"A -- {MyCwlib.game_info_lookup(p_game, b'attendance')}")
 
     # void cwbox_print_player(CWBoxPlayer *player, CWRoster *roster)
     def print_player( self, p_player:POINTER(CWBoxPlayer), p_roster:POINTER(CWRoster) ):
@@ -78,7 +78,7 @@ class MyChadwickTools:
 
         player = p_player.contents
         if p_roster:
-            bio = MyCwlib.cwlib_roster_player_find(p_roster, player.player_id)
+            bio = MyCwlib.roster_player_find(p_roster, player.player_id)
 
         if bio:
             name = c_char_p_to_str(bio.contents.last_name) + " " + c_char_p_to_str(bio.contents.first_name, 1)
@@ -139,9 +139,9 @@ class MyChadwickTools:
                 search_event = search_event.next.contents if search_event.next else None
 
             if p_vis:
-                bio = MyCwlib.cwlib_roster_player_find(p_vis, event.players[index])
+                bio = MyCwlib.roster_player_find(p_vis, event.players[index])
             if not bio and p_home:
-                bio = MyCwlib.cwlib_roster_player_find(p_home, event.players[index])
+                bio = MyCwlib.roster_player_find(p_home, event.players[index])
             if not bio:
                 name = event.players[index].decode('UTF8')
                 self.lgr.warning("bio NOT available!")
@@ -207,7 +207,7 @@ class MyChadwickTools:
         self.lgr.info(F"player id = {player_id}")
         self.lgr.debug(F"type(player id) = {type(player_id)}")
         if roster:
-            bio = MyCwlib.cwlib_roster_player_find(p_roster, bytes(pitcher.player_id))
+            bio = MyCwlib.roster_player_find(p_roster, bytes(pitcher.player_id))
         if bio:
             name = c_char_p_to_str(bio.contents.last_name) + " " + c_char_p_to_str(bio.contents.first_name, 1)
         else:
@@ -215,12 +215,12 @@ class MyChadwickTools:
         self.lgr.info(F"pitcher name = {name}")
 
         game = p_game.contents
-        wp = MyCwlib.cwlib_game_info_lookup(game, b"wp")
+        wp = MyCwlib.game_info_lookup(game, b"wp")
         self.lgr.info(F"winning pitcher id = {wp}")
         self.lgr.debug(F"type(wp) = {type(wp)}")
-        lp = MyCwlib.cwlib_game_info_lookup(game, b"lp")
+        lp = MyCwlib.game_info_lookup(game, b"lp")
         self.lgr.info(F"losing pitcher id = {lp}")
-        save = MyCwlib.cwlib_game_info_lookup(game, b"save")
+        save = MyCwlib.game_info_lookup(game, b"save")
         self.lgr.info(F"save pitcher id = {save}")
         if wp and wp == player_id:
             name += " (W)"
@@ -251,8 +251,8 @@ class MyChadwickTools:
         if dp[0] == 0 and dp[1] == 0:
             return
         print("DP -- ", end = '')
-        vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
-        home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
+        vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.game_info_lookup(p_game, b"visteam")
+        home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.game_info_lookup(p_game, b"hometeam")
 
         if dp[0] > 0 and dp[1] == 0:
             print(F"{vis_city} {dp[0]}")
@@ -268,8 +268,8 @@ class MyChadwickTools:
         if tp[0] == 0 and tp[1] == 0:
             return
         print("TP -- ", end = '')
-        vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
-        home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
+        vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.game_info_lookup(p_game, b"visteam")
+        home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.game_info_lookup(p_game, b"hometeam")
         if tp[0] > 0 and tp[1] == 0:
             print(F"{vis_city} {tp[0]}")
         elif tp[0] == 0 and tp[1] > 0:
@@ -302,16 +302,16 @@ class MyChadwickTools:
                 search_event = search_event.contents.next
 
             if p_vis:
-                batter = MyCwlib.cwlib_roster_player_find(p_vis, event.contents.players[0])
+                batter = MyCwlib.roster_player_find(p_vis, event.contents.players[0])
             if not batter and p_home:
-                batter = MyCwlib.cwlib_roster_player_find(p_home, event.contents.players[0])
+                batter = MyCwlib.roster_player_find(p_home, event.contents.players[0])
             if not batter:
                 batter_name = event.contents.players[0].decode('UTF8')
                 self.lgr.warning("roster NOT available for batter!")
             if p_vis:
-                pitcher = MyCwlib.cwlib_roster_player_find(p_vis, event.contents.players[1])
+                pitcher = MyCwlib.roster_player_find(p_vis, event.contents.players[1])
             if not pitcher and p_home:
-                pitcher = MyCwlib.cwlib_roster_player_find(p_home, event.contents.players[1])
+                pitcher = MyCwlib.roster_player_find(p_home, event.contents.players[1])
             if not pitcher:
                 self.lgr.warning("roster NOT available for pitcher!")
                 pitcher_name = event.contents.players[1].decode('UTF8')
@@ -343,8 +343,8 @@ class MyChadwickTools:
         lob = p_box.contents.lob
         if lob[0] == 0 and lob[1] == 0:
             return
-        vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.cwlib_game_info_lookup(p_game, b"visteam")
-        home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.cwlib_game_info_lookup(p_game, b"hometeam")
+        vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.game_info_lookup(p_game, b"visteam")
+        home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.game_info_lookup(p_game, b"hometeam")
         print(F"LOB -- {vis_city} {lob[0]}, {home_city} {lob[1]}")
 
     # void cwbox_print_pitcher_apparatus(CWBoxscore * boxscore)
@@ -354,7 +354,7 @@ class MyChadwickTools:
 
         count = 0
         for t in range(0, 2):
-            pitcher = MyCwlib.cwlib_box_get_starting_pitcher(p_box, t)
+            pitcher = MyCwlib.box_get_starting_pitcher(p_box, t)
             while pitcher:
                 pitching = pitcher.contents.pitching.contents
                 if pitching.xbinn > 0 and pitching.xb > 0:
