@@ -21,98 +21,39 @@ from cwLibWrappers import chadwick, cwlib
 from cwTools import *
 
 
+# noinspection PyAttributeOutsideInit
 class PrintPlayerStats:
     def __init__(self, cwt:MyChadwickTools, logger:logging.Logger):
         self.cwtools = cwt
         self.lgr = logger
         self.lgr.warning(F" Start {self.__class__.__name__}")
-        self.rosters = {}
         self.event_files = {}
         self.games = {}
-        self.note_count = 0
+        self.year_stats = {}
+        self.clear()
 
-    # void cwbox_print_header(CWGame *game, CWRoster *visitors, CWRoster *home)
-    def print_header( self, p_game:pointer, p_vis:pointer, p_home:pointer ):
-        self.lgr.info("print_header():\n----------------------------------")
+    def clear(self, stats:dict=None):
+        self.ab = [0,0]
+        self.r  = [0,0]
+        self.h  = [0,0]
+        self.bi = [0,0]
+        self.pa = [0,0]
+        self.bb = [0,0]
+        self.so = [0,0]
+        if stats:
+            stats["ab"] = 0
+            stats["bb"] = 0
+            stats["so"] = 0
+            stats["pa"] = 0
+            stats["bi"] = 0
+            stats["h"] = 0
+            stats["r"] = 0
 
-        dn_code = "?"
-        day_night = MyCwlib.game_info_lookup(p_game, b"daynight")
-        if day_night:
-            dn_code = "D" if day_night == "day" else "N" if day_night == "night" else day_night
-
-        game_date = MyCwlib.game_info_lookup(p_game, b"date")
-        self.lgr.info(F"game date = {game_date}")
-        year, month, day = game_date.split('/')
-        game_number = MyCwlib.game_info_lookup(p_game, b"number")
-        self.lgr.info(F"game_number = {game_number}")
-        game_number_str = "" if game_number == "0" else F", game #{game_number}"
-
-        vis_city = p_vis.contents.city
-        vis_city_text = c_char_p_to_str(vis_city)
-        self.lgr.info(F"visitor = {vis_city_text}")
-
-        home_city = p_home.contents.city
-        home_city_text = c_char_p_to_str(home_city)
-        self.lgr.info(F"home = {home_city_text}")
-
-        print(F"\n\t\tGame of {month}/{day}/{year}{game_number_str} -- {vis_city_text} @ {home_city_text} ({dn_code})\n")
-
-    # void cwbox_print_linescore(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
-    def print_linescore( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
-        self.lgr.info("print_linescore():\n----------------------------------")
-
-        linescore = p_box.contents.linescore
-        for t in range(0,2):
-            runs = 0
-            if t == 0:
-                print(F"{c_char_p_to_str(p_vis.contents.city, 16):16}" if p_vis
-                      else MyCwlib.game_info_lookup(p_game, b"visteam"), end = '')
-            else:
-                print(F"{c_char_p_to_str(p_home.contents.city, 16):16}" if p_home
-                      else MyCwlib.game_info_lookup(p_game, b"hometeam"), end = '')
-
-            for ix in range(1,32):
-                if linescore[ix][t] >= 10:
-                    print(F"({linescore[ix][t]})", end = '')
-                    runs += linescore[ix][t]
-                elif linescore[ix][t] >= 0:
-                    print(F"{linescore[ix][t]}", end = '')
-                    runs += linescore[ix][t]
-                elif t == 0:
-                    break
-                elif linescore[ix][0] < 0:
-                    break
-                else:
-                    print("x ", end = '')
-                    break
-
-                if ix % 3 == 0:
-                    print(" ", end = '')
-
-            print(F" -- {runs:2}")
-
-        outs_at_end = p_box.contents.outs_at_end
-        if outs_at_end != 3:
-            if p_box.contents.walk_off:
-                print(F"  {outs_at_end} out{'' if outs_at_end == 1 else 's'} when winning run scored.")
-            else:
-                print(F"  {outs_at_end} out{'' if outs_at_end == 1 else 's'} when game ended.")
-
-    # void cwbox_print_text(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
-    def print_game_summary( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
-        self.lgr.info("print_game_summary():\n----------------------------------")
-
-        self.note_count = 0
+    def collect_stats( self, p_box:pointer, play_id:str, stats:dict, year:str ):
+        self.lgr.debug(F"collect stats for year = {year}")
         slots = [1,1]
         players = list()
-        ab = [0,0]
-        r  = [0,0]
-        h  = [0,0]
-        bi = [0,0]
-        pa = [0,0]
-        bb = [0,0]
-        so = [0,0]
-
+        self.lgr.info(F"player = {play_id}")
         player0 = MyCwlib.box_get_starter(p_box, 0, 1)
         self.lgr.debug(F"type(player0) = {type(player0)}")
         players.insert(0, player0)
@@ -120,29 +61,32 @@ class PrintPlayerStats:
         self.lgr.debug(F"type(player1) = {type(player1)}")
         players.insert(1, player1)
 
-        self.print_header(p_game, p_vis, p_home)
-
-        vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.game_info_lookup(p_game, b"visteam")
-        home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.game_info_lookup(p_game, b"hometeam")
-
-        print(F"  {vis_city:18} PA  AB   H  BB  SO  R RBI      {home_city:18} PA  AB   H  BB  SO  R RBI    ")
-
         while slots[0] <= 9 or slots[1] <= 9 :
             for t in range(0,2):
                 if slots[t] <= 9:
-                    self.cwtools.print_player(players[t], p_vis if (t == 0) else p_home)
-                    # NOTE: misspelling 'battiing' in the python wrapper file
-                    batting = players[t].contents.battiing.contents
-                    ab[t] += batting.ab
-                    r[t]  += batting.r
-                    h[t]  += batting.h
-                    bb[t] += batting.bb
-                    pa[t] += batting.pa
-                    so[t] += batting.so
-                    if batting.bi != -1:
-                        bi[t] += batting.bi
-                    else:
-                        bi[t] = -1
+                    player = players[t].contents.player_id.decode("UTF-8")
+                    # self.lgr.info(F"players[t] = {players[t]}")
+                    self.lgr.debug(F"player = {player}")
+                    if player == play_id:
+                        self.lgr.info(F"found player {play_id}")
+                        # NOTE: misspelling 'battiing' in the python wrapper file
+                        batting = players[t].contents.battiing.contents
+                        stats["ab"] += batting.ab
+                        stats["bb"] += batting.bb
+                        stats["so"] += batting.so
+                        stats["pa"] += batting.pa
+                        stats["h"] += batting.h
+                        stats["r"] += batting.r
+                        # self.ab[t] += batting.ab
+                        # self.r[t]  += batting.r
+                        # self.h[t]  += batting.h
+                        # self.bb[t] += batting.bb
+                        # self.pa[t] += batting.pa
+                        # self.so[t] += batting.so
+                        if batting.bi != -1:
+                            stats["bi"] += batting.bi
+                        else:
+                            stats["bi"] = -1
                     players[t] = players[t].contents.next
                     if not players[t]:
                         # In some National Association games, teams played with 8 players.
@@ -151,37 +95,30 @@ class PrintPlayerStats:
                             slots[t] += 1
                             if slots[t] <= 9:
                                 players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
-                else:
-                    print(F"{''.ljust(45)}", end = '')
-                print("     ", end = ''),
-            print("")
 
-        print(F"{''.ljust(20)} --  --  --  --  -- -- -- {''.ljust(24)} --  --  --  --  -- -- --")
-        print(F"{''.ljust(20)}{pa[0]:3}{ab[0]:4}{h[0]:4}{bb[0]:4}{so[0]:4}{r[0]:3}", end = '')
-        print(F"{bi[0]:3} " if bi[0] >= 0 else "    ", end = '')
-        print(F"{''.ljust(24)}{pa[1]:3}{ab[1]:4}{h[1]:4}{bb[1]:4}{so[1]:4}{r[1]:3}", end = '')
-        print(F"{bi[1]:3} " if bi[1] >= 0 else "    ")
-        print("")
+    def add(self, year:str, stats:dict):
+        self.year_stats[year] = stats
 
-        self.print_linescore(p_game, p_box, p_vis, p_home)
-        print("")
+    # void cwbox_print_text(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
+    def print_stats(self, year:str, stats:dict):
+        self.lgr.info(F"print stats for year = {year}")
+        ab = stats["ab"]
+        bb = stats["bb"]
+        so = stats["so"]
+        bi = stats["bi"]
+        pa = stats["pa"]
+        h = stats["h"]
+        r = stats["r"]
+        # ab = self.ab
+        # pa = self.pa
+        # bb = self.bb
+        # so = self.so
+        # bi = self.bi
+        # h = self.h
+        # r = self.r
 
-        for t in range(0, 2):
-            pitcher = MyCwlib.box_get_starting_pitcher(p_box, t)
-            if t == 0:
-                print(F"  {vis_city:18}   IP  H  R ER BB SO  TP TS GB FB")
-            else:
-                print(F"  {home_city:18}   IP  H  R ER BB SO  TP TS GB FB")
-            while pitcher:
-                self.cwtools.print_pitcher( p_game, pitcher, (p_vis if (t == 0) else p_home) )
-                pitcher = pitcher.contents.next
-            if t == 0:
-                print("")
-
-        self.cwtools.print_pitcher_apparatus(p_box)
-        print("")
-
-        self.cwtools.print_apparatus(p_game, p_box, p_vis, p_home)
+        print(F"{year.ljust(4)}{pa:5}{ab:5}{h:5}{bb:5}{so:5}{r:5}", end = '')
+        print(F"{bi:5} " if bi >= 0 else "    ", end = '')
         print("")
 
 # END class PrintPlayerStats
@@ -192,9 +129,9 @@ def process_args():
                                 prog='main_chadwick_py3.py')
     # required arguments
     required = arg_parser.add_argument_group('REQUIRED')
-    required.add_argument('-i', '--player_id', required=True, help="Retrosheet id for a player, e.g. ")
-    arg_parser.add_argument('-s', '--start', required=True, help="start year to find stats (yyyy)")
-    arg_parser.add_argument('-e', '--end', required=True, help="end year to find stats (yyyy)")
+    required.add_argument('-i', '--player_id', required=True, help="Retrosheet id for a player, e.g. aaroh101, bondb101")
+    required.add_argument('-s', '--start', required=True, type=int, help="start year to find stats (yyyy)")
+    required.add_argument('-e', '--end', required=True, type=int, help="end year to find stats (yyyy)")
     # optional arguments
     arg_parser.add_argument('-p', '--post', action="store_true", help="find postseason games instead of regular season")
     arg_parser.add_argument('-q', '--quiet', action="store_true", help="NO logging")
@@ -218,116 +155,98 @@ def process_input_parameters(argx:list):
 
     # TODO: process 'postseason' flag
 
-    team = args.team.strip().upper() if args.team.isalpha() and len(args.team.strip()) >= 3 else "TOR"
-    if len(team) > 3:
-        team = team[:3]
-    logging.warning(F"team = {team}")
+    playid = args.player_id.strip() if len(args.player_id) >= 8 and \
+         args.player_id[:5].isalpha() and args.player_id[5:8].isdecimal() else "maysw001"
+    if len(playid) > 8:
+        playid = playid[:8]
+    logging.warning(F"id = {playid}")
 
-    year = str(args.year) if 1871 <= args.year <= 2020 else "1993"
-    logging.warning(F"year = {year}")
-
-    if args.start:
-        start = args.start.strip()
-        if not start.isdecimal() or not len(start) == 4:
-            start = "9999"
-    else:
-        start = "0301"
+    start = args.start if 1871 <= args.start <= 2020 else 1954
     logging.warning(F"start = {start}")
 
-    if args.end:
-        end = args.end.strip()
-        if not end.isdecimal() or not len(end) == 4:
-            end = "0000"
-    else:
-        end = "1031"
+    end = args.end if 1871 <= args.end <= 2020 else 1955
+    if args.end < args.start: end = start
     logging.warning(F"end = {end}")
 
-    return team, year, start, end, loglevel
+    return playid, start, end, loglevel
 
 
 def main_player_stats(args:list):
     lgr = logging.getLogger("PrintPlayerStats")
 
-    team, year, start, end, loglevel = process_input_parameters(args)
+    playid, start, end, loglevel = process_input_parameters(args)
 
     lgr.setLevel(loglevel)
     lgr.debug( str(lgr.handlers) )
-    lgr.warning(F" team = {team}; year = {year}")
+    lgr.warning(F" id = {playid}; years = {start}->{end}")
 
     cwtools = MyChadwickTools(lgr)
     player_stats = PrintPlayerStats(cwtools, lgr)
+    need_name = True
+    fam_name = playid
+    giv_name = ""
     # TODO:
     #   get ALL the event files for the requested years
     #   go through each event line for the files and find where player == 'BAT_ID' and save these
     #   go through each file and look for the batting stats of the player and sum
     try:
-        # get the team files
-        team_file_name = REGULAR_SEASON_FOLDER + "TEAM" + year
-        lgr.info(F"team file name = {team_file_name}")
-        with open(team_file_name, newline = '') as csvfile:
-            teamreader = csv.reader(csvfile)
-            for row in teamreader:
-                rteam = row[0]
-                lgr.info(F"Found team {rteam}")
-                if rteam == team:
-                    lgr.info(F"\t-- league is {row[1]}L; city is {row[2]}; nickname is {row[3]}")
-                # create the rosters
-                cwtools.rosters[rteam] = MyCwlib.roster_create(rteam, int(year), row[1]+"L", row[2], row[3])
-                roster_file = ROSTERS_FOLDER + rteam + year + ".ROS"
-                lgr.debug(F"roster file name = {roster_file}")
-                if not os.path.exists(roster_file):
-                    raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
-                roster_fptr = chadwick.fopen( bytes(roster_file, "utf8") )
-                # fill the rosters
-                roster_read_result = MyCwlib.roster_read(cwtools.rosters[rteam], roster_fptr)
-                lgr.info("roster read result = " + ("Success." if roster_read_result > 0 else "Failure!"))
-                chadwick.fclose(roster_fptr)
-                # find and store the event file paths
-                event_file = REGULAR_SEASON_FOLDER + year + rteam + ".EV" + row[1]
-                if not os.path.exists(event_file):
-                    raise FileNotFoundError(F"CANNOT find event file {event_file}!")
-                cwtools.event_files[rteam] = event_file
+        for year in range(start, end+1):
+            year_events = list()
+            # get the team files
+            team_file_name = REGULAR_SEASON_FOLDER + "TEAM" + str(year)
+            lgr.info(F"team file name = {team_file_name}")
+            with open(team_file_name, newline = '') as team_csvfile:
+                team_reader = csv.reader(team_csvfile)
+                for trow in team_reader:
+                    rteam = trow[0]
+                    lgr.info(F"Found team {rteam}")
+                    # get the rosters
+                    if need_name:
+                        roster_file = ROSTERS_FOLDER + rteam + str(year) + ".ROS"
+                        lgr.debug(F"roster file name = {roster_file}")
+                        if not os.path.exists(roster_file):
+                            raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
+                        with open(roster_file, newline = '') as roster_csvfile:
+                            ros_reader = csv.reader(roster_csvfile)
+                            for rrow in ros_reader:
+                                if playid == rrow[0]:
+                                    fam_name = rrow[1]
+                                    giv_name = rrow[2]
+                                    need_name = False
+                                    break
+                    # find and store the event file paths
+                    event_file = REGULAR_SEASON_FOLDER + str(year) + rteam + ".EV" + trow[1]
+                    if not os.path.exists(event_file):
+                        raise FileNotFoundError(F"CANNOT find event file {event_file}!")
+                    year_events.append(event_file)
+            player_stats.event_files[str(year)] = year_events
 
-        for item in cwtools.rosters.values():
+        lgr.warning(F"name = {giv_name} {fam_name}")
+        lgr.warning(F"found {len(player_stats.event_files)} year-event files")
+        for item in player_stats.event_files:
             lgr.debug(item)
-        for item in cwtools.event_files.values():
-            lgr.debug(item)
 
-        start_id = year + start
-        lgr.info(F"start id = {start_id}")
-        end_id = year + end
-        lgr.info(F"end id = {end_id}")
+        print(F"\t{giv_name} {fam_name} Stats:")
+        print(F"{'':4}   PA   AB    H   BB   SO    R  RBI")
+        print(F"{''.ljust(4)}   --   --   --   --   --   --  ---")
 
+        stats = {"ab":0, "bb":0, "so":0, "pa":0, "bi":0, "h":0, "r":0}
         # get all the games for the requested team in the supplied date range
-        for evteam in cwtools.event_files:
-            lgr.info(F"found events for team = {evteam}")
-            cwgames = chadwick.games( cwtools.event_files[evteam] )
-            for game in cwgames:
-                game_id = game.contents.game_id.decode(encoding='UTF-8')
-                game_date = game_id[3:11]
-                lgr.debug(F" Found game id = {game_id}; date = {game_date}")
+        for year in range(start, end+1):
+            lgr.info(F"collect stats for year: {year}")
+            for evteam in player_stats.event_files[str(year)]:
+                lgr.info(F"found events for team = {evteam}")
+                cwgames = chadwick.games(evteam)
+                for game in cwgames:
+                    game_id = game.contents.game_id.decode(encoding='UTF-8')
+                    game_date = game_id[3:11]
+                    lgr.info(F" Found game id = {game_id}; date = {game_date}")
 
-                if end_id >= game_date >= start_id:
-                    results = tuple( chadwick.process_game(game) )
-                    home_team = results[0]['HOME_TEAM_ID']
-                    away_team = results[0]['AWAY_TEAM_ID']
-                    if home_team == team or away_team == team:
-                        lgr.warning(F" Found game id = {game_id}")
-                        cwtools.games[game_id[3:]] = game
+                    box = MyCwlib.box_create(game)
+                    player_stats.collect_stats(box, playid, stats, str(year))
 
-        # sort the games and print out the information
-        for key in sorted( cwtools.games.keys() ):
-            game = cwtools.games[key]
-            box = MyCwlib.box_create(game)
-            events = chadwick.process_game(game)
-            results = tuple(events)
-
-            away_team = results[0]['AWAY_TEAM_ID']
-            visitor = cwtools.rosters[away_team]
-            home_team = results[0]['HOME_TEAM_ID']
-            home = cwtools.rosters[home_team]
-
-            player_stats.print_game_summary(game, box, visitor, home)
+            player_stats.print_stats(str(year), stats)
+            player_stats.clear(stats)
 
     except Exception as ex:
         lgr.exception(F"Exception: {repr(ex)}")
