@@ -97,8 +97,8 @@ def process_args():
     required = arg_parser.add_argument_group('REQUIRED')
     required.add_argument('-i', '--player_id', required=True, help="Retrosheet id for a player, e.g. aaroh101, bondb101")
     required.add_argument('-s', '--start', required=True, type=int, help="start year to find stats (yyyy)")
-    required.add_argument('-e', '--end', required=True, type=int, help="end year to find stats (yyyy)")
     # optional arguments
+    arg_parser.add_argument('-e', '--end', type=int, help="end year to find stats (yyyy)")
     arg_parser.add_argument('-p', '--post', action="store_true", help="find postseason games instead of regular season")
     arg_parser.add_argument('-q', '--quiet', action="store_true", help="NO logging")
     arg_parser.add_argument('-l', '--level', default="INFO", help="set LEVEL of logging output")
@@ -130,8 +130,8 @@ def process_input_parameters(argx:list):
     start = args.start if 1871 <= args.start <= 2020 else 1954
     logging.warning(F"start = {start}")
 
-    end = args.end if 1871 <= args.end <= 2020 else 1955
-    if args.end < args.start: end = start
+    end = args.end if args.end and 1871 <= args.end <= 2020 else start
+    if end < start: end = start
     logging.warning(F"end = {end}")
 
     return playid, start, end, loglevel
