@@ -50,9 +50,6 @@ class MyChadwickTools:
     def __init__(self, logger:logging.Logger):
         self.lgr = logger
         self.lgr.warning(F" Start {self.__class__.__name__}")
-        self.rosters = {}
-        self.event_files = {}
-        self.games = {}
         self.note_count = 0
 
     # void cwbox_print_timeofgame(CWGame * game)

@@ -269,25 +269,25 @@ def main_game_summary(args:list):
                 if rteam == team:
                     lgr.info(F"\t-- league is {row[1]}L; city is {row[2]}; nickname is {row[3]}")
                 # create the rosters
-                cwtools.rosters[rteam] = MyCwlib.roster_create(rteam, int(year), row[1]+"L", row[2], row[3])
+                pgs.rosters[rteam] = MyCwlib.roster_create(rteam, int(year), row[1]+"L", row[2], row[3])
                 roster_file = ROSTERS_FOLDER + rteam + year + ".ROS"
                 lgr.debug(F"roster file name = {roster_file}")
                 if not os.path.exists(roster_file):
                     raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
                 roster_fptr = chadwick.fopen( bytes(roster_file, "utf8") )
                 # fill the rosters
-                roster_read_result = MyCwlib.roster_read(cwtools.rosters[rteam], roster_fptr)
+                roster_read_result = MyCwlib.roster_read(pgs.rosters[rteam], roster_fptr)
                 lgr.info("roster read result = " + ("Success." if roster_read_result > 0 else "Failure!"))
                 chadwick.fclose(roster_fptr)
                 # find and store the event file paths
                 event_file = REGULAR_SEASON_FOLDER + year + rteam + ".EV" + row[1]
                 if not os.path.exists(event_file):
                     raise FileNotFoundError(F"CANNOT find event file {event_file}!")
-                cwtools.event_files[rteam] = event_file
+                pgs.event_files[rteam] = event_file
 
-        for item in cwtools.rosters.values():
+        for item in pgs.rosters.values():
             lgr.debug(item)
-        for item in cwtools.event_files.values():
+        for item in pgs.event_files.values():
             lgr.debug(item)
 
         start_id = year + start
@@ -296,9 +296,9 @@ def main_game_summary(args:list):
         lgr.info(F"end id = {end_id}")
 
         # get all the games for the requested team in the supplied date range
-        for evteam in cwtools.event_files:
+        for evteam in pgs.event_files:
             lgr.info(F"found events for team = {evteam}")
-            cwgames = chadwick.games( cwtools.event_files[evteam] )
+            cwgames = chadwick.games( pgs.event_files[evteam] )
             for game in cwgames:
                 # lgr.debug(F"type(game) = {type(game)}")
                 # type(game) = <class 'pychadwick.game.LP_CWGame'>
@@ -313,19 +313,19 @@ def main_game_summary(args:list):
                     away_team = g_results[0]['AWAY_TEAM_ID']
                     if home_team == team or away_team == team:
                         lgr.warning(F" Found game id = {game_id}")
-                        cwtools.games[game_id[3:]] = game
+                        pgs.games[game_id[3:]] = game
 
         # sort the games and print out the information
-        for key in sorted( cwtools.games.keys() ):
-            game = cwtools.games[key]
+        for key in sorted( pgs.games.keys() ):
+            game = pgs.games[key]
             box = MyCwlib.box_create(game)
             events = chadwick.process_game(game)
             e_results = tuple(events)
 
             away_team = e_results[0]['AWAY_TEAM_ID']
-            visitor = cwtools.rosters[away_team]
+            visitor = pgs.rosters[away_team]
             home_team = e_results[0]['HOME_TEAM_ID']
-            home = cwtools.rosters[home_team]
+            home = pgs.rosters[home_team]
 
             pgs.print_game_summary(game, box, visitor, home)
 
