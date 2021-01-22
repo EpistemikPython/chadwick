@@ -99,7 +99,7 @@ class PrintGameSummary:
                 print(F"  {outs_at_end} out{'' if outs_at_end == 1 else 's'} when game ended.")
 
     # void cwbox_print_text(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
-    def print_game_summary( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
+    def print_summary( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
         self.lgr.info("print_game_summary():\n----------------------------------")
 
         self.note_count = 0
@@ -327,7 +327,7 @@ def main_game_summary(args:list):
             home_team = e_results[0]['HOME_TEAM_ID']
             home = pgs.rosters[home_team]
 
-            pgs.print_game_summary(game, box, visitor, home)
+            pgs.print_summary(game, box, visitor, home)
 
     except Exception as ex:
         lgr.exception(F"Exception: {repr(ex)}")
