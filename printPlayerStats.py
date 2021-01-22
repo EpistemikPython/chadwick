@@ -6,12 +6,12 @@
 # Original C code Copyright (c) 2002-2020
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
 #
-# Port to Python3 and modifications Copyright (c) 2019-2021 Mark Sattolo <epistemik@gmail.com>
+# Port to Python3, additions & modifications Copyright (c) 2019-2021 Mark Sattolo <epistemik@gmail.com>
 
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-01-21"
+__updated__ = "2021-01-22"
 
 import csv
 import sys
@@ -21,7 +21,12 @@ from cwLibWrappers import chadwick, cwlib
 from cwTools import *
 
 
-# noinspection PyAttributeOutsideInit
+def clear(stats:dict=None):
+    if stats:
+        for item in stats.keys():
+            stats[item] = 0
+
+
 class PrintPlayerStats:
     def __init__(self, cwt:MyChadwickTools, logger:logging.Logger):
         self.cwtools = cwt
@@ -30,45 +35,23 @@ class PrintPlayerStats:
         self.event_files = {}
         self.games = {}
         self.year_stats = {}
-        self.clear()
-
-    def clear(self, stats:dict=None):
-        self.ab = [0,0]
-        self.r  = [0,0]
-        self.h  = [0,0]
-        self.bi = [0,0]
-        self.pa = [0,0]
-        self.bb = [0,0]
-        self.so = [0,0]
-        if stats:
-            stats["ab"] = 0
-            stats["bb"] = 0
-            stats["so"] = 0
-            stats["pa"] = 0
-            stats["bi"] = 0
-            stats["h"] = 0
-            stats["r"] = 0
 
     def collect_stats( self, p_box:pointer, play_id:str, stats:dict, year:str ):
-        self.lgr.debug(F"collect stats for year = {year}")
+        self.lgr.debug(F"player = {play_id}; collect stats for year = {year}")
         slots = [1,1]
         players = list()
-        self.lgr.info(F"player = {play_id}")
         player0 = MyCwlib.box_get_starter(p_box, 0, 1)
-        self.lgr.debug(F"type(player0) = {type(player0)}")
         players.insert(0, player0)
         player1 = MyCwlib.box_get_starter(p_box, 1, 1)
-        self.lgr.debug(F"type(player1) = {type(player1)}")
         players.insert(1, player1)
 
         while slots[0] <= 9 or slots[1] <= 9 :
             for t in range(0,2):
                 if slots[t] <= 9:
                     player = players[t].contents.player_id.decode("UTF-8")
-                    # self.lgr.info(F"players[t] = {players[t]}")
                     self.lgr.debug(F"player = {player}")
                     if player == play_id:
-                        self.lgr.info(F"found player {play_id}")
+                        self.lgr.debug(F"found player = {play_id}")
                         # NOTE: misspelling 'battiing' in the python wrapper file
                         batting = players[t].contents.battiing.contents
                         stats["ab"] += batting.ab
@@ -77,12 +60,6 @@ class PrintPlayerStats:
                         stats["pa"] += batting.pa
                         stats["h"] += batting.h
                         stats["r"] += batting.r
-                        # self.ab[t] += batting.ab
-                        # self.r[t]  += batting.r
-                        # self.h[t]  += batting.h
-                        # self.bb[t] += batting.bb
-                        # self.pa[t] += batting.pa
-                        # self.so[t] += batting.so
                         if batting.bi != -1:
                             stats["bi"] += batting.bi
                         else:
@@ -96,10 +73,6 @@ class PrintPlayerStats:
                             if slots[t] <= 9:
                                 players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
 
-    def add(self, year:str, stats:dict):
-        self.year_stats[year] = stats
-
-    # void cwbox_print_text(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_stats(self, year:str, stats:dict):
         self.lgr.info(F"print stats for year = {year}")
         ab = stats["ab"]
@@ -109,16 +82,9 @@ class PrintPlayerStats:
         pa = stats["pa"]
         h = stats["h"]
         r = stats["r"]
-        # ab = self.ab
-        # pa = self.pa
-        # bb = self.bb
-        # so = self.so
-        # bi = self.bi
-        # h = self.h
-        # r = self.r
 
         print(F"{year.ljust(4)}{pa:5}{ab:5}{h:5}{bb:5}{so:5}{r:5}", end = '')
-        print(F"{bi:5} " if bi >= 0 else "    ", end = '')
+        print(F"{bi:5} " if bi >= 0 else "     ", end = '')
         print("")
 
 # END class PrintPlayerStats
@@ -185,10 +151,6 @@ def main_player_stats(args:list):
     need_name = True
     fam_name = playid
     giv_name = ""
-    # TODO:
-    #   get ALL the event files for the requested years
-    #   go through each event line for the files and find where player == 'BAT_ID' and save these
-    #   go through each file and look for the batting stats of the player and sum
     try:
         for year in range(start, end+1):
             year_events = list()
@@ -200,7 +162,7 @@ def main_player_stats(args:list):
                 for trow in team_reader:
                     rteam = trow[0]
                     lgr.info(F"Found team {rteam}")
-                    # get the rosters
+                    # search rosters for the player's full name
                     if need_name:
                         roster_file = ROSTERS_FOLDER + rteam + str(year) + ".ROS"
                         lgr.debug(F"roster file name = {roster_file}")
@@ -214,24 +176,25 @@ def main_player_stats(args:list):
                                     giv_name = rrow[2]
                                     need_name = False
                                     break
-                    # find and store the event file paths
+                    # find and store the event file paths for the requested years
                     event_file = REGULAR_SEASON_FOLDER + str(year) + rteam + ".EV" + trow[1]
                     if not os.path.exists(event_file):
                         raise FileNotFoundError(F"CANNOT find event file {event_file}!")
                     year_events.append(event_file)
             player_stats.event_files[str(year)] = year_events
 
-        lgr.warning(F"name = {giv_name} {fam_name}")
+        name = F"{giv_name} {fam_name}"
+        lgr.warning(F"name = {name}")
         lgr.warning(F"found {len(player_stats.event_files)} year-event files")
         for item in player_stats.event_files:
             lgr.debug(item)
 
-        print(F"\t{giv_name} {fam_name} Stats:")
+        print(F"\t{name} Stats:")
         print(F"{'':4}   PA   AB    H   BB   SO    R  RBI")
         print(F"{''.ljust(4)}   --   --   --   --   --   --  ---")
 
         stats = {"ab":0, "bb":0, "so":0, "pa":0, "bi":0, "h":0, "r":0}
-        # get all the games for the requested team in the supplied date range
+        # get all the games in the supplied date range
         for year in range(start, end+1):
             lgr.info(F"collect stats for year: {year}")
             for evteam in player_stats.event_files[str(year)]:
@@ -246,7 +209,8 @@ def main_player_stats(args:list):
                     player_stats.collect_stats(box, playid, stats, str(year))
 
             player_stats.print_stats(str(year), stats)
-            player_stats.clear(stats)
+            clear(stats)
+        print("")
 
     except Exception as ex:
         lgr.exception(F"Exception: {repr(ex)}")
