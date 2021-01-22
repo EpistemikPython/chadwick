@@ -246,7 +246,7 @@ def process_input_parameters(argx:list):
     return team, year, start, end, loglevel
 
 
-def main_pgs(args:list):
+def main_game_summary(args:list):
     lgr = logging.getLogger("PrintGameSummary")
 
     team, year, start, end, loglevel = process_input_parameters(args)
@@ -300,14 +300,17 @@ def main_pgs(args:list):
             lgr.info(F"found events for team = {evteam}")
             cwgames = chadwick.games( cwtools.event_files[evteam] )
             for game in cwgames:
+                # lgr.debug(F"type(game) = {type(game)}")
+                # type(game) = <class 'pychadwick.game.LP_CWGame'>
                 game_id = game.contents.game_id.decode(encoding='UTF-8')
                 game_date = game_id[3:11]
                 lgr.debug(F" Found game id = {game_id}; date = {game_date}")
 
                 if end_id >= game_date >= start_id:
-                    results = tuple( chadwick.process_game(game) )
-                    home_team = results[0]['HOME_TEAM_ID']
-                    away_team = results[0]['AWAY_TEAM_ID']
+                    proc_game = chadwick.process_game(game)
+                    g_results = tuple(proc_game)
+                    home_team = g_results[0]['HOME_TEAM_ID']
+                    away_team = g_results[0]['AWAY_TEAM_ID']
                     if home_team == team or away_team == team:
                         lgr.warning(F" Found game id = {game_id}")
                         cwtools.games[game_id[3:]] = game
@@ -317,11 +320,11 @@ def main_pgs(args:list):
             game = cwtools.games[key]
             box = MyCwlib.box_create(game)
             events = chadwick.process_game(game)
-            results = tuple(events)
+            e_results = tuple(events)
 
-            away_team = results[0]['AWAY_TEAM_ID']
+            away_team = e_results[0]['AWAY_TEAM_ID']
             visitor = cwtools.rosters[away_team]
-            home_team = results[0]['HOME_TEAM_ID']
+            home_team = e_results[0]['HOME_TEAM_ID']
             home = cwtools.rosters[home_team]
 
             pgs.print_game_summary(game, box, visitor, home)
@@ -334,7 +337,7 @@ if __name__ == "__main__":
     run_start_time = dt.now()
     if '-q' not in sys.argv:
         logging.critical(F"Run Start time = {run_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-    main_pgs(sys.argv[1:])
+    main_game_summary(sys.argv[1:])
     if '-q' not in sys.argv:
         run_time = (dt.now() - run_start_time).total_seconds()
         logging.critical(F" Running time = {(run_time // 60)} minutes, {(run_time % 60):2.3} seconds")
