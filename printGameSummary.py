@@ -130,7 +130,7 @@ class PrintGameSummary:
         while slots[0] <= 9 or slots[1] <= 9 :
             for t in range(0,2):
                 if slots[t] <= 9:
-                    cwlib.print_player(players[t], p_vis if (t == 0) else p_home)
+                    self.cwtools.print_player(players[t], p_vis if (t == 0) else p_home)
                     # NOTE: misspelling 'battiing' in the python wrapper file
                     batting = players[t].contents.battiing.contents
                     ab[t] += batting.ab
