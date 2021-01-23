@@ -1,7 +1,7 @@
 ##############################################################################################################################
 # coding=utf-8
 #
-# printPlayerStats.py -- print stats for a player using Retrosheet data
+# printBattingStats.py -- print batting stats for a player using Retrosheet data
 #
 # Original C code Copyright (c) 2002-2020
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
@@ -21,6 +21,10 @@ from datetime import datetime as dt
 from cwLibWrappers import chadwick, cwlib
 from cwTools import *
 
+BATTING_KEYS = ["01g","02pa","03ab","04r","05h","06b2","07b3","08hr","09bi","10so","11bb","12ibb","13sb","14cs"]
+BATTING_HDRS = {"01":" G ", "02":" PA", "03":" AB", "04":" R ", "05":" H ", "06":" B2", "07":" B3", "08":" HR", "09":"RBI",
+                "10":" SO", "11":" BB", "12":"IBB", "13":" SB", "14":" CS", "15":" BA"}
+
 
 def clear(stats:dict, totals:dict):
     for item in stats.keys():
@@ -39,6 +43,7 @@ class PrintBattingStats:
 
     def collect_stats( self, p_box:pointer, play_id:str, stats:dict, year:str ):
         self.lgr.debug(F"player = {play_id}; collect stats for year = {year}")
+        bk = BATTING_KEYS
         slots = [1,1]
         players = list()
         players.insert( 0, MyCwlib.box_get_starter(p_box, 0, 1) )
@@ -53,23 +58,23 @@ class PrintBattingStats:
                         self.lgr.debug(F"found player = {play_id}")
                         # NOTE: misspelling 'battiing' in the python wrapper file
                         batting = players[t].contents.battiing.contents
-                        stats["01g"] += batting.g
-                        stats["02pa"] += batting.pa
-                        stats["03ab"] += batting.ab
-                        stats["04r"] += batting.r
-                        stats["05h"] += batting.h
-                        stats["06b2"] += batting.b2
-                        stats["07b3"] += batting.b3
-                        stats["08hr"] += batting.hr
+                        stats[ bk[0] ] += batting.g
+                        stats[ bk[1] ] += batting.pa
+                        stats[ bk[2] ] += batting.ab
+                        stats[ bk[3] ] += batting.r
+                        stats[ bk[4] ] += batting.h
+                        stats[ bk[5] ] += batting.b2
+                        stats[ bk[6] ] += batting.b3
+                        stats[ bk[7] ] += batting.hr
                         if batting.bi != -1:
-                            stats["09bi"] += batting.bi
+                            stats[ bk[8] ] += batting.bi
                         else:
-                            stats["09bi"] = -1
-                        stats["10bb"] += batting.bb
-                        stats["11ibb"] += batting.ibb
-                        stats["12so"] += batting.so
-                        stats["13sb"] += batting.sb
-                        stats["14cs"] += batting.cs
+                            stats[ bk[8] ] = -1
+                        stats[ bk[9] ] += batting.bb
+                        stats[ bk[10] ] += batting.ibb
+                        stats[ bk[11] ] += batting.so
+                        stats[ bk[12] ] += batting.sb
+                        stats[ bk[13] ] += batting.cs
                     players[t] = players[t].contents.next
                     if not players[t]:
                         while slots[t] <= 9 and not players[t]:
@@ -78,18 +83,22 @@ class PrintBattingStats:
                                 players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
 
     def print_stats(self, playid, name, yrstart, yrend):
-        # int g, pa, ab, r, h, b2, b3, hr, hrslam, bi, bi2out, gw, bb, ibb, so, gdp, hp, sh, sf, sb, cs, xi;
-        # G PA AB R H 2B 3B HR RBI SB CS BB SO BA OBP SLG OPS OPS+ TB GDP HBP SH SF IBB
-        stats = {"01g":0, "02pa":0, "03ab":0, "04r":0, "05h":0, "06b2":0, "07b3":0, "08hr":0, "09bi":0, "10bb":0,
-                 "11ibb":0, "12so":0, "13sb":0, "14cs":0}
+        # CWBoxBatting: int g, pa, ab, r, h, b2, b3, hr, hrslam, bi, bi2out, gw, bb, ibb, so, gdp, hp, sh, sf, sb, cs, xi;
+        # Baseball Ref:     G  PA  AB  R  H  2B  3B  HR  RBI  SB  CS  BB  SO  BA  OBP  SLG  OPS  OPS+  TB  GDP  HBP  SH  SF IBB
+        bk = BATTING_KEYS
+        stats = { bk[0]:0, bk[1]:0, bk[2]:0, bk[3]:0, bk[4]:0, bk[5]:0, bk[6]:0, bk[7]:0, bk[8]:0, bk[9]:0,
+                  bk[10]:0, bk[11]:0, bk[12]:0, bk[13]:0}
         totals = copy.copy(stats)
 
         print(F"\t{name} Stats:")
-        print(F"{' ':11}{' G ':7}{' PA':7}{' AB':7}{' R ':7}{' H ':7}{' B2':7}{' B3':7}{' HR':7}{'RBI':7}{' BB':7}"
-              F"{'IBB':7}{' SO':7}{' SB':7}{' CS':7}")
-        print(F"{' ':11}", end = '')
-        for sp in range(0,14): print(F"{'---':7}", end = '')
-        print("")
+        print(F"{''}".rjust(STD_PRINT_SPACE), end = '')
+        for key in sorted( BATTING_HDRS ):
+            print(F"{BATTING_HDRS[key]}".rjust(STD_PRINT_SPACE), end = '')
+        print(" ")
+        print(F"{''}".rjust(STD_PRINT_SPACE), end = '')
+        for sp in range(0,len(BATTING_HDRS)):
+            print(F"{'---'}".rjust(STD_PRINT_SPACE), end = '')
+        print(" ")
 
         # get all the games in the supplied date range
         for year in range(yrstart, yrend+1):
@@ -110,18 +119,27 @@ class PrintBattingStats:
             self.print_stat_line(str(year), stats)
             clear(stats, totals)
 
-        print(F"{' ':11}", end = '')
-        for sp in range(0,14): print(F"{'---':7}", end = '')
-        print("")
+        print(F"{''}".rjust(STD_PRINT_SPACE), end = '')
+        for sp in range(0,len(stats)):
+            print(F"{'---'}".rjust(STD_PRINT_SPACE), end = '')
+        print(" ")
+        print(F"{''}".rjust(STD_PRINT_SPACE), end = '')
+        for key in sorted( BATTING_HDRS ):
+            print(F"{BATTING_HDRS[key]}".rjust(STD_PRINT_SPACE), end = '')
+        print(" ")
+        print(F"{''}".rjust(STD_PRINT_SPACE), end = '')
+        for sp in range(0,len(BATTING_HDRS)):
+            print(F"{'---'}".rjust(STD_PRINT_SPACE), end = '')
+        print(" ")
         self.print_stat_line("Total", totals)
         print("")
 
     def print_stat_line(self, year:str, bat:dict):
         self.lgr.info(F"print stats for year = {year}")
-        print(F"{year.ljust(8)}", end = '')
-        for item in sorted( bat.keys() ):
-            print(F"{bat[item]:6} " if bat[item] >= 0 else F"{' ':6}", end = '')
-        print("")
+        print(F"{year.ljust(STD_PRINT_SPACE)}", end = '')
+        for key in sorted( bat.keys() ):
+            print(F"{bat[key]}".rjust(STD_PRINT_SPACE) if bat[key] >= 0 else F"{''}".rjust(STD_PRINT_SPACE), end = '')
+        print(" ")
 
 # END class PrintPlayerStats
 
@@ -183,7 +201,7 @@ def main_batting_stats(args:list):
     lgr.warning(F" id = {playid}; years = {start}->{end}")
 
     cwtools = MyChadwickTools(lgr)
-    player_stats = PrintBattingStats(cwtools, lgr)
+    bat_stats = PrintBattingStats(cwtools, lgr)
     need_name = True
     fam_name = playid
     giv_name = ""
@@ -220,15 +238,15 @@ def main_batting_stats(args:list):
                     if not os.path.exists(event_file):
                         raise FileNotFoundError(F"CANNOT find event file {event_file}!")
                     year_events.append(event_file)
-            player_stats.event_files[str(year)] = year_events
+            bat_stats.event_files[str(year)] = year_events
 
         name = F"{giv_name} {fam_name}"
         lgr.warning(F"name = {name}")
-        lgr.warning(F"found {len(player_stats.event_files)} year-event files")
-        for item in player_stats.event_files:
+        lgr.warning(F"found {len(bat_stats.event_files)} year-event files")
+        for item in bat_stats.event_files:
             lgr.debug(item)
 
-        player_stats.print_stats(playid, name, start, end)
+        bat_stats.print_stats(playid, name, start, end)
 
     except Exception as ex:
         lgr.exception(F"Exception: {repr(ex)}")

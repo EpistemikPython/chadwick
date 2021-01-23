@@ -19,6 +19,7 @@ from cwLibWrappers import MyCwlib
 
 POSITIONS = ["", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"]
 MARKERS = ['*', '+', '#']
+STD_PRINT_SPACE = 6
 
 RETROSHEET_FOLDER = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/"
 ROSTERS_FOLDER = RETROSHEET_FOLDER + "rosters/"
