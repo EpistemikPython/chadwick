@@ -21,10 +21,10 @@ from cwLibWrappers import chadwick, cwlib
 from cwTools import *
 
 
-def clear(stats:dict=None):
-    if stats:
-        for item in stats.keys():
-            stats[item] = 0
+def clear(stats:dict, totals:dict):
+    for item in stats.keys():
+        totals[item] += stats[item]
+        stats[item] = 0
 
 
 class PrintPlayerStats:
@@ -83,8 +83,8 @@ class PrintPlayerStats:
         h = stats["h"]
         r = stats["r"]
 
-        print(F"{year.ljust(4)}{pa:5}{ab:5}{h:5}{bb:5}{so:5}{r:5}", end = '')
-        print(F"{bi:5} " if bi >= 0 else "     ", end = '')
+        print(F"{year.ljust(6)}{pa:7}{ab:7}{h:7}{bb:7}{so:7}{r:7}", end = '')
+        print(F"{bi:7} " if bi >= 0 else "     ", end = '')
         print("")
 
 # END class PrintPlayerStats
@@ -190,10 +190,11 @@ def main_player_stats(args:list):
             lgr.debug(item)
 
         print(F"\t{name} Stats:")
-        print(F"{'':4}   PA   AB    H   BB   SO    R  RBI")
-        print(F"{''.ljust(4)}   --   --   --   --   --   --  ---")
+        print(F"{'':6}     PA     AB      H     BB     SO      R    RBI ")
+        print(F"{''.ljust(6)}     --     --     --     --     --     --    ---")
 
         stats = {"ab":0, "bb":0, "so":0, "pa":0, "bi":0, "h":0, "r":0}
+        totals = {"ab":0, "bb":0, "so":0, "pa":0, "bi":0, "h":0, "r":0}
         # get all the games in the supplied date range
         for year in range(start, end+1):
             lgr.info(F"collect stats for year: {year}")
@@ -209,7 +210,10 @@ def main_player_stats(args:list):
                     player_stats.collect_stats(box, playid, stats, str(year))
 
             player_stats.print_stats(str(year), stats)
-            clear(stats)
+            clear(stats, totals)
+
+        print(F"{''.ljust(6)}     --     --     --     --     --     --    ---")
+        player_stats.print_stats("Total", totals)
         print("")
 
     except Exception as ex:
