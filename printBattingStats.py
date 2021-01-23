@@ -21,15 +21,56 @@ from datetime import datetime as dt
 from cwLibWrappers import chadwick, cwlib
 from cwTools import *
 
-BATTING_KEYS = ["01g","02pa","03ab","04r","05h","06b2","07b3","08hr","09bi","10so","11bb","12ibb","13sb","14cs"]
-BATTING_HDRS = {"01":" G ", "02":" PA", "03":" AB", "04":" R ", "05":" H ", "06":" B2", "07":" B3", "08":" HR", "09":"RBI",
-                "10":" SO", "11":" BB", "12":"IBB", "13":" SB", "14":" CS", "15":" BA"}
-
+GM=0
+PA=1
+AB=2
+RUN=3
+HIT=4
+B2=5
+B3=6
+HR=7
+RBI=8
+SO=9
+BB=10
+IBB=11
+SB=12
+CS=13
+STATS_DICT = { "01g":0, "02pa":0, "03ab":0, "04r":0, "05h":0, "06b2":0, "07b3":0, "08hr":0, "09bi":0, "10so":0,
+               "11bb":0, "12ibb":0, "13sb":0, "14cs":0 }
+BATTING_KEYS = list( STATS_DICT.keys() )
+BATTING_HDRS = { BATTING_KEYS[GM][:2] :F" {BATTING_KEYS[GM][2:].upper()} ",
+                 BATTING_KEYS[PA][:2] :F" {BATTING_KEYS[PA][2:].upper()}",
+                 BATTING_KEYS[AB][:2] :F" {BATTING_KEYS[AB][2:].upper()}",
+                 BATTING_KEYS[RUN][:2]:F" {BATTING_KEYS[RUN][2:].upper()} ",
+                 BATTING_KEYS[HIT][:2]:F" {BATTING_KEYS[HIT][2:].upper()} ",
+                 BATTING_KEYS[B2][:2]:F" {BATTING_KEYS[B2][2:].upper()}",
+                 BATTING_KEYS[B3][:2] :F" {BATTING_KEYS[B3][2:].upper()}",
+                 BATTING_KEYS[HR][:2]:F" {BATTING_KEYS[HR][2:].upper()}",
+                 BATTING_KEYS[RBI][:2]:F"{BATTING_KEYS[RBI][2:].upper()}",
+                 BATTING_KEYS[SO][:2]:F" {BATTING_KEYS[SO][2:].upper()}",
+                 BATTING_KEYS[BB][:2] :F" {BATTING_KEYS[BB][2:].upper()}",
+                 BATTING_KEYS[IBB][:2]:F"{BATTING_KEYS[IBB][2:].upper()}",
+                 BATTING_KEYS[SB][:2] :F" {BATTING_KEYS[SB][2:].upper()}",
+                 BATTING_KEYS[CS][:2]:F" {BATTING_KEYS[CS][2:].upper()}",
+                 "15":" BA", "16":"OBP", "17":"SLG" }
 
 def clear(stats:dict, totals:dict):
     for item in stats.keys():
         totals[item] += stats[item]
         stats[item] = 0
+
+def print_ul():
+    print(F"{''}".rjust(STD_PRINT_SPACE), end = '')
+    for sp in range(0, len(BATTING_HDRS)):
+        print(F"{'---'}".rjust(STD_PRINT_SPACE), end = '')
+    print(" ")
+
+def print_hdr():
+    print(F"{''}".rjust(STD_PRINT_SPACE), end = '')
+    for key in sorted(BATTING_HDRS):
+        print(F"{BATTING_HDRS[key]}".rjust(STD_PRINT_SPACE), end = '')
+    print(" ")
+    print_ul()
 
 
 class PrintBattingStats:
@@ -58,23 +99,23 @@ class PrintBattingStats:
                         self.lgr.debug(F"found player = {play_id}")
                         # NOTE: misspelling 'battiing' in the python wrapper file
                         batting = players[t].contents.battiing.contents
-                        stats[ bk[0] ] += batting.g
-                        stats[ bk[1] ] += batting.pa
-                        stats[ bk[2] ] += batting.ab
-                        stats[ bk[3] ] += batting.r
-                        stats[ bk[4] ] += batting.h
-                        stats[ bk[5] ] += batting.b2
-                        stats[ bk[6] ] += batting.b3
-                        stats[ bk[7] ] += batting.hr
+                        stats[ bk[GM] ] += batting.g
+                        stats[ bk[PA] ] += batting.pa
+                        stats[ bk[AB] ] += batting.ab
+                        stats[ bk[RUN] ] += batting.r
+                        stats[ bk[HIT] ] += batting.h
+                        stats[ bk[B2] ] += batting.b2
+                        stats[ bk[B3] ] += batting.b3
+                        stats[ bk[HR] ] += batting.hr
                         if batting.bi != -1:
-                            stats[ bk[8] ] += batting.bi
+                            stats[ bk[RBI] ] += batting.bi
                         else:
-                            stats[ bk[8] ] = -1
-                        stats[ bk[9] ] += batting.bb
-                        stats[ bk[10] ] += batting.ibb
-                        stats[ bk[11] ] += batting.so
-                        stats[ bk[12] ] += batting.sb
-                        stats[ bk[13] ] += batting.cs
+                            stats[ bk[RBI] ] = -1
+                        stats[ bk[BB] ] += batting.bb
+                        stats[ bk[IBB] ] += batting.ibb
+                        stats[ bk[SO] ] += batting.so
+                        stats[ bk[SB] ] += batting.sb
+                        stats[ bk[CS] ] += batting.cs
                     players[t] = players[t].contents.next
                     if not players[t]:
                         while slots[t] <= 9 and not players[t]:
@@ -83,22 +124,14 @@ class PrintBattingStats:
                                 players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
 
     def print_stats(self, playid, name, yrstart, yrend):
+        self.lgr.info(F"print stats for years {yrstart}->{yrend}")
         # CWBoxBatting: int g, pa, ab, r, h, b2, b3, hr, hrslam, bi, bi2out, gw, bb, ibb, so, gdp, hp, sh, sf, sb, cs, xi;
-        # Baseball Ref:     G  PA  AB  R  H  2B  3B  HR  RBI  SB  CS  BB  SO  BA  OBP  SLG  OPS  OPS+  TB  GDP  HBP  SH  SF IBB
-        bk = BATTING_KEYS
-        stats = { bk[0]:0, bk[1]:0, bk[2]:0, bk[3]:0, bk[4]:0, bk[5]:0, bk[6]:0, bk[7]:0, bk[8]:0, bk[9]:0,
-                  bk[10]:0, bk[11]:0, bk[12]:0, bk[13]:0}
-        totals = copy.copy(stats)
+        # baseball-ref.com: G  PA  AB  R  H  2B  3B  HR  RBI  SB  CS  BB  SO  BA  OBP  SLG  OPS  OPS+  TB  GDP  HBP  SH  SF IBB
+        stats = copy.copy(STATS_DICT)
+        totals = copy.copy(STATS_DICT)
 
         print(F"\t{name} Stats:")
-        print(F"{''}".rjust(STD_PRINT_SPACE), end = '')
-        for key in sorted( BATTING_HDRS ):
-            print(F"{BATTING_HDRS[key]}".rjust(STD_PRINT_SPACE), end = '')
-        print(" ")
-        print(F"{''}".rjust(STD_PRINT_SPACE), end = '')
-        for sp in range(0,len(BATTING_HDRS)):
-            print(F"{'---'}".rjust(STD_PRINT_SPACE), end = '')
-        print(" ")
+        print_hdr()
 
         # get all the games in the supplied date range
         for year in range(yrstart, yrend+1):
@@ -119,33 +152,35 @@ class PrintBattingStats:
             self.print_stat_line(str(year), stats)
             clear(stats, totals)
 
-        print(F"{''}".rjust(STD_PRINT_SPACE), end = '')
-        for sp in range(0,len(stats)):
-            print(F"{'---'}".rjust(STD_PRINT_SPACE), end = '')
-        print(" ")
-        print(F"{''}".rjust(STD_PRINT_SPACE), end = '')
-        for key in sorted( BATTING_HDRS ):
-            print(F"{BATTING_HDRS[key]}".rjust(STD_PRINT_SPACE), end = '')
-        print(" ")
-        print(F"{''}".rjust(STD_PRINT_SPACE), end = '')
-        for sp in range(0,len(BATTING_HDRS)):
-            print(F"{'---'}".rjust(STD_PRINT_SPACE), end = '')
-        print(" ")
+        print_ul()
+        print_hdr()
         self.print_stat_line("Total", totals)
         print("")
 
     def print_stat_line(self, year:str, bat:dict):
-        self.lgr.info(F"print stats for year = {year}")
+        self.lgr.info(F"print stat line for year = {year}")
         print(F"{year.ljust(STD_PRINT_SPACE)}", end = '')
         for key in sorted( bat.keys() ):
             print(F"{bat[key]}".rjust(STD_PRINT_SPACE) if bat[key] >= 0 else F"{''}".rjust(STD_PRINT_SPACE), end = '')
+        ba = bat[ BATTING_KEYS[HIT] ] / bat[ BATTING_KEYS[AB] ] if bat[ BATTING_KEYS[AB] ] > 0 else 0.0
+        pba = str(ba)[1:5] if ba > 0.0 else "000"
+        print(F"{pba}".rjust(STD_PRINT_SPACE), end = '')
+        obp_num = bat[ BATTING_KEYS[HIT] ] + bat[ BATTING_KEYS[BB] ] # + bat[ BATTING_KEYS[HBP] ]
+        obp_denom = bat[ BATTING_KEYS[AB] ] + bat[ BATTING_KEYS[BB] ] # + bat[ BATTING_KEYS[HBP] ] + bat[ BATTING_KEYS[SF] ]
+        obp = obp_num / obp_denom if obp_denom > 0 else 0.0
+        pobp = str(obp)[1:5] if obp > 0.0 else "000"
+        print(F"{pobp}".rjust(STD_PRINT_SPACE), end = '')
+        slg_num = bat[BATTING_KEYS[HIT]] + bat[BATTING_KEYS[B2]] + bat[BATTING_KEYS[B3]]*2 + bat[BATTING_KEYS[HR]]*3
+        slg = slg_num / bat[ BATTING_KEYS[AB] ] if bat[ BATTING_KEYS[AB] ] > 0 else 0.0
+        pslg = str(slg)[1:5] if slg > 0.0 else "000"
+        print(F"{pslg}".rjust(STD_PRINT_SPACE), end = '')
         print(" ")
 
 # END class PrintPlayerStats
 
 
 def process_args():
-    arg_parser = ArgumentParser(description="Print player combined stats from Retrosheet data for the specified years",
+    arg_parser = ArgumentParser(description="Print player stats and total from Retrosheet data for the specified years",
                                 prog='main_chadwick_py3.py')
     # required arguments
     required = arg_parser.add_argument_group('REQUIRED')
