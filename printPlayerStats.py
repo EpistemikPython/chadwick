@@ -40,10 +40,8 @@ class PrintPlayerStats:
         self.lgr.debug(F"player = {play_id}; collect stats for year = {year}")
         slots = [1,1]
         players = list()
-        player0 = MyCwlib.box_get_starter(p_box, 0, 1)
-        players.insert(0, player0)
-        player1 = MyCwlib.box_get_starter(p_box, 1, 1)
-        players.insert(1, player1)
+        players.insert( 0, MyCwlib.box_get_starter(p_box, 0, 1) )
+        players.insert( 1, MyCwlib.box_get_starter(p_box, 1, 1) )
 
         while slots[0] <= 9 or slots[1] <= 9 :
             for t in range(0,2):
@@ -73,18 +71,40 @@ class PrintPlayerStats:
                             if slots[t] <= 9:
                                 players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
 
-    def print_stats(self, year:str, stats:dict):
-        self.lgr.info(F"print stats for year = {year}")
-        ab = stats["ab"]
-        bb = stats["bb"]
-        so = stats["so"]
-        bi = stats["bi"]
-        pa = stats["pa"]
-        h = stats["h"]
-        r = stats["r"]
+    def print_stats(self, playid, name, start, end):
+        stats = {"ab":0, "bb":0, "so":0, "pa":0, "bi":0, "h":0, "r":0}
+        totals = {"ab":0, "bb":0, "so":0, "pa":0, "bi":0, "h":0, "r":0}
 
-        print(F"{year.ljust(6)}{pa:7}{ab:7}{h:7}{bb:7}{so:7}{r:7}", end = '')
-        print(F"{bi:7} " if bi >= 0 else "     ", end = '')
+        print(F"\t{name} Stats:")
+        print(F"{'':6}     PA     AB      H     BB     SO      R    RBI ")
+        print(F"{''.ljust(6)}     --     --     --     --     --     --    ---")
+
+        # get all the games in the supplied date range
+        for year in range(start, end+1):
+            self.lgr.info(F"collect stats for year: {year}")
+            for evteam in self.event_files[str(year)]:
+                self.lgr.info(F"found events for team = {evteam}")
+                cwgames = chadwick.games(evteam)
+                for game in cwgames:
+                    game_id = game.contents.game_id.decode(encoding = 'UTF-8')
+                    game_date = game_id[3:11]
+                    self.lgr.info(F" Found game id = {game_id}; date = {game_date}")
+
+                    box = MyCwlib.box_create(game)
+                    self.collect_stats(box, playid, stats, str(year))
+
+            self.print_stat_line(str(year), stats)
+            clear(stats, totals)
+
+        print(F"{''.ljust(6)}     --     --     --     --     --     --    ---")
+        self.print_stat_line("Total", totals)
+        print("")
+
+    def print_stat_line(self, year:str, bat:dict):
+        self.lgr.info(F"print stats for year = {year}")
+        print(F"{year.ljust(6)}", end = '')
+        print(F"{bat['pa']:7}{bat['ab']:7}{bat['h']:7}{bat['bb']:7}{bat['so']:7}{bat['r']:7}", end = '')
+        print(F"{bat['bi']:7} " if bat['bi'] >= 0 else F"{'x':7}", end = '')
         print("")
 
 # END class PrintPlayerStats
@@ -189,32 +209,7 @@ def main_player_stats(args:list):
         for item in player_stats.event_files:
             lgr.debug(item)
 
-        print(F"\t{name} Stats:")
-        print(F"{'':6}     PA     AB      H     BB     SO      R    RBI ")
-        print(F"{''.ljust(6)}     --     --     --     --     --     --    ---")
-
-        stats = {"ab":0, "bb":0, "so":0, "pa":0, "bi":0, "h":0, "r":0}
-        totals = {"ab":0, "bb":0, "so":0, "pa":0, "bi":0, "h":0, "r":0}
-        # get all the games in the supplied date range
-        for year in range(start, end+1):
-            lgr.info(F"collect stats for year: {year}")
-            for evteam in player_stats.event_files[str(year)]:
-                lgr.info(F"found events for team = {evteam}")
-                cwgames = chadwick.games(evteam)
-                for game in cwgames:
-                    game_id = game.contents.game_id.decode(encoding='UTF-8')
-                    game_date = game_id[3:11]
-                    lgr.info(F" Found game id = {game_id}; date = {game_date}")
-
-                    box = MyCwlib.box_create(game)
-                    player_stats.collect_stats(box, playid, stats, str(year))
-
-            player_stats.print_stats(str(year), stats)
-            clear(stats, totals)
-
-        print(F"{''.ljust(6)}     --     --     --     --     --     --    ---")
-        player_stats.print_stats("Total", totals)
-        print("")
+        player_stats.print_stats(playid, name, start, end)
 
     except Exception as ex:
         lgr.exception(F"Exception: {repr(ex)}")
