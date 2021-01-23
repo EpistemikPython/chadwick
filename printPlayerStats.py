@@ -11,8 +11,9 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-01-22"
+__updated__ = "2021-01-23"
 
+import copy
 import csv
 import sys
 from argparse import ArgumentParser
@@ -52,35 +53,46 @@ class PrintPlayerStats:
                         self.lgr.debug(F"found player = {play_id}")
                         # NOTE: misspelling 'battiing' in the python wrapper file
                         batting = players[t].contents.battiing.contents
-                        stats["ab"] += batting.ab
-                        stats["bb"] += batting.bb
-                        stats["so"] += batting.so
-                        stats["pa"] += batting.pa
-                        stats["h"] += batting.h
-                        stats["r"] += batting.r
+                        stats["01g"] += batting.g
+                        stats["02pa"] += batting.pa
+                        stats["03ab"] += batting.ab
+                        stats["04r"] += batting.r
+                        stats["05h"] += batting.h
+                        stats["06b2"] += batting.b2
+                        stats["07b3"] += batting.b3
+                        stats["08hr"] += batting.hr
                         if batting.bi != -1:
-                            stats["bi"] += batting.bi
+                            stats["09bi"] += batting.bi
                         else:
-                            stats["bi"] = -1
+                            stats["09bi"] = -1
+                        stats["10bb"] += batting.bb
+                        stats["11ibb"] += batting.ibb
+                        stats["12so"] += batting.so
+                        stats["13sb"] += batting.sb
+                        stats["14cs"] += batting.cs
                     players[t] = players[t].contents.next
                     if not players[t]:
-                        # In some National Association games, teams played with 8 players.
-                        # This generalization allows for printing boxscores when some batting slots are empty.
                         while slots[t] <= 9 and not players[t]:
                             slots[t] += 1
                             if slots[t] <= 9:
                                 players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
 
-    def print_stats(self, playid, name, start, end):
-        stats = {"ab":0, "bb":0, "so":0, "pa":0, "bi":0, "h":0, "r":0}
-        totals = {"ab":0, "bb":0, "so":0, "pa":0, "bi":0, "h":0, "r":0}
+    def print_stats(self, playid, name, yrstart, yrend):
+        # int g, pa, ab, r, h, b2, b3, hr, hrslam, bi, bi2out, gw, bb, ibb, so, gdp, hp, sh, sf, sb, cs, xi;
+        # G PA AB R H 2B 3B HR RBI SB CS BB SO BA OBP SLG OPS OPS+ TB GDP HBP SH SF IBB
+        stats = {"01g":0, "02pa":0, "03ab":0, "04r":0, "05h":0, "06b2":0, "07b3":0, "08hr":0, "09bi":0, "10bb":0,
+                 "11ibb":0, "12so":0, "13sb":0, "14cs":0}
+        totals = copy.copy(stats)
 
         print(F"\t{name} Stats:")
-        print(F"{'':6}     PA     AB      H     BB     SO      R    RBI ")
-        print(F"{''.ljust(6)}     --     --     --     --     --     --    ---")
+        print(F"{' ':11}{' G ':7}{' PA':7}{' AB':7}{' R ':7}{' H ':7}{' B2':7}{' B3':7}{' HR':7}{'RBI':7}{' BB':7}"
+              F"{'IBB':7}{' SO':7}{' SB':7}{' CS':7}")
+        print(F"{' ':11}", end = '')
+        for sp in range(0,14): print(F"{'---':7}", end = '')
+        print("")
 
         # get all the games in the supplied date range
-        for year in range(start, end+1):
+        for year in range(yrstart, yrend+1):
             self.lgr.info(F"collect stats for year: {year}")
             if str(year) not in self.event_files.keys():
                 continue
@@ -98,15 +110,17 @@ class PrintPlayerStats:
             self.print_stat_line(str(year), stats)
             clear(stats, totals)
 
-        print(F"{''.ljust(6)}     --     --     --     --     --     --    ---")
+        print(F"{' ':11}", end = '')
+        for sp in range(0,14): print(F"{'---':7}", end = '')
+        print("")
         self.print_stat_line("Total", totals)
         print("")
 
     def print_stat_line(self, year:str, bat:dict):
         self.lgr.info(F"print stats for year = {year}")
-        print(F"{year.ljust(6)}", end = '')
-        print(F"{bat['pa']:7}{bat['ab']:7}{bat['h']:7}{bat['bb']:7}{bat['so']:7}{bat['r']:7}", end = '')
-        print(F"{bat['bi']:7} " if bat['bi'] >= 0 else F"{'x':7}", end = '')
+        print(F"{year.ljust(8)}", end = '')
+        for item in sorted( bat.keys() ):
+            print(F"{bat[item]:6} " if bat[item] >= 0 else F"{' ':6}", end = '')
         print("")
 
 # END class PrintPlayerStats
