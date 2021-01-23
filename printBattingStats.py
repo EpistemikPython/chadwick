@@ -28,7 +28,7 @@ def clear(stats:dict, totals:dict):
         stats[item] = 0
 
 
-class PrintPlayerStats:
+class PrintBattingStats:
     def __init__(self, cwt:MyChadwickTools, logger:logging.Logger):
         self.cwtools = cwt
         self.lgr = logger
@@ -173,7 +173,7 @@ def process_input_parameters(argx:list):
     return playid, start, end, loglevel
 
 
-def main_player_stats(args:list):
+def main_batting_stats(args:list):
     lgr = logging.getLogger("PrintPlayerStats")
 
     playid, start, end, loglevel = process_input_parameters(args)
@@ -183,7 +183,7 @@ def main_player_stats(args:list):
     lgr.warning(F" id = {playid}; years = {start}->{end}")
 
     cwtools = MyChadwickTools(lgr)
-    player_stats = PrintPlayerStats(cwtools, lgr)
+    player_stats = PrintBattingStats(cwtools, lgr)
     need_name = True
     fam_name = playid
     giv_name = ""
@@ -238,7 +238,7 @@ if __name__ == "__main__":
     run_start_time = dt.now()
     if '-q' not in sys.argv:
         logging.critical(F"Run Start time = {run_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-    main_player_stats(sys.argv[1:])
+    main_batting_stats(sys.argv[1:])
     if '-q' not in sys.argv:
         run_time = (dt.now() - run_start_time).total_seconds()
         logging.critical(F" Running time = {(run_time // 60)} minutes, {(run_time % 60):2.3} seconds")
