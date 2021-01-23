@@ -1,7 +1,7 @@
 ##############################################################################################################################
 # coding=utf-8
 #
-# printPlayerStats.py -- print a summary of baseball game or games using Retrosheet data
+# printPlayerStats.py -- print stats for a player using Retrosheet data
 #
 # Original C code Copyright (c) 2002-2020
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
@@ -82,9 +82,11 @@ class PrintPlayerStats:
         # get all the games in the supplied date range
         for year in range(start, end+1):
             self.lgr.info(F"collect stats for year: {year}")
-            for evteam in self.event_files[str(year)]:
-                self.lgr.info(F"found events for team = {evteam}")
-                cwgames = chadwick.games(evteam)
+            if str(year) not in self.event_files.keys():
+                continue
+            for efile in self.event_files[str(year)]:
+                self.lgr.info(F"found events for team/year = {efile[-11:-4]}")
+                cwgames = chadwick.games(efile)
                 for game in cwgames:
                     game_id = game.contents.game_id.decode(encoding = 'UTF-8')
                     game_date = game_id[3:11]
@@ -142,7 +144,7 @@ def process_input_parameters(argx:list):
     # TODO: process 'postseason' flag
 
     playid = args.player_id.strip() if len(args.player_id) >= 8 and \
-         args.player_id[:5].isalpha() and args.player_id[5:8].isdecimal() else "maysw001"
+         args.player_id[:5].isalpha() and args.player_id[5:8].isdecimal() else "maysw101"
     if len(playid) > 8:
         playid = playid[:8]
     logging.warning(F"id = {playid}")
@@ -177,6 +179,9 @@ def main_player_stats(args:list):
             # get the team files
             team_file_name = REGULAR_SEASON_FOLDER + "TEAM" + str(year)
             lgr.info(F"team file name = {team_file_name}")
+            if not os.path.exists(team_file_name):
+                lgr.exception(F"CANNOT find team file {team_file_name}!")
+                continue
             with open(team_file_name, newline = '') as team_csvfile:
                 team_reader = csv.reader(team_csvfile)
                 for trow in team_reader:
