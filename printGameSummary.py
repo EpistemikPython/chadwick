@@ -29,7 +29,6 @@ class PrintGameSummary:
         self.rosters = {}
         self.event_files = {}
         self.games = {}
-        self.note_count = 0
 
     # void cwbox_print_header(CWGame *game, CWRoster *visitors, CWRoster *home)
     def print_header( self, p_game:pointer, p_vis:pointer, p_home:pointer ):
@@ -102,7 +101,7 @@ class PrintGameSummary:
     def print_summary( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
         self.lgr.info("print_game_summary():\n----------------------------------")
 
-        self.note_count = 0
+        self.cwtools.note_count = 0
         slots = [1,1]
         players = list()
         ab = [0,0]
