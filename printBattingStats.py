@@ -21,24 +21,25 @@ from datetime import datetime as dt
 from cwLibWrappers import chadwick, cwlib
 from cwTools import *
 
-GM=0
-PA=1
-AB=2
-RUN=3
-HIT=4
-B2=5
-B3=6
-HR=7
-RBI=8
-SO=9
-BB=10
-IBB=11
-SB=12
-CS=13
-SH=14
-SF=15
-HBP=16
-GDP=17
+GM=0        # 0
+PA=GM+1     # 1
+AB=PA+1     # 2
+RUN=AB+1    # 3
+HIT=RUN+1   # 4
+B2=HIT+1    # 5
+B3=B2+1     # 6
+HR=B3+1     # 7
+XBH=999
+RBI=HR+1    # 8
+SO=RBI+1    # 9
+BB=SO+1     # 10
+IBB=BB+1    # 11
+SB=IBB+1    # 12
+CS=SB+1     # 13
+SH=CS+1     # 14
+SF=SH+1     # 15
+HBP=SF+1    # 16
+GDP=HBP+1   # 17
 STATS_DICT = { "01g":0, "02pa":0, "03ab":0, "04r":0, "05h":0, "06b2":0, "07b3":0, "08hr":0, "09rbi":0, "10so":0,
                "11bb":0, "12ibb":0, "13sb":0, "14cs":0, "15sh":0, "16sf":0, "17hbp":0, "18gdp":0 }
 BATTING_KEYS = list( STATS_DICT.keys() )
@@ -60,7 +61,7 @@ BATTING_HDRS = { BATTING_KEYS[GM][:2] :F" {BATTING_KEYS[GM][2:].upper()} ",
                  BATTING_KEYS[SF][:2]:F" {BATTING_KEYS[SF][2:].upper()}",
                  BATTING_KEYS[HBP][:2] :F" {BATTING_KEYS[HBP][2:].upper()}",
                  BATTING_KEYS[GDP][:2]:F" {BATTING_KEYS[GDP][2:].upper()}",
-                 "19":" BA", "20":"OBP", "21":"SLG", "22":"OPS" }
+                 F"{str(GDP+2)}":" BA", F"{str(GDP+3)}":"OBP", F"{str(GDP+4)}":"SLG", F"{str(GDP+5)}":"OPS" }
 
 def clear(stats:dict, totals:dict):
     for item in stats.keys():
@@ -82,21 +83,18 @@ def print_hdr():
 
 
 class PrintBattingStats:
-    def __init__(self, cwt:MyChadwickTools, logger:logging.Logger):
-        self.cwtools = cwt
+    def __init__(self, logger:logging.Logger):
         self.lgr = logger
         self.lgr.warning(F" Start {self.__class__.__name__}")
         self.event_files = {}
-        self.games = {}
-        self.year_stats = {}
 
     def collect_stats( self, p_box:pointer, play_id:str, stats:dict, year:str ):
         self.lgr.debug(F"player = {play_id}; collect stats for year = {year}")
         bk = BATTING_KEYS
         slots = [1,1]
         players = list()
-        players.insert( 0, MyCwlib.box_get_starter(p_box, 0, 1) )
-        players.insert( 1, MyCwlib.box_get_starter(p_box, 1, 1) )
+        players.insert( 0, MyCwlib.box_get_starter(p_box,0,1) )
+        players.insert( 1, MyCwlib.box_get_starter(p_box,1,1) )
 
         while slots[0] <= 9 or slots[1] <= 9 :
             for t in range(0,2):
@@ -228,7 +226,7 @@ def process_input_parameters(argx:list):
     # TODO: process 'postseason' flag
 
     playid = args.player_id.strip() if len(args.player_id) >= 8 and \
-         args.player_id[:5].isalpha() and args.player_id[5:8].isdecimal() else "maysw101"
+                args.player_id[:5].isalpha() and args.player_id[5:8].isdecimal() else "maysw101"
     if len(playid) > 8:
         playid = playid[:8]
     logging.warning(F"id = {playid}")
@@ -252,8 +250,7 @@ def main_batting_stats(args:list):
     lgr.debug( str(lgr.handlers) )
     lgr.warning(F" id = {playid}; years = {start}->{end}")
 
-    cwtools = MyChadwickTools(lgr)
-    bat_stats = PrintBattingStats(cwtools, lgr)
+    bat_stats = PrintBattingStats(lgr)
     need_name = True
     fam_name = playid
     giv_name = ""
