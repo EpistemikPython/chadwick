@@ -35,8 +35,12 @@ BB=10
 IBB=11
 SB=12
 CS=13
-STATS_DICT = { "01g":0, "02pa":0, "03ab":0, "04r":0, "05h":0, "06b2":0, "07b3":0, "08hr":0, "09bi":0, "10so":0,
-               "11bb":0, "12ibb":0, "13sb":0, "14cs":0 }
+SH=14
+SF=15
+HBP=16
+GDP=17
+STATS_DICT = { "01g":0, "02pa":0, "03ab":0, "04r":0, "05h":0, "06b2":0, "07b3":0, "08hr":0, "09rbi":0, "10so":0,
+               "11bb":0, "12ibb":0, "13sb":0, "14cs":0, "15sh":0, "16sf":0, "17hbp":0, "18gdp":0 }
 BATTING_KEYS = list( STATS_DICT.keys() )
 BATTING_HDRS = { BATTING_KEYS[GM][:2] :F" {BATTING_KEYS[GM][2:].upper()} ",
                  BATTING_KEYS[PA][:2] :F" {BATTING_KEYS[PA][2:].upper()}",
@@ -52,7 +56,11 @@ BATTING_HDRS = { BATTING_KEYS[GM][:2] :F" {BATTING_KEYS[GM][2:].upper()} ",
                  BATTING_KEYS[IBB][:2]:F"{BATTING_KEYS[IBB][2:].upper()}",
                  BATTING_KEYS[SB][:2] :F" {BATTING_KEYS[SB][2:].upper()}",
                  BATTING_KEYS[CS][:2]:F" {BATTING_KEYS[CS][2:].upper()}",
-                 "15":" BA", "16":"OBP", "17":"SLG" }
+                 BATTING_KEYS[SH][:2] :F" {BATTING_KEYS[SH][2:].upper()}",
+                 BATTING_KEYS[SF][:2]:F" {BATTING_KEYS[SF][2:].upper()}",
+                 BATTING_KEYS[HBP][:2] :F" {BATTING_KEYS[HBP][2:].upper()}",
+                 BATTING_KEYS[GDP][:2]:F" {BATTING_KEYS[GDP][2:].upper()}",
+                 "19":" BA", "20":"OBP", "21":"SLG", "22":"OPS" }
 
 def clear(stats:dict, totals:dict):
     for item in stats.keys():
@@ -116,6 +124,10 @@ class PrintBattingStats:
                         stats[ bk[SO] ] += batting.so
                         stats[ bk[SB] ] += batting.sb
                         stats[ bk[CS] ] += batting.cs
+                        stats[ bk[SH] ] += batting.sh
+                        stats[ bk[SF] ] += batting.sf
+                        stats[ bk[HBP] ] += batting.hp
+                        stats[ bk[GDP] ] += batting.gdp
                     players[t] = players[t].contents.next
                     if not players[t]:
                         while slots[t] <= 9 and not players[t]:
@@ -160,20 +172,25 @@ class PrintBattingStats:
     def print_stat_line(self, year:str, bat:dict):
         self.lgr.info(F"print stat line for year = {year}")
         print(F"{year.ljust(STD_PRINT_SPACE)}", end = '')
+        # print all the counting stats from the retrosheet data
         for key in sorted( bat.keys() ):
             print(F"{bat[key]}".rjust(STD_PRINT_SPACE) if bat[key] >= 0 else F"{''}".rjust(STD_PRINT_SPACE), end = '')
+        # calculate and print the rate stats
         ba = bat[ BATTING_KEYS[HIT] ] / bat[ BATTING_KEYS[AB] ] if bat[ BATTING_KEYS[AB] ] > 0 else 0.0
-        pba = str(ba)[1:5] if ba > 0.0 else "000"
+        pba = str(ba)[2:6] if ba > 0.0 else "000"
         print(F"{pba}".rjust(STD_PRINT_SPACE), end = '')
-        obp_num = bat[ BATTING_KEYS[HIT] ] + bat[ BATTING_KEYS[BB] ] # + bat[ BATTING_KEYS[HBP] ]
-        obp_denom = bat[ BATTING_KEYS[AB] ] + bat[ BATTING_KEYS[BB] ] # + bat[ BATTING_KEYS[HBP] ] + bat[ BATTING_KEYS[SF] ]
+        obp_num = bat[ BATTING_KEYS[HIT] ] + bat[ BATTING_KEYS[BB] ] + bat[ BATTING_KEYS[HBP] ]
+        obp_denom = bat[ BATTING_KEYS[AB] ] + bat[ BATTING_KEYS[BB] ] + bat[ BATTING_KEYS[HBP] ] + bat[ BATTING_KEYS[SF] ]
         obp = obp_num / obp_denom if obp_denom > 0 else 0.0
-        pobp = str(obp)[1:5] if obp > 0.0 else "000"
+        pobp = str(obp)[2:6] if obp > 0.0 else "000"
         print(F"{pobp}".rjust(STD_PRINT_SPACE), end = '')
         slg_num = bat[BATTING_KEYS[HIT]] + bat[BATTING_KEYS[B2]] + bat[BATTING_KEYS[B3]]*2 + bat[BATTING_KEYS[HR]]*3
         slg = slg_num / bat[ BATTING_KEYS[AB] ] if bat[ BATTING_KEYS[AB] ] > 0 else 0.0
-        pslg = str(slg)[1:5] if slg > 0.0 else "000"
+        pslg = str(slg)[2:6] if slg > 0.0 else "000"
         print(F"{pslg}".rjust(STD_PRINT_SPACE), end = '')
+        ops = obp + slg
+        pops = str(ops)[2:6] if ops > 0.0 else "000"
+        print(F"{pops}".rjust(STD_PRINT_SPACE), end = '')
         print(" ")
 
 # END class PrintPlayerStats
