@@ -11,7 +11,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-01-23"
+__updated__ = "2021-01-24"
 
 import copy
 import csv
@@ -85,6 +85,7 @@ def print_hdr():
 
 
 class PrintBattingStats:
+    """print batting stats for a player using Retrosheet data"""
     def __init__(self, logger:logging.Logger):
         self.lgr = logger
         self.lgr.warning(F" Start {self.__class__.__name__}")
@@ -136,7 +137,7 @@ class PrintBattingStats:
                             if slots[t] <= 9:
                                 players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
 
-    def print_stats(self, playid, name, yrstart, yrend):
+    def print_stats(self, playid:str, name:str, yrstart:int, yrend:int):
         self.lgr.info(F"print stats for years {yrstart}->{yrend}")
         # CWBoxBatting: int g, pa, ab, r, h, b2, b3, hr, hrslam, bi, bi2out, gw, bb, ibb, so, gdp, hp, sh, sf, sb, cs, xi;
         # baseball-ref.com: G  PA  AB  R  H  2B  3B  HR  RBI  SB  CS  BB  SO  BA  OBP  SLG  OPS  OPS+  TB  GDP  HBP  SH  SF IBB
@@ -168,7 +169,22 @@ class PrintBattingStats:
         print_ul()
         print_hdr()
         self.print_stat_line("Total", totals)
+        self.print_ave_line(totals, yrend-yrstart+1)
         print("")
+
+    def print_ave_line(self, totals:dict, period:int):
+        self.lgr.info(F"print average of each counting stat over span of {period} years")
+        averages = copy.copy(STATS_DICT)
+        for item in totals.keys():
+            averages[item] = round(totals[item] / period)
+        print("Ave".ljust(STD_PRINT_SPACE), end = '')
+        for key in sorted( averages.keys() ):
+            print(F"{averages[key]}".rjust(STD_PRINT_SPACE), end = '')
+        # add Total Bases
+        tb = totals[BATTING_KEYS[HIT]] + totals[BATTING_KEYS[B2]] + totals[BATTING_KEYS[B3]]*2 + totals[BATTING_KEYS[HR]]*3
+        tbave = round(tb / period)
+        print(F"{tbave}".rjust(STD_PRINT_SPACE), end = '')
+        print(" ")
 
     def print_stat_line(self, year:str, bat:dict):
         self.lgr.info(F"print stat line for year = {year}")
