@@ -113,6 +113,7 @@ class PrintGameSummary:
         bb = [0,0]
         so = [0,0]
 
+        # ?? trying to use cwlib.cw_box_get_starter FAILS here as print_player() gets players[t] as an int... see below
         player0 = MyCwlib.box_get_starter(p_box, 0, 1)
         self.lgr.debug(F"type(player0) = {type(player0)}")
         players.insert(0, player0)
@@ -150,6 +151,8 @@ class PrintGameSummary:
                         while slots[t] <= 9 and not players[t]:
                             slots[t] += 1
                             if slots[t] <= 9:
+                                self.lgr.debug("\ncwlib.cw_box_get_starter")
+                                # ?? using this function WITHOUT the python wrapper works fine here
                                 players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
                 else:
                     print(F"{''.ljust(45)}", end = '')
