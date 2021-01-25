@@ -40,7 +40,7 @@ SH=CS+1     # 15
 SF=SH+1     # 16
 HBP=SF+1    # 17
 GDP=HBP+1   # 18
-STATS_DICT = { "01g":0, "02pa":0, "03ab":0, "04r":0, "05h":0, "06b2":0, "07b3":0, "08hr":0, "09xbh":0, "10rbi":0,
+STATS_DICT = { "01g":0, "02pa":0, "03ab":0, "04r":0, "05h":0, "062b":0, "073b":0, "08hr":0, "09xbh":0, "10rbi":0,
                "11so":0, "12bb":0, "13ibb":0, "14sb":0, "15cs":0, "16sh":0, "17sf":0, "18hbp":0, "19gdp":0 }
 BATTING_KEYS = list( STATS_DICT.keys() )
 BATTING_HDRS = { BATTING_KEYS[GM][:2] :F" {BATTING_KEYS[GM][2:].upper()} ",
@@ -180,7 +180,7 @@ class PrintBattingStats:
         print("Ave".ljust(STD_PRINT_SPACE), end = '')
         for key in sorted( averages.keys() ):
             print(F"{averages[key]}".rjust(STD_PRINT_SPACE), end = '')
-        # add Total Bases
+        # add Total Bases average
         tb = totals[BATTING_KEYS[HIT]] + totals[BATTING_KEYS[B2]] + totals[BATTING_KEYS[B3]]*2 + totals[BATTING_KEYS[HR]]*3
         tbave = round(tb / period)
         print(F"{tbave}".rjust(STD_PRINT_SPACE), end = '')
@@ -233,9 +233,9 @@ def process_args():
 
 def process_input_parameters(argx:list):
     args = process_args().parse_args(argx)
-    loglevel = "CRITICAL" if args.quiet else args.level
+    loglevel = "CRITICAL" if args.quiet else args.level.strip().upper()
     try:
-        getattr( logging, loglevel.strip().upper() )
+        getattr( logging, loglevel )
     except AttributeError as ae:
         print(F"Problem with log level: {repr(ae)}")
         loglevel = "INFO"

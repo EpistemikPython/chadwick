@@ -208,9 +208,9 @@ def process_args():
 
 def process_input_parameters(argx:list):
     args = process_args().parse_args(argx)
-    loglevel = "CRITICAL" if args.quiet else args.level
+    loglevel = "CRITICAL" if args.quiet else args.level.strip().upper()
     try:
-        getattr( logging, loglevel.strip().upper() )
+        getattr( logging, loglevel )
     except AttributeError as ae:
         print(F"Problem with log level: {repr(ae)}")
         loglevel = "INFO"
