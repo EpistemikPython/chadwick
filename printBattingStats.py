@@ -158,7 +158,7 @@ class PrintBattingStats:
                 for game in cwgames:
                     game_id = game.contents.game_id.decode(encoding = 'UTF-8')
                     game_date = game_id[3:11]
-                    self.lgr.info(F" Found game id = {game_id}; date = {game_date}")
+                    self.lgr.debug(F" Found game id = {game_id}; date = {game_date}")
 
                     box = MyCwlib.box_create(game)
                     self.collect_stats(box, playid, stats, str(year))
@@ -196,23 +196,23 @@ class PrintBattingStats:
         tb = bat[BATTING_KEYS[HIT]] + bat[BATTING_KEYS[B2]] + bat[BATTING_KEYS[B3]]*2 + bat[BATTING_KEYS[HR]]*3
         print(F"{tb}".rjust(STD_PRINT_SPACE) if tb >= 0 else F"{''}".rjust(STD_PRINT_SPACE), end = '')
         # calculate and print the rate stats
-        ba = bat[ BATTING_KEYS[HIT] ] / bat[ BATTING_KEYS[AB] ] if bat[ BATTING_KEYS[AB] ] > 0 else 0.0
-        pba = str(ba)[2:6] if ba > 0.0 else "000"
+        ba = bat[ BATTING_KEYS[HIT] ] / bat[ BATTING_KEYS[AB] ] * 10000 if bat[ BATTING_KEYS[AB] ] > 0 else 0.0
+        pba = str(ba)[:4] if ba > 0.0 else "000"
         print(F"{pba}".rjust(STD_PRINT_SPACE), end = '')
         obp_num = bat[ BATTING_KEYS[HIT] ] + bat[ BATTING_KEYS[BB] ] + bat[ BATTING_KEYS[HBP] ]
         obp_denom = bat[ BATTING_KEYS[AB] ] + bat[ BATTING_KEYS[BB] ] + bat[ BATTING_KEYS[HBP] ] + bat[ BATTING_KEYS[SF] ]
-        obp = obp_num / obp_denom if obp_denom > 0 else 0.0
-        pobp = str(obp)[2:6] if obp > 0.0 else "000"
+        obp = obp_num / obp_denom * 10000 if obp_denom > 0 else 0.0
+        pobp = str(obp)[:4] if obp > 0.0 else "000"
         print(F"{pobp}".rjust(STD_PRINT_SPACE), end = '')
-        slg = tb / bat[ BATTING_KEYS[AB] ] if bat[ BATTING_KEYS[AB] ] > 0 else 0.0
-        pslg = str(slg)[2:6] if slg > 0.0 else "000"
+        slg = tb / bat[ BATTING_KEYS[AB] ] * 10000 if bat[ BATTING_KEYS[AB] ] > 0 else 0.0
+        pslg = str(slg)[:4] if slg > 0.0 else "000"
         print(F"{pslg}".rjust(STD_PRINT_SPACE), end = '')
         ops = obp + slg
-        pops = str(ops)[2:6] if ops > 0.0 else "000"
+        pops = str(ops)[:5] if ops > 10000 else str(ops)[:4] if ops > 0.0 else "000"
         print(F"{pops}".rjust(STD_PRINT_SPACE), end = '')
         print(" ")
 
-# END class PrintPlayerStats
+# END class PrintBattingStats
 
 
 def process_args():
@@ -263,7 +263,7 @@ def process_input_parameters(argx:list):
 
 
 def main_batting_stats(args:list):
-    lgr = logging.getLogger("PrintPlayerStats")
+    lgr = logging.getLogger("PrintBattingStats")
 
     playid, start, end, loglevel = process_input_parameters(args)
 
@@ -288,7 +288,7 @@ def main_batting_stats(args:list):
                 team_reader = csv.reader(team_csvfile)
                 for trow in team_reader:
                     rteam = trow[0]
-                    lgr.info(F"Found team {rteam}")
+                    lgr.debug(F"Found team {rteam}")
                     # search rosters for the player's full name
                     if need_name:
                         roster_file = ROSTERS_FOLDER + rteam + str(year) + ".ROS"
