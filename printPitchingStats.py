@@ -22,6 +22,7 @@ from cwLibWrappers import chadwick
 from cwTools import *
 
 STD_PITCH_SPACE = 6
+TOTAL = "Total"
 
 GM  = 0         # 0
 GS  = GM + 1    # 1
@@ -53,7 +54,7 @@ STR = PIT + 1   # 23
 # G GS GF CG SHO outs/IP H R ER HR SO BB IBB BF W L SV GB FB WP HBP BK pit/TP str/TS
 STATS_DICT = { "01G":0, "02GS":0, "03GF":0, "04CG":0, "05SHO":0, "06IP":0, "07H":0, "08R":0, "09ER":0, "10HR":0,
                "11SO":0, "12BB":0, "13IBB":0, "14BF":0, "15W":0, "16L":0, "17SV":0, "18GBO":0, "19FBO":0, "20WP":0,
-               "21HBP":0, "22BK":0, "23TP":0, "24TS":0}
+               "21HBP":0, "22BK":0, "23TP":0, "24TS":0 }
 PITCHING_KEYS = list(STATS_DICT.keys())
 PITCHING_HDRS = { PITCHING_KEYS[GM][:2] :F"{PITCHING_KEYS[GM][2:]} ",
                   PITCHING_KEYS[GS][:2] :F"{PITCHING_KEYS[GS][2:]}",
@@ -109,17 +110,17 @@ class PrintPitchingStats:
         self.lgr.warning(F" Start {self.__class__.__name__}")
         self.event_files = {}
 
-    def collect_stats( self, p_box:pointer, play_id:str, stats:dict, year:str ):
-        self.lgr.debug(F"player = {play_id}; collect stats for year = {year}")
+    def collect_stats(self, p_box:pointer, pit_id:str, stats:dict, year:str):
+        self.lgr.debug(F"player = {pit_id}; collect stats for year = {year}")
         pk = PITCHING_KEYS
         for t in range(0, 2):
             p_pitcher = MyCwlib.box_get_starting_pitcher(p_box, t)
             while p_pitcher:
                 pitcher = p_pitcher.contents
                 pitcher_id = pitcher.player_id.decode("UTF8")
-                self.lgr.debug(F"pitcher = {pitcher}")
-                if pitcher_id == play_id:
-                    self.lgr.debug(F"found player = {play_id}")
+                self.lgr.debug(F"pitcher = {pitcher_id}")
+                if pitcher_id == pit_id:
+                    self.lgr.debug(F"found pitcher = {pit_id}")
                     pitching = pitcher.pitching.contents
                     stats[pk[GM]]  += pitching.g
                     stats[pk[GS]]  += pitching.gs
@@ -147,7 +148,7 @@ class PrintPitchingStats:
                     stats[pk[STR]] += pitching.strikes
                 p_pitcher = p_pitcher.contents.next
 
-    def print_stats(self, playid:str, name:str, yrstart:int, yrend:int):
+    def print_stats(self, persid:str, name:str, yrstart:int, yrend:int):
         self.lgr.info(F"print stats for years {yrstart}->{yrend}")
         stats = copy.copy(STATS_DICT)
         totals = copy.copy(STATS_DICT)
@@ -169,41 +170,54 @@ class PrintPitchingStats:
                     self.lgr.debug(F" Found game id = {game_id}; date = {game_date}")
 
                     box = MyCwlib.box_create(game)
-                    self.collect_stats(box, playid, stats, str(year))
+                    self.collect_stats(box, persid, stats, str(year))
 
             self.print_stat_line(str(year), stats)
             clear(stats, totals)
 
         print_ul()
         print_hdr()
-        self.print_stat_line("Total", totals)
-        # self.print_ave_line(totals, yrend-yrstart+1)
+        self.print_stat_line(TOTAL, totals)
+        self.print_ave_line(totals, yrend-yrstart+1)
         print("")
 
     def print_ave_line(self, totals:dict, period:int):
         self.lgr.info(F"print average of each counting stat over span of {period} years")
+        diff = 0
         averages = copy.copy(STATS_DICT)
-        for item in totals.keys():
-            averages[item] = round(totals[item] / period)
+        for key in totals.keys():
+            # adjust from outs to innings pitched
+            if key == PITCHING_KEYS[OUT]:
+                outs = round(totals[key] / period)
+                averages[key] = (outs // 3) + (outs % 3)/10
+            else:
+                averages[key] = round(totals[key] / period)
         print("Ave".ljust(STD_PITCH_SPACE), end = '')
         for key in sorted( averages.keys() ):
-            print(F"{averages[key]}".rjust(STD_PITCH_SPACE), end = '')
-        # add Total Bases average
-        tb = totals[PITCHING_KEYS[SHO]] + totals[PITCHING_KEYS[OUT]] + totals[PITCHING_KEYS[HIT]] * 2 + totals[PITCHING_KEYS[RUN]] * 3
-        tbave = round(tb / period)
-        print(F"{tbave}".rjust(STD_PITCH_SPACE), end = '')
+            if key == PITCHING_KEYS[OUT]:
+                diff = -1 # have to adjust for the extra space required to print IP
+                print(F"{averages[key]}".rjust(STD_PITCH_SPACE+1), end = '')
+            else:
+                print(F"{averages[key]}".rjust(STD_PITCH_SPACE+diff), end = '')
+                diff = 0
         print(" ")
 
     def print_stat_line(self, year:str, pitch:dict):
         self.lgr.info(F"print stat line for year = {year}")
+        diff = 0
         print(F"{year.ljust(STD_PITCH_SPACE)}", end = '')
         # print all the counting stats from the retrosheet data
         for key in sorted( pitch.keys() ):
+            # adjust from outs to innings pitched
             if key == PITCHING_KEYS[OUT]:
+                diff = 1 # have to adjust for the extra space required to print IP
                 outs = pitch[key]
-                print(F"{outs // 3}.{outs % 3}".rjust(STD_PITCH_SPACE), end = '')
+                print(F"{outs // 3}.{outs % 3}".rjust(STD_PITCH_SPACE+diff), end = '')
+                diff = -1
             else:
-                print(F"{pitch[key]}".rjust(STD_PITCH_SPACE) if pitch[key] >= 0 else F"{''}".rjust(STD_PITCH_SPACE), end = '')
+                print(F"{pitch[key]}".rjust(STD_PITCH_SPACE+diff) if pitch[key] >= 0 else F"{''}".rjust(STD_PITCH_SPACE+diff),
+                      end = '')
+                diff = 0
         print(" ")
 
 # END class PrintPitchingStats
@@ -215,7 +229,7 @@ def process_args():
         prog='main_chadwick_py3.py' )
     # required arguments
     required = arg_parser.add_argument_group('REQUIRED')
-    required.add_argument('-i', '--player_id', required=True, help="Retrosheet id for a player, e.g. aaroh101, bondb101")
+    required.add_argument('-i', '--pitcher_id', required=True, help="Retrosheet id for a player, e.g. aaroh101, bondb101")
     required.add_argument('-s', '--start', required=True, type=int, help="start year to find stats (yyyy)")
     # optional arguments
     arg_parser.add_argument('-e', '--end', type=int, help="end year to find stats (yyyy)")
@@ -241,34 +255,34 @@ def process_input_parameters(argx:list):
 
     # TODO: process 'postseason' flag
 
-    playid = args.player_id.strip() if len(args.player_id) >= 8 and \
-                args.player_id[:5].isalpha() and args.player_id[5:8].isdecimal() else "maysw101"
-    if len(playid) > 8:
-        playid = playid[:8]
-    logging.warning(F"id = {playid}")
+    pitcher_id = args.pitcher_id.strip() if len(args.pitcher_id) >= 8 and \
+                 args.pitcher_id[:5].isalpha() and args.pitcher_id[5:8].isdecimal() else "kersc001"
+    if len(pitcher_id) > 8:
+        pitcher_id = pitcher_id[:8]
+    logging.warning(F"id = {pitcher_id}")
 
-    start = args.start if 1871 <= args.start <= 2020 else 1954
+    start = args.start if 1871 <= args.start <= 2020 else 2014
     logging.warning(F"start = {start}")
 
     end = args.end if args.end and 1871 <= args.end <= 2020 else start
     if end < start: end = start
     logging.warning(F"end = {end}")
 
-    return playid, start, end, loglevel
+    return pitcher_id, start, end, loglevel
 
 
-def main_batting_stats(args:list):
+def main_pitching_stats(args:list):
     lgr = logging.getLogger("PrintPitchingStats")
 
-    playid, start, end, loglevel = process_input_parameters(args)
+    pers_id, start, end, loglevel = process_input_parameters(args)
 
     lgr.setLevel(loglevel)
     lgr.debug( str(lgr.handlers) )
-    lgr.warning(F" id = {playid}; years = {start}->{end}")
+    lgr.warning(F" id = {pers_id}; years = {start}->{end}")
 
-    bat_stats = PrintPitchingStats(lgr)
+    pitch_stats = PrintPitchingStats(lgr)
     need_name = True
-    fam_name = playid
+    fam_name = pers_id
     giv_name = ""
     try:
         for year in range(start, end+1):
@@ -293,7 +307,7 @@ def main_batting_stats(args:list):
                         with open(roster_file, newline = '') as roster_csvfile:
                             ros_reader = csv.reader(roster_csvfile)
                             for rrow in ros_reader:
-                                if playid == rrow[0]:
+                                if pers_id == rrow[0]:
                                     fam_name = rrow[1]
                                     giv_name = rrow[2]
                                     need_name = False
@@ -303,15 +317,15 @@ def main_batting_stats(args:list):
                     if not os.path.exists(event_file):
                         raise FileNotFoundError(F"CANNOT find event file {event_file}!")
                     year_events.append(event_file)
-            bat_stats.event_files[str(year)] = year_events
+            pitch_stats.event_files[str(year)] = year_events
 
         name = F"{giv_name} {fam_name}"
         lgr.warning(F"name = {name}")
-        lgr.warning(F"found {len(bat_stats.event_files)} year-event files")
-        for item in bat_stats.event_files:
+        lgr.warning(F"found {len(pitch_stats.event_files)} year-event files")
+        for item in pitch_stats.event_files:
             lgr.debug(item)
 
-        bat_stats.print_stats(playid, name, start, end)
+        pitch_stats.print_stats(pers_id, name, start, end)
 
     except Exception as ex:
         lgr.exception(F"Exception: {repr(ex)}")
@@ -321,7 +335,7 @@ if __name__ == "__main__":
     run_start_time = dt.now()
     if '-q' not in sys.argv:
         logging.critical(F"Run Start time = {run_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-    main_batting_stats(sys.argv[1:])
+    main_pitching_stats(sys.argv[1:])
     if '-q' not in sys.argv:
         run_time = (dt.now() - run_start_time).total_seconds()
         logging.critical(F" Running time = {(run_time // 60)} minutes, {(run_time % 60):2.3} seconds")
