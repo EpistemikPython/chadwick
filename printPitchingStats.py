@@ -1,7 +1,7 @@
 ##############################################################################################################################
 # coding=utf-8
 #
-# printPitchingStats.py -- print batting stats for a player using Retrosheet data
+# printPitchingStats.py -- print pitching stats for a player using Retrosheet data
 #
 # Original C code Copyright (c) 2002-2020
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
@@ -10,60 +10,77 @@
 
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
-__created__ = "2021-01-21"
-__updated__ = "2021-01-24"
+__created__ = "2021-01-25"
+__updated__ = "2021-01-26"
 
 import copy
 import csv
 import sys
 from argparse import ArgumentParser
 from datetime import datetime as dt
-from cwLibWrappers import chadwick, cwlib
+from cwLibWrappers import chadwick
 from cwTools import *
 
-GM=0        # 0
-PA=GM+1     # 1
-AB=PA+1     # 2
-RUN=AB+1    # 3
-HIT=RUN+1   # 4
-B2=HIT+1    # 5
-B3=B2+1     # 6
-HR=B3+1     # 7
-XBH=HR+1    # 8
-RBI=XBH+1   # 9
-SO=RBI+1    # 10
-BB=SO+1     # 11
-IBB=BB+1    # 12
-SB=IBB+1    # 13
-CS=SB+1     # 14
-SH=CS+1     # 15
-SF=SH+1     # 16
-HBP=SF+1    # 17
-GDP=HBP+1   # 18
-STATS_DICT = { "01g":0, "02pa":0, "03ab":0, "04r":0, "05h":0, "062b":0, "073b":0, "08hr":0, "09xbh":0, "10rbi":0,
-               "11so":0, "12bb":0, "13ibb":0, "14sb":0, "15cs":0, "16sh":0, "17sf":0, "18hbp":0, "19gdp":0 }
-BATTING_KEYS = list( STATS_DICT.keys() )
-BATTING_HDRS = { BATTING_KEYS[GM][:2] :F" {BATTING_KEYS[GM][2:].upper()} ",
-                 BATTING_KEYS[PA][:2] :F" {BATTING_KEYS[PA][2:].upper()}",
-                 BATTING_KEYS[AB][:2] :F" {BATTING_KEYS[AB][2:].upper()}",
-                 BATTING_KEYS[RUN][:2]:F"{BATTING_KEYS[RUN][2:].upper()}",
-                 BATTING_KEYS[HIT][:2]:F"{BATTING_KEYS[HIT][2:].upper()}",
-                 BATTING_KEYS[B2][:2] :F" {BATTING_KEYS[B2][2:].upper()}",
-                 BATTING_KEYS[B3][:2] :F" {BATTING_KEYS[B3][2:].upper()}",
-                 BATTING_KEYS[HR][:2] :F" {BATTING_KEYS[HR][2:].upper()}",
-                 BATTING_KEYS[XBH][:2]:F"{BATTING_KEYS[XBH][2:].upper()}",
-                 BATTING_KEYS[RBI][:2]:F"{BATTING_KEYS[RBI][2:].upper()}",
-                 BATTING_KEYS[SO][:2] :F" {BATTING_KEYS[SO][2:].upper()}",
-                 BATTING_KEYS[BB][:2] :F" {BATTING_KEYS[BB][2:].upper()}",
-                 BATTING_KEYS[IBB][:2]:F"{BATTING_KEYS[IBB][2:].upper()}",
-                 BATTING_KEYS[SB][:2] :F" {BATTING_KEYS[SB][2:].upper()}",
-                 BATTING_KEYS[CS][:2] :F" {BATTING_KEYS[CS][2:].upper()}",
-                 BATTING_KEYS[SH][:2] :F" {BATTING_KEYS[SH][2:].upper()}",
-                 BATTING_KEYS[SF][:2] :F" {BATTING_KEYS[SF][2:].upper()}",
-                 BATTING_KEYS[HBP][:2]:F"{BATTING_KEYS[HBP][2:].upper()}",
-                 BATTING_KEYS[GDP][:2]:F"{BATTING_KEYS[GDP][2:].upper()}",
-                 F"{str(GDP+2)}":" TB", F"{str(GDP+3)}":" BA", F"{str(GDP+4)}":"OBP",
-                 F"{str(GDP+5)}":"SLG", F"{str(GDP+6)}":"OPS" }
+STD_PITCH_SPACE = 6
+
+GM  = 0         # 0
+GS  = GM + 1    # 1
+GF  = GS + 1    # 2
+CG  = GF + 1    # 3
+SHO = CG + 1    # 4
+OUT = SHO + 1   # 5
+HIT = OUT + 1   # 6
+RUN = HIT + 1   # 7
+ER  = RUN + 1   # 8
+HR  = ER + 1    # 9
+SO  = HR + 1    # 10
+BB  = SO + 1    # 11
+IBB = BB + 1    # 12
+BF  = IBB + 1   # 13
+WIN = BF + 1    # 14
+LOS = WIN + 1   # 15
+SAV = LOS + 1   # 16
+GB  = SAV + 1   # 17
+FB  = GB + 1    # 18
+WP  = FB + 1    # 19
+HBP = WP + 1    # 20
+BK  = HBP + 1   # 21
+PIT = BK + 1    # 22
+STR = PIT + 1   # 23
+# CWBoxPitching: g, gs, cg, sho, gf, outs, ab, r, er, h, b2, b3, hr, hrslam, bb, ibb, so, bf, bk, wp, hb;
+#                gdp, sh, sf, xi, pk, w, l, sv, inr, inrs, gb, fb, pitches, strikes
+# baseball-ref.com: W L W-L% ERA G GS GF CG SHO SV IP H R ER HR BB IBB SO HBP BK WP BF ERA+ FIP WHIP H9 HR9 BB9 SO9 SO/BB
+# G GS GF CG SHO outs/IP H R ER HR SO BB IBB BF W L SV GB FB WP HBP BK pit/TP str/TS
+STATS_DICT = { "01G":0, "02GS":0, "03GF":0, "04CG":0, "05SHO":0, "06IP":0, "07H":0, "08R":0, "09ER":0, "10HR":0,
+               "11SO":0, "12BB":0, "13IBB":0, "14BF":0, "15W":0, "16L":0, "17SV":0, "18GBO":0, "19FBO":0, "20WP":0,
+               "21HBP":0, "22BK":0, "23TP":0, "24TS":0}
+PITCHING_KEYS = list(STATS_DICT.keys())
+PITCHING_HDRS = { PITCHING_KEYS[GM][:2] :F"{PITCHING_KEYS[GM][2:]} ",
+                  PITCHING_KEYS[GS][:2] :F"{PITCHING_KEYS[GS][2:]}",
+                  PITCHING_KEYS[GF][:2] :F"{PITCHING_KEYS[GF][2:]}",
+                  PITCHING_KEYS[CG][:2] :F"{PITCHING_KEYS[CG][2:]}",
+                  PITCHING_KEYS[SHO][:2]:F"{PITCHING_KEYS[SHO][2:]}",
+                  PITCHING_KEYS[OUT][:2]:F"{PITCHING_KEYS[OUT][2:]}",
+                  PITCHING_KEYS[HIT][:2]:F"{PITCHING_KEYS[HIT][2:]} ",
+                  PITCHING_KEYS[RUN][:2]:F"{PITCHING_KEYS[RUN][2:]} ",
+                  PITCHING_KEYS[ER][:2] :F"{PITCHING_KEYS[ER][2:]}",
+                  PITCHING_KEYS[HR][:2] :F"{PITCHING_KEYS[HR][2:]}",
+                  PITCHING_KEYS[SO][:2] :F"{PITCHING_KEYS[SO][2:]}",
+                  PITCHING_KEYS[BB][:2] :F"{PITCHING_KEYS[BB][2:]}",
+                  PITCHING_KEYS[IBB][:2]:F"{PITCHING_KEYS[IBB][2:]}",
+                  PITCHING_KEYS[BF][:2] :F"{PITCHING_KEYS[BF][2:]}",
+                  PITCHING_KEYS[WIN][:2]:F"{PITCHING_KEYS[WIN][2:]} ",
+                  PITCHING_KEYS[LOS][:2]:F"{PITCHING_KEYS[LOS][2:]} ",
+                  PITCHING_KEYS[SAV][:2]:F"{PITCHING_KEYS[SAV][2:]}",
+                  PITCHING_KEYS[GB][:2] :F"{PITCHING_KEYS[GB][2:]}",
+                  PITCHING_KEYS[FB][:2] :F"{PITCHING_KEYS[FB][2:]}",
+                  PITCHING_KEYS[WP][:2] :F"{PITCHING_KEYS[WP][2:]}",
+                  PITCHING_KEYS[HBP][:2]:F"{PITCHING_KEYS[HBP][2:]}",
+                  PITCHING_KEYS[BK][:2] :F"{PITCHING_KEYS[BK][2:]}",
+                  PITCHING_KEYS[PIT][:2]:F"{PITCHING_KEYS[PIT][2:]}",
+                  PITCHING_KEYS[STR][:2]:F"{PITCHING_KEYS[STR][2:]}",
+                  F"{str(STR + 2)}":"ERA", F"{str(STR + 3)}":"WHIP", F"{str(STR + 4)}":"H9", F"{str(STR + 5)}":"HR9",
+                  F"{str(STR + 6)}":"BB9", F"{str(STR + 7)}":"SO9" , F"{str(STR + 8)}":"SO/BB", F"{str(STR + 9)}":"WL%"}
 
 def clear(stats:dict, totals:dict):
     for item in stats.keys():
@@ -71,15 +88,16 @@ def clear(stats:dict, totals:dict):
         stats[item] = 0
 
 def print_ul():
-    print(F"{''}".rjust(STD_PRINT_SPACE), end = '')
-    for sp in range(0, len(BATTING_HDRS)):
-        print(F"{'---'}".rjust(STD_PRINT_SPACE), end = '')
+    print(F"{''}".rjust(STD_PITCH_SPACE), end = '')
+    for sp in range(0, len(PITCHING_HDRS)):
+        print(F"{'---'}".rjust(STD_PITCH_SPACE), end = '')
     print(" ")
 
 def print_hdr():
-    print(F"{''}".rjust(STD_PRINT_SPACE), end = '')
-    for key in sorted(BATTING_HDRS):
-        print(F"{BATTING_HDRS[key]}".rjust(STD_PRINT_SPACE), end = '')
+    # print(F"{'':18}   IP  H  R ER BB SO  TP TS GB FB")
+    print(F"{''}".rjust(STD_PITCH_SPACE), end = '')
+    for key in sorted(PITCHING_HDRS):
+        print(F"{PITCHING_HDRS[key]}".rjust(STD_PITCH_SPACE), end = '')
     print(" ")
     print_ul()
 
@@ -93,54 +111,44 @@ class PrintPitchingStats:
 
     def collect_stats( self, p_box:pointer, play_id:str, stats:dict, year:str ):
         self.lgr.debug(F"player = {play_id}; collect stats for year = {year}")
-        bk = BATTING_KEYS
-        slots = [1,1]
-        players = list()
-        players.insert( 0, MyCwlib.box_get_starter(p_box,0,1) )
-        players.insert( 1, MyCwlib.box_get_starter(p_box,1,1) )
-
-        while slots[0] <= 9 or slots[1] <= 9 :
-            for t in range(0,2):
-                if slots[t] <= 9:
-                    player = players[t].contents.player_id.decode("UTF-8")
-                    self.lgr.debug(F"player = {player}")
-                    if player == play_id:
-                        self.lgr.debug(F"found player = {play_id}")
-                        # NOTE: misspelling 'battiing' in the python wrapper file
-                        batting = players[t].contents.battiing.contents
-                        stats[ bk[GM] ] += batting.g
-                        stats[ bk[PA] ] += batting.pa
-                        stats[ bk[AB] ] += batting.ab
-                        stats[ bk[RUN] ] += batting.r
-                        stats[ bk[HIT] ] += batting.h
-                        stats[ bk[B2] ] += batting.b2
-                        stats[ bk[B3] ] += batting.b3
-                        stats[ bk[HR] ] += batting.hr
-                        stats[ bk[XBH] ] += (batting.b2 + batting.b3 + batting.hr)
-                        if batting.bi != -1:
-                            stats[ bk[RBI] ] += batting.bi
-                        else:
-                            stats[ bk[RBI] ] = -1
-                        stats[ bk[BB] ] += batting.bb
-                        stats[ bk[IBB] ] += batting.ibb
-                        stats[ bk[SO] ] += batting.so
-                        stats[ bk[SB] ] += batting.sb
-                        stats[ bk[CS] ] += batting.cs
-                        stats[ bk[SH] ] += batting.sh
-                        stats[ bk[SF] ] += batting.sf
-                        stats[ bk[HBP] ] += batting.hp
-                        stats[ bk[GDP] ] += batting.gdp
-                    players[t] = players[t].contents.next
-                    if not players[t]:
-                        while slots[t] <= 9 and not players[t]:
-                            slots[t] += 1
-                            if slots[t] <= 9:
-                                players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
+        pk = PITCHING_KEYS
+        for t in range(0, 2):
+            p_pitcher = MyCwlib.box_get_starting_pitcher(p_box, t)
+            while p_pitcher:
+                pitcher = p_pitcher.contents
+                pitcher_id = pitcher.player_id.decode("UTF8")
+                self.lgr.debug(F"pitcher = {pitcher}")
+                if pitcher_id == play_id:
+                    self.lgr.debug(F"found player = {play_id}")
+                    pitching = pitcher.pitching.contents
+                    stats[pk[GM]]  += pitching.g
+                    stats[pk[GS]]  += pitching.gs
+                    stats[pk[GF]]  += pitching.gf
+                    stats[pk[CG]]  += pitching.cg
+                    stats[pk[SHO]] += pitching.sho
+                    stats[pk[OUT]] += pitching.outs
+                    stats[pk[HIT]] += pitching.h
+                    stats[pk[RUN]] += pitching.r
+                    stats[pk[ER]]  += pitching.er
+                    stats[pk[HR]]  += pitching.hr
+                    stats[pk[BB]]  += pitching.bb
+                    stats[pk[IBB]] += pitching.ibb
+                    stats[pk[SO]]  += pitching.so
+                    stats[pk[BF]]  += pitching.bf
+                    stats[pk[WIN]] += pitching.w
+                    stats[pk[LOS]] += pitching.l
+                    stats[pk[SAV]] += pitching.sv
+                    stats[pk[GB]]  += pitching.gb
+                    stats[pk[FB]]  += pitching.fb
+                    stats[pk[WP]]  += pitching.wp
+                    stats[pk[HBP]] += pitching.hb
+                    stats[pk[BK]]  += pitching.bk
+                    stats[pk[PIT]] += pitching.pitches
+                    stats[pk[STR]] += pitching.strikes
+                p_pitcher = p_pitcher.contents.next
 
     def print_stats(self, playid:str, name:str, yrstart:int, yrend:int):
         self.lgr.info(F"print stats for years {yrstart}->{yrend}")
-        # CWBoxBatting: int g, pa, ab, r, h, b2, b3, hr, hrslam, bi, bi2out, gw, bb, ibb, so, gdp, hp, sh, sf, sb, cs, xi;
-        # baseball-ref.com: G  PA  AB  R  H  2B  3B  HR  RBI  SB  CS  BB  SO  BA  OBP  SLG  OPS  OPS+  TB  GDP  HBP  SH  SF IBB
         stats = copy.copy(STATS_DICT)
         totals = copy.copy(STATS_DICT)
 
@@ -169,7 +177,7 @@ class PrintPitchingStats:
         print_ul()
         print_hdr()
         self.print_stat_line("Total", totals)
-        self.print_ave_line(totals, yrend-yrstart+1)
+        # self.print_ave_line(totals, yrend-yrstart+1)
         print("")
 
     def print_ave_line(self, totals:dict, period:int):
@@ -177,39 +185,25 @@ class PrintPitchingStats:
         averages = copy.copy(STATS_DICT)
         for item in totals.keys():
             averages[item] = round(totals[item] / period)
-        print("Ave".ljust(STD_PRINT_SPACE), end = '')
+        print("Ave".ljust(STD_PITCH_SPACE), end = '')
         for key in sorted( averages.keys() ):
-            print(F"{averages[key]}".rjust(STD_PRINT_SPACE), end = '')
+            print(F"{averages[key]}".rjust(STD_PITCH_SPACE), end = '')
         # add Total Bases average
-        tb = totals[BATTING_KEYS[HIT]] + totals[BATTING_KEYS[B2]] + totals[BATTING_KEYS[B3]]*2 + totals[BATTING_KEYS[HR]]*3
+        tb = totals[PITCHING_KEYS[SHO]] + totals[PITCHING_KEYS[OUT]] + totals[PITCHING_KEYS[HIT]] * 2 + totals[PITCHING_KEYS[RUN]] * 3
         tbave = round(tb / period)
-        print(F"{tbave}".rjust(STD_PRINT_SPACE), end = '')
+        print(F"{tbave}".rjust(STD_PITCH_SPACE), end = '')
         print(" ")
 
-    def print_stat_line(self, year:str, bat:dict):
+    def print_stat_line(self, year:str, pitch:dict):
         self.lgr.info(F"print stat line for year = {year}")
-        print(F"{year.ljust(STD_PRINT_SPACE)}", end = '')
+        print(F"{year.ljust(STD_PITCH_SPACE)}", end = '')
         # print all the counting stats from the retrosheet data
-        for key in sorted( bat.keys() ):
-            print(F"{bat[key]}".rjust(STD_PRINT_SPACE) if bat[key] >= 0 else F"{''}".rjust(STD_PRINT_SPACE), end = '')
-        # add Total Bases
-        tb = bat[BATTING_KEYS[HIT]] + bat[BATTING_KEYS[B2]] + bat[BATTING_KEYS[B3]]*2 + bat[BATTING_KEYS[HR]]*3
-        print(F"{tb}".rjust(STD_PRINT_SPACE) if tb >= 0 else F"{''}".rjust(STD_PRINT_SPACE), end = '')
-        # calculate and print the rate stats
-        ba = bat[ BATTING_KEYS[HIT] ] / bat[ BATTING_KEYS[AB] ] * 10000 if bat[ BATTING_KEYS[AB] ] > 0 else 0.0
-        pba = str(ba)[:4] if ba > 0.0 else "000"
-        print(F"{pba}".rjust(STD_PRINT_SPACE), end = '')
-        obp_num = bat[ BATTING_KEYS[HIT] ] + bat[ BATTING_KEYS[BB] ] + bat[ BATTING_KEYS[HBP] ]
-        obp_denom = bat[ BATTING_KEYS[AB] ] + bat[ BATTING_KEYS[BB] ] + bat[ BATTING_KEYS[HBP] ] + bat[ BATTING_KEYS[SF] ]
-        obp = obp_num / obp_denom * 10000 if obp_denom > 0 else 0.0
-        pobp = str(obp)[:4] if obp > 0.0 else "000"
-        print(F"{pobp}".rjust(STD_PRINT_SPACE), end = '')
-        slg = tb / bat[ BATTING_KEYS[AB] ] * 10000 if bat[ BATTING_KEYS[AB] ] > 0 else 0.0
-        pslg = str(slg)[:4] if slg > 0.0 else "000"
-        print(F"{pslg}".rjust(STD_PRINT_SPACE), end = '')
-        ops = obp + slg
-        pops = str(ops)[:5] if ops > 10000 else str(ops)[:4] if ops > 0.0 else "000"
-        print(F"{pops}".rjust(STD_PRINT_SPACE), end = '')
+        for key in sorted( pitch.keys() ):
+            if key == PITCHING_KEYS[OUT]:
+                outs = pitch[key]
+                print(F"{outs // 3}.{outs % 3}".rjust(STD_PITCH_SPACE), end = '')
+            else:
+                print(F"{pitch[key]}".rjust(STD_PITCH_SPACE) if pitch[key] >= 0 else F"{''}".rjust(STD_PITCH_SPACE), end = '')
         print(" ")
 
 # END class PrintPitchingStats
