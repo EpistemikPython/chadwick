@@ -21,47 +21,51 @@ from datetime import datetime as dt
 from cwLibWrappers import chadwick, cwlib
 from cwTools import *
 
-GM=0        # 0
-PA=GM+1     # 1
-AB=PA+1     # 2
-RUN=AB+1    # 3
-HIT=RUN+1   # 4
-B2=HIT+1    # 5
-B3=B2+1     # 6
-HR=B3+1     # 7
-XBH=HR+1    # 8
-RBI=XBH+1   # 9
-SO=RBI+1    # 10
-BB=SO+1     # 11
-IBB=BB+1    # 12
-SB=IBB+1    # 13
-CS=SB+1     # 14
-SH=CS+1     # 15
-SF=SH+1     # 16
-HBP=SF+1    # 17
-GDP=HBP+1   # 18
-STATS_DICT = { "01g":0, "02pa":0, "03ab":0, "04r":0, "05h":0, "062b":0, "073b":0, "08hr":0, "09xbh":0, "10rbi":0,
-               "11so":0, "12bb":0, "13ibb":0, "14sb":0, "15cs":0, "16sh":0, "17sf":0, "18hbp":0, "19gdp":0 }
+STD_BAT_SPACE = 6
+
+GM  = 0       # 0
+PA  = GM+1    # 1
+AB  = PA+1    # 2
+RUN = AB+1    # 3
+HIT = RUN+1   # 4
+B2  = HIT+1   # 5
+B3  = B2+1    # 6
+HR  = B3+1    # 7
+XBH = HR+1    # 8
+RBI = XBH+1   # 9
+SO  = RBI+1   # 10
+BB  = SO+1    # 11
+IBB = BB+1    # 12
+SB  = IBB+1   # 13
+CS  = SB+1    # 14
+SH  = CS+1    # 15
+SF  = SH+1    # 16
+HBP = SF+1    # 17
+GDP = HBP+1   # 18
+# CWBoxBatting: int g, pa, ab, r, h, b2, b3, hr, hrslam, bi, bi2out, gw, bb, ibb, so, gdp, hp, sh, sf, sb, cs, xi;
+# baseball-ref.com: G  PA  AB  R  H  2B  3B  HR  RBI  SB  CS  BB  SO  BA  OBP  SLG  OPS  OPS+  TB  GDP  HBP  SH  SF IBB
+STATS_DICT = { "01G":0, "02PA":0, "03AB":0, "04R":0, "05H":0, "062B":0, "073B":0, "08HR":0, "09XBH":0, "10RBI":0,
+               "11SO":0, "12BB":0, "13IBB":0, "14SB":0, "15CS":0, "16SH":0, "17SF":0, "18HBP":0, "19GDP":0 }
 BATTING_KEYS = list( STATS_DICT.keys() )
-BATTING_HDRS = { BATTING_KEYS[GM][:2] :F" {BATTING_KEYS[GM][2:].upper()} ",
-                 BATTING_KEYS[PA][:2] :F" {BATTING_KEYS[PA][2:].upper()}",
-                 BATTING_KEYS[AB][:2] :F" {BATTING_KEYS[AB][2:].upper()}",
-                 BATTING_KEYS[RUN][:2]:F"{BATTING_KEYS[RUN][2:].upper()}",
-                 BATTING_KEYS[HIT][:2]:F"{BATTING_KEYS[HIT][2:].upper()}",
-                 BATTING_KEYS[B2][:2] :F" {BATTING_KEYS[B2][2:].upper()}",
-                 BATTING_KEYS[B3][:2] :F" {BATTING_KEYS[B3][2:].upper()}",
-                 BATTING_KEYS[HR][:2] :F" {BATTING_KEYS[HR][2:].upper()}",
-                 BATTING_KEYS[XBH][:2]:F"{BATTING_KEYS[XBH][2:].upper()}",
-                 BATTING_KEYS[RBI][:2]:F"{BATTING_KEYS[RBI][2:].upper()}",
-                 BATTING_KEYS[SO][:2] :F" {BATTING_KEYS[SO][2:].upper()}",
-                 BATTING_KEYS[BB][:2] :F" {BATTING_KEYS[BB][2:].upper()}",
-                 BATTING_KEYS[IBB][:2]:F"{BATTING_KEYS[IBB][2:].upper()}",
-                 BATTING_KEYS[SB][:2] :F" {BATTING_KEYS[SB][2:].upper()}",
-                 BATTING_KEYS[CS][:2] :F" {BATTING_KEYS[CS][2:].upper()}",
-                 BATTING_KEYS[SH][:2] :F" {BATTING_KEYS[SH][2:].upper()}",
-                 BATTING_KEYS[SF][:2] :F" {BATTING_KEYS[SF][2:].upper()}",
-                 BATTING_KEYS[HBP][:2]:F"{BATTING_KEYS[HBP][2:].upper()}",
-                 BATTING_KEYS[GDP][:2]:F"{BATTING_KEYS[GDP][2:].upper()}",
+BATTING_HDRS = { BATTING_KEYS[GM][:2] :F"{BATTING_KEYS[GM][2:]} ",
+                 BATTING_KEYS[PA][:2] :F"{BATTING_KEYS[PA][2:]}",
+                 BATTING_KEYS[AB][:2] :F"{BATTING_KEYS[AB][2:]}",
+                 BATTING_KEYS[RUN][:2]:F"{BATTING_KEYS[RUN][2:]} ",
+                 BATTING_KEYS[HIT][:2]:F"{BATTING_KEYS[HIT][2:]} ",
+                 BATTING_KEYS[B2][:2] :F"{BATTING_KEYS[B2][2:]}",
+                 BATTING_KEYS[B3][:2] :F"{BATTING_KEYS[B3][2:]}",
+                 BATTING_KEYS[HR][:2] :F"{BATTING_KEYS[HR][2:]}",
+                 BATTING_KEYS[XBH][:2]:F"{BATTING_KEYS[XBH][2:]}",
+                 BATTING_KEYS[RBI][:2]:F"{BATTING_KEYS[RBI][2:]}",
+                 BATTING_KEYS[SO][:2] :F"{BATTING_KEYS[SO][2:]}",
+                 BATTING_KEYS[BB][:2] :F"{BATTING_KEYS[BB][2:]}",
+                 BATTING_KEYS[IBB][:2]:F"{BATTING_KEYS[IBB][2:]}",
+                 BATTING_KEYS[SB][:2] :F"{BATTING_KEYS[SB][2:]}",
+                 BATTING_KEYS[CS][:2] :F"{BATTING_KEYS[CS][2:]}",
+                 BATTING_KEYS[SH][:2] :F"{BATTING_KEYS[SH][2:]}",
+                 BATTING_KEYS[SF][:2] :F"{BATTING_KEYS[SF][2:]}",
+                 BATTING_KEYS[HBP][:2]:F"{BATTING_KEYS[HBP][2:]}",
+                 BATTING_KEYS[GDP][:2]:F"{BATTING_KEYS[GDP][2:]}",
                  F"{str(GDP+2)}":" TB", F"{str(GDP+3)}":" BA", F"{str(GDP+4)}":"OBP",
                  F"{str(GDP+5)}":"SLG", F"{str(GDP+6)}":"OPS" }
 
@@ -71,15 +75,15 @@ def clear(stats:dict, totals:dict):
         stats[item] = 0
 
 def print_ul():
-    print(F"{''}".rjust(STD_PRINT_SPACE), end = '')
+    print(F"{''}".rjust(STD_BAT_SPACE), end = '')
     for sp in range(0, len(BATTING_HDRS)):
-        print(F"{'---'}".rjust(STD_PRINT_SPACE), end = '')
+        print(F"{'---'}".rjust(STD_BAT_SPACE), end = '')
     print(" ")
 
 def print_hdr():
-    print(F"{''}".rjust(STD_PRINT_SPACE), end = '')
+    print(F"{''}".rjust(STD_BAT_SPACE), end = '')
     for key in sorted(BATTING_HDRS):
-        print(F"{BATTING_HDRS[key]}".rjust(STD_PRINT_SPACE), end = '')
+        print(F"{BATTING_HDRS[key]}".rjust(STD_BAT_SPACE), end = '')
     print(" ")
     print_ul()
 
@@ -139,8 +143,6 @@ class PrintBattingStats:
 
     def print_stats(self, playid:str, name:str, yrstart:int, yrend:int):
         self.lgr.info(F"print stats for years {yrstart}->{yrend}")
-        # CWBoxBatting: int g, pa, ab, r, h, b2, b3, hr, hrslam, bi, bi2out, gw, bb, ibb, so, gdp, hp, sh, sf, sb, cs, xi;
-        # baseball-ref.com: G  PA  AB  R  H  2B  3B  HR  RBI  SB  CS  BB  SO  BA  OBP  SLG  OPS  OPS+  TB  GDP  HBP  SH  SF IBB
         stats = copy.copy(STATS_DICT)
         totals = copy.copy(STATS_DICT)
 
@@ -177,39 +179,39 @@ class PrintBattingStats:
         averages = copy.copy(STATS_DICT)
         for item in totals.keys():
             averages[item] = round(totals[item] / period)
-        print("Ave".ljust(STD_PRINT_SPACE), end = '')
+        print("Ave".ljust(STD_BAT_SPACE), end = '')
         for key in sorted( averages.keys() ):
-            print(F"{averages[key]}".rjust(STD_PRINT_SPACE), end = '')
+            print(F"{averages[key]}".rjust(STD_BAT_SPACE), end = '')
         # add Total Bases average
         tb = totals[BATTING_KEYS[HIT]] + totals[BATTING_KEYS[B2]] + totals[BATTING_KEYS[B3]]*2 + totals[BATTING_KEYS[HR]]*3
         tbave = round(tb / period)
-        print(F"{tbave}".rjust(STD_PRINT_SPACE), end = '')
+        print(F"{tbave}".rjust(STD_BAT_SPACE), end = '')
         print(" ")
 
     def print_stat_line(self, year:str, bat:dict):
         self.lgr.info(F"print stat line for year = {year}")
-        print(F"{year.ljust(STD_PRINT_SPACE)}", end = '')
+        print(F"{year.ljust(STD_BAT_SPACE)}", end = '')
         # print all the counting stats from the retrosheet data
         for key in sorted( bat.keys() ):
-            print(F"{bat[key]}".rjust(STD_PRINT_SPACE) if bat[key] >= 0 else F"{''}".rjust(STD_PRINT_SPACE), end = '')
+            print(F"{bat[key]}".rjust(STD_BAT_SPACE) if bat[key] >= 0 else F"{''}".rjust(STD_BAT_SPACE), end = '')
         # add Total Bases
         tb = bat[BATTING_KEYS[HIT]] + bat[BATTING_KEYS[B2]] + bat[BATTING_KEYS[B3]]*2 + bat[BATTING_KEYS[HR]]*3
-        print(F"{tb}".rjust(STD_PRINT_SPACE) if tb >= 0 else F"{''}".rjust(STD_PRINT_SPACE), end = '')
+        print(F"{tb}".rjust(STD_BAT_SPACE) if tb >= 0 else F"{''}".rjust(STD_BAT_SPACE), end = '')
         # calculate and print the rate stats
         ba = bat[ BATTING_KEYS[HIT] ] / bat[ BATTING_KEYS[AB] ] * 10000 if bat[ BATTING_KEYS[AB] ] > 0 else 0.0
         pba = str(ba)[:4] if ba > 0.0 else "000"
-        print(F"{pba}".rjust(STD_PRINT_SPACE), end = '')
+        print(F"{pba}".rjust(STD_BAT_SPACE), end = '')
         obp_num = bat[ BATTING_KEYS[HIT] ] + bat[ BATTING_KEYS[BB] ] + bat[ BATTING_KEYS[HBP] ]
         obp_denom = bat[ BATTING_KEYS[AB] ] + bat[ BATTING_KEYS[BB] ] + bat[ BATTING_KEYS[HBP] ] + bat[ BATTING_KEYS[SF] ]
         obp = obp_num / obp_denom * 10000 if obp_denom > 0 else 0.0
         pobp = str(obp)[:4] if obp > 0.0 else "000"
-        print(F"{pobp}".rjust(STD_PRINT_SPACE), end = '')
+        print(F"{pobp}".rjust(STD_BAT_SPACE), end = '')
         slg = tb / bat[ BATTING_KEYS[AB] ] * 10000 if bat[ BATTING_KEYS[AB] ] > 0 else 0.0
         pslg = str(slg)[:4] if slg > 0.0 else "000"
-        print(F"{pslg}".rjust(STD_PRINT_SPACE), end = '')
+        print(F"{pslg}".rjust(STD_BAT_SPACE), end = '')
         ops = obp + slg
         pops = str(ops)[:5] if ops > 10000 else str(ops)[:4] if ops > 0.0 else "000"
-        print(F"{pops}".rjust(STD_PRINT_SPACE), end = '')
+        print(F"{pops}".rjust(STD_BAT_SPACE), end = '')
         print(" ")
 
 # END class PrintBattingStats
