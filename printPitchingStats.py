@@ -81,7 +81,7 @@ PITCHING_HDRS = { PITCHING_KEYS[GM][:2] :F"{PITCHING_KEYS[GM][2:]} ",
                   PITCHING_KEYS[PIT][:2]:F"{PITCHING_KEYS[PIT][2:]}",
                   PITCHING_KEYS[STR][:2]:F"{PITCHING_KEYS[STR][2:]}",
                   F"{str(STR + 2)}":"ERA", F"{str(STR + 3)}":"WHIP", F"{str(STR + 4)}":"H9", F"{str(STR + 5)}":"HR9",
-                  F"{str(STR + 6)}":"BB9", F"{str(STR + 7)}":"SO9" , F"{str(STR + 8)}":"SO/BB", F"{str(STR + 9)}":"WL%"}
+                  F"{str(STR + 6)}":"SO9", F"{str(STR + 7)}":"BB9" , F"{str(STR + 8)}":"SO/BB", F"{str(STR + 9)}":"WL%"}
 
 def clear(stats:dict, totals:dict):
     for item in stats.keys():
@@ -204,6 +204,7 @@ class PrintPitchingStats:
 
     def print_stat_line(self, year:str, pitch:dict):
         self.lgr.info(F"print stat line for year = {year}")
+        pk = PITCHING_KEYS
         diff = 0
         print(F"{year.ljust(STD_PITCH_SPACE)}", end = '')
         # print all the counting stats from the retrosheet data
@@ -218,6 +219,24 @@ class PrintPitchingStats:
                 print(F"{pitch[key]}".rjust(STD_PITCH_SPACE+diff) if pitch[key] >= 0 else F"{''}".rjust(STD_PITCH_SPACE+diff),
                       end = '')
                 diff = 0
+        # calculate and print the rate stats: ERA, WHIP, H9, HR9, SO9, BB9, SO/BB, WL%
+        era = round( (pitch[pk[ER]] * 27 / pitch[pk[OUT]]), 2 )
+        print(F"{era}".rjust(STD_PITCH_SPACE), end = '')
+        whip = (pitch[pk[BB]] + pitch[pk[HIT]]) / pitch[pk[OUT]] * 3
+        pwhip = round(whip,3)
+        print(F"{pwhip}".rjust(STD_PITCH_SPACE), end = '')
+        h9 = round( (pitch[pk[HIT]] * 27 / pitch[pk[OUT]]), 2 )
+        print(F"{h9}".rjust(STD_PITCH_SPACE), end = '')
+        hr9 = round( (pitch[pk[HR]] * 27 / pitch[pk[OUT]]), 2 )
+        print(F"{hr9}".rjust(STD_PITCH_SPACE), end = '')
+        so9 = round( (pitch[pk[SO]] * 27 / pitch[pk[OUT]]), 2 )
+        print(F"{so9}".rjust(STD_PITCH_SPACE), end = '')
+        bb9 = round( (pitch[pk[BB]] * 27 / pitch[pk[OUT]]), 2 )
+        print(F"{bb9}".rjust(STD_PITCH_SPACE), end = '')
+        sobb = round( (pitch[pk[SO]] / pitch[pk[BB]]), 2 )
+        print(F"{sobb}".rjust(STD_PITCH_SPACE), end = '')
+        wlp = round( (pitch[pk[WIN]] / (pitch[pk[WIN]] + pitch[pk[LOS]])), 3 ) * 100
+        print(F"{wlp}"[:4].rjust(STD_PITCH_SPACE), end = '')
         print(" ")
 
 # END class PrintPitchingStats
@@ -226,10 +245,10 @@ class PrintPitchingStats:
 def process_args():
     arg_parser = ArgumentParser(
         description="Print pitching stats, totals & averages from Retrosheet data for the specified years",
-        prog='main_chadwick_py3.py' )
+        prog='main_pitching_stats.py' )
     # required arguments
     required = arg_parser.add_argument_group('REQUIRED')
-    required.add_argument('-i', '--pitcher_id', required=True, help="Retrosheet id for a player, e.g. aaroh101, bondb101")
+    required.add_argument('-i', '--pitcher_id', required=True, help="Retrosheet id for a pitcher, e.g. spahw101, kersc001")
     required.add_argument('-s', '--start', required=True, type=int, help="start year to find stats (yyyy)")
     # optional arguments
     arg_parser.add_argument('-e', '--end', type=int, help="end year to find stats (yyyy)")
