@@ -1,7 +1,7 @@
 ##############################################################################################################################
 # coding=utf-8
 #
-# printBattingStats.py -- print batting stats for a player using Retrosheet data
+# printPitchingStats.py -- print batting stats for a player using Retrosheet data
 #
 # Original C code Copyright (c) 2002-2020
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
@@ -84,8 +84,8 @@ def print_hdr():
     print_ul()
 
 
-class PrintBattingStats:
-    """print batting stats for a player using Retrosheet data"""
+class PrintPitchingStats:
+    """print pitching stats for a player using Retrosheet data"""
     def __init__(self, logger:logging.Logger):
         self.lgr = logger
         self.lgr.warning(F" Start {self.__class__.__name__}")
@@ -212,12 +212,12 @@ class PrintBattingStats:
         print(F"{pops}".rjust(STD_PRINT_SPACE), end = '')
         print(" ")
 
-# END class PrintBattingStats
+# END class PrintPitchingStats
 
 
 def process_args():
     arg_parser = ArgumentParser(
-        description="Print batting stats, totals & averages from Retrosheet data for the specified years",
+        description="Print pitching stats, totals & averages from Retrosheet data for the specified years",
         prog='main_chadwick_py3.py' )
     # required arguments
     required = arg_parser.add_argument_group('REQUIRED')
@@ -264,7 +264,7 @@ def process_input_parameters(argx:list):
 
 
 def main_batting_stats(args:list):
-    lgr = logging.getLogger("PrintBattingStats")
+    lgr = logging.getLogger("PrintPitchingStats")
 
     playid, start, end, loglevel = process_input_parameters(args)
 
@@ -272,7 +272,7 @@ def main_batting_stats(args:list):
     lgr.debug( str(lgr.handlers) )
     lgr.warning(F" id = {playid}; years = {start}->{end}")
 
-    bat_stats = PrintBattingStats(lgr)
+    bat_stats = PrintPitchingStats(lgr)
     need_name = True
     fam_name = playid
     giv_name = ""
