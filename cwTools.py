@@ -11,7 +11,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-01-21"
+__updated__ = "2021-01-26"
 
 from pychadwick.box import CWBoxPlayer
 from pychadwick.chadwick import *
@@ -19,7 +19,6 @@ from cwLibWrappers import MyCwlib
 
 POSITIONS = ["", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"]
 MARKERS = ['*', '+', '#']
-STD_PRINT_SPACE = 6
 
 RETROSHEET_FOLDER = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/"
 ROSTERS_FOLDER = RETROSHEET_FOLDER + "rosters/"
@@ -108,7 +107,6 @@ class MyChadwickTools:
 
         # NOTE: misspelling 'battiing' in the python wrapper file
         batting = player.battiing.contents
-
         print(F"{outstr:20}{batting.pa:3}{batting.ab:4}{batting.h:4}{batting.bb:4}{batting.so:4}{batting.r:3}", end = '')
         print(F"{batting.bi:3}" if batting.bi >= 0 else "", end = '')
 
@@ -249,6 +247,7 @@ class MyChadwickTools:
         if dp[0] == 0 and dp[1] == 0:
             return
         print("DP -- ", end = '')
+
         vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.game_info_lookup(p_game, b"visteam")
         home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.game_info_lookup(p_game, b"hometeam")
 
@@ -266,8 +265,10 @@ class MyChadwickTools:
         if tp[0] == 0 and tp[1] == 0:
             return
         print("TP -- ", end = '')
+
         vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.game_info_lookup(p_game, b"visteam")
         home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.game_info_lookup(p_game, b"hometeam")
+
         if tp[0] > 0 and tp[1] == 0:
             print(F"{vis_city} {tp[0]}")
         elif tp[0] == 0 and tp[1] > 0:
