@@ -11,10 +11,11 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-01-24"
+__updated__ = "2021-01-27"
 
 import copy
 import csv
+import glob
 import sys
 from argparse import ArgumentParser
 from datetime import datetime as dt
@@ -112,26 +113,26 @@ class PrintBattingStats:
                         self.lgr.debug(F"found player = {play_id}")
                         # NOTE: misspelling 'battiing' in the python wrapper file
                         batting = players[t].contents.battiing.contents
-                        stats[ bk[GM] ] += batting.g
-                        stats[ bk[PA] ] += batting.pa
-                        stats[ bk[AB] ] += batting.ab
+                        stats[ bk[GM] ]  += batting.g
+                        stats[ bk[PA] ]  += batting.pa
+                        stats[ bk[AB] ]  += batting.ab
                         stats[ bk[RUN] ] += batting.r
                         stats[ bk[HIT] ] += batting.h
-                        stats[ bk[B2] ] += batting.b2
-                        stats[ bk[B3] ] += batting.b3
-                        stats[ bk[HR] ] += batting.hr
+                        stats[ bk[B2] ]  += batting.b2
+                        stats[ bk[B3] ]  += batting.b3
+                        stats[ bk[HR] ]  += batting.hr
                         stats[ bk[XBH] ] += (batting.b2 + batting.b3 + batting.hr)
                         if batting.bi != -1:
                             stats[ bk[RBI] ] += batting.bi
                         else:
                             stats[ bk[RBI] ] = -1
-                        stats[ bk[BB] ] += batting.bb
+                        stats[ bk[BB] ]  += batting.bb
                         stats[ bk[IBB] ] += batting.ibb
-                        stats[ bk[SO] ] += batting.so
-                        stats[ bk[SB] ] += batting.sb
-                        stats[ bk[CS] ] += batting.cs
-                        stats[ bk[SH] ] += batting.sh
-                        stats[ bk[SF] ] += batting.sf
+                        stats[ bk[SO] ]  += batting.so
+                        stats[ bk[SB] ]  += batting.sb
+                        stats[ bk[CS] ]  += batting.cs
+                        stats[ bk[SH] ]  += batting.sh
+                        stats[ bk[SF] ]  += batting.sf
                         stats[ bk[HBP] ] += batting.hp
                         stats[ bk[GDP] ] += batting.gdp
                     players[t] = players[t].contents.next
@@ -141,12 +142,12 @@ class PrintBattingStats:
                             if slots[t] <= 9:
                                 players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
 
-    def print_stats(self, playid:str, name:str, yrstart:int, yrend:int):
-        self.lgr.info(F"print stats for years {yrstart}->{yrend}")
+    def print_stats(self, playid:str, name:str, season:str, yrstart:int, yrend:int):
+        self.lgr.info(F"print {season} stats for years {yrstart}->{yrend}")
         stats = copy.copy(STATS_DICT)
         totals = copy.copy(STATS_DICT)
 
-        print(F"\t{name} Stats:")
+        print(F"\t{name} {season} Stats:")
         print_hdr()
 
         # get all the games in the supplied date range
@@ -220,7 +221,7 @@ class PrintBattingStats:
 def process_args():
     arg_parser = ArgumentParser(
         description="Print batting stats, totals & averages from Retrosheet data for the specified years",
-        prog='main_chadwick_py3.py' )
+        prog='main_batting_stats.py' )
     # required arguments
     required = arg_parser.add_argument_group('REQUIRED')
     required.add_argument('-i', '--player_id', required=True, help="Retrosheet id for a player, e.g. aaroh101, bondb101")
@@ -247,8 +248,6 @@ def process_input_parameters(argx:list):
     logging.warning(F"process_input_parameters(): Level = {loglevel}\n--------------------------------------")
     logging.info(F"args = \n{args}")
 
-    # TODO: process 'postseason' flag
-
     playid = args.player_id.strip() if len(args.player_id) >= 8 and \
                 args.player_id[:5].isalpha() and args.player_id[5:8].isdecimal() else "maysw101"
     if len(playid) > 8:
@@ -262,19 +261,20 @@ def process_input_parameters(argx:list):
     if end < start: end = start
     logging.warning(F"end = {end}")
 
-    return playid, start, end, loglevel
+    return playid, start, end, args.post, loglevel
 
 
 def main_batting_stats(args:list):
     lgr = logging.getLogger("PrintBattingStats")
 
-    playid, start, end, loglevel = process_input_parameters(args)
+    playid, start, end, post, loglevel = process_input_parameters(args)
 
     lgr.setLevel(loglevel)
     lgr.debug( str(lgr.handlers) )
     lgr.warning(F" id = {playid}; years = {start}->{end}")
 
     bat_stats = PrintBattingStats(lgr)
+    season = "post-season" if post else "regular season"
     need_name = True
     fam_name = playid
     giv_name = ""
@@ -306,20 +306,31 @@ def main_batting_stats(args:list):
                                     giv_name = rrow[2]
                                     need_name = False
                                     break
-                    # find and store the event file paths for the requested years
-                    event_file = REGULAR_SEASON_FOLDER + str(year) + rteam + ".EV" + trow[1]
-                    if not os.path.exists(event_file):
-                        raise FileNotFoundError(F"CANNOT find event file {event_file}!")
-                    year_events.append(event_file)
+                    if not post:
+                        # find and store the event file paths for the requested years
+                        event_file = REGULAR_SEASON_FOLDER + str(year) + rteam + ".EV" + trow[1]
+                        if not os.path.exists(event_file):
+                            raise FileNotFoundError(F"CANNOT find {season} event file {event_file}!")
+                        year_events.append(event_file)
+
+            if post:
+                # find and store the event file paths for the requested years
+                post_files = POST_SEASON_FOLDER + str(year) + "*"
+                for pfile in glob.glob(post_files):
+                    lgr.debug(F"pfile name = {pfile}")
+                    if not os.path.exists(pfile):
+                        raise FileNotFoundError(F"CANNOT find {season} event file {pfile}!")
+                    year_events.append(pfile)
+
             bat_stats.event_files[str(year)] = year_events
 
         name = F"{giv_name} {fam_name}"
         lgr.warning(F"name = {name}")
-        lgr.warning(F"found {len(bat_stats.event_files)} year-event files")
+        lgr.warning(F"found {len(bat_stats.event_files)} {season} event files")
         for item in bat_stats.event_files:
             lgr.debug(item)
 
-        bat_stats.print_stats(playid, name, start, end)
+        bat_stats.print_stats(playid, name, season, start, end)
 
     except Exception as ex:
         lgr.exception(F"Exception: {repr(ex)}")
