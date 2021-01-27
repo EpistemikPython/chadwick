@@ -199,19 +199,24 @@ class PrintBattingStats:
         tb = bat[BATTING_KEYS[HIT]] + bat[BATTING_KEYS[B2]] + bat[BATTING_KEYS[B3]]*2 + bat[BATTING_KEYS[HR]]*3
         print(F"{tb}".rjust(STD_BAT_SPACE) if tb >= 0 else F"{''}".rjust(STD_BAT_SPACE), end = '')
         # calculate and print the rate stats
+        games = bat[BATTING_KEYS[GM]]
         ba = bat[ BATTING_KEYS[HIT] ] / bat[ BATTING_KEYS[AB] ] * 10000 if bat[ BATTING_KEYS[AB] ] > 0 else 0.0
-        pba = str(ba)[:4] if ba > 0.0 else "000"
+        pba = str(int(ba))[:4] if ba > 0.0 else 'x' if games == 0 else "00"
+        if pba != 'x' and len(pba) < 4: pba = '0' + pba
         print(F"{pba}".rjust(STD_BAT_SPACE), end = '')
         obp_num = bat[ BATTING_KEYS[HIT] ] + bat[ BATTING_KEYS[BB] ] + bat[ BATTING_KEYS[HBP] ]
         obp_denom = bat[ BATTING_KEYS[AB] ] + bat[ BATTING_KEYS[BB] ] + bat[ BATTING_KEYS[HBP] ] + bat[ BATTING_KEYS[SF] ]
         obp = obp_num / obp_denom * 10000 if obp_denom > 0 else 0.0
-        pobp = str(obp)[:4] if obp > 0.0 else "000"
+        pobp = str(int(obp))[:4] if obp > 0.0 else 'x' if games == 0 else "00"
+        if pobp != 'x' and len(pobp) < 4: pobp = '0' + pobp
         print(F"{pobp}".rjust(STD_BAT_SPACE), end = '')
         slg = tb / bat[ BATTING_KEYS[AB] ] * 10000 if bat[ BATTING_KEYS[AB] ] > 0 else 0.0
-        pslg = str(slg)[:4] if slg > 0.0 else "000"
+        pslg = str(int(slg))[:4] if slg > 0.0 else 'x' if games == 0 else "00"
+        if pslg != 'x' and len(pslg) < 4: pslg = '0' + pslg
         print(F"{pslg}".rjust(STD_BAT_SPACE), end = '')
         ops = obp + slg
-        pops = str(ops)[:5] if ops > 10000 else str(ops)[:4] if ops > 0.0 else "000"
+        pops = str(int(ops))[:5] if ops > 10000 else str(ops)[:4] if ops > 0.0 else 'x' if games == 0 else "00"
+        if pops != 'x' and len(pops) < 4: pops = '0' + pops
         print(F"{pops}".rjust(STD_BAT_SPACE), end = '')
         print(" ")
 
