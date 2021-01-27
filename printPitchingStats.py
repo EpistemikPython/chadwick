@@ -220,22 +220,22 @@ class PrintPitchingStats:
                       end = '')
                 diff = 0
         # calculate and print the rate stats: ERA, WHIP, H9, HR9, SO9, BB9, SO/BB, WL%
-        era = round( (pitch[pk[ER]] * 27 / pitch[pk[OUT]]), 2 )
+        era = round( (pitch[pk[ER]] * 27 / pitch[pk[OUT]]), 2 ) if pitch[pk[OUT]] > 0 else 0
         print(F"{era}".rjust(STD_PITCH_SPACE), end = '')
-        whip = (pitch[pk[BB]] + pitch[pk[HIT]]) / pitch[pk[OUT]] * 3
+        whip = (pitch[pk[BB]] + pitch[pk[HIT]]) / pitch[pk[OUT]] * 3 if pitch[pk[OUT]] > 0 else 0
         pwhip = round(whip,3)
         print(F"{pwhip}".rjust(STD_PITCH_SPACE), end = '')
-        h9 = round( (pitch[pk[HIT]] * 27 / pitch[pk[OUT]]), 2 )
+        h9 = round( (pitch[pk[HIT]] * 27 / pitch[pk[OUT]]), 2 ) if pitch[pk[OUT]] > 0 else 0
         print(F"{h9}".rjust(STD_PITCH_SPACE), end = '')
-        hr9 = round( (pitch[pk[HR]] * 27 / pitch[pk[OUT]]), 2 )
+        hr9 = round( (pitch[pk[HR]] * 27 / pitch[pk[OUT]]), 2 ) if pitch[pk[OUT]] > 0 else 0
         print(F"{hr9}".rjust(STD_PITCH_SPACE), end = '')
-        so9 = round( (pitch[pk[SO]] * 27 / pitch[pk[OUT]]), 2 )
+        so9 = round( (pitch[pk[SO]] * 27 / pitch[pk[OUT]]), 2 ) if pitch[pk[OUT]] > 0 else 0
         print(F"{so9}".rjust(STD_PITCH_SPACE), end = '')
-        bb9 = round( (pitch[pk[BB]] * 27 / pitch[pk[OUT]]), 2 )
+        bb9 = round( (pitch[pk[BB]] * 27 / pitch[pk[OUT]]), 2 ) if pitch[pk[OUT]] > 0 else 0
         print(F"{bb9}".rjust(STD_PITCH_SPACE), end = '')
-        sobb = round( (pitch[pk[SO]] / pitch[pk[BB]]), 2 )
+        sobb = round( (pitch[pk[SO]] / pitch[pk[BB]]), 2 ) if pitch[pk[BB]] > 0 else 0
         print(F"{sobb}".rjust(STD_PITCH_SPACE), end = '')
-        wlp = round( (pitch[pk[WIN]] / (pitch[pk[WIN]] + pitch[pk[LOS]])), 3 ) * 100
+        wlp = round( (pitch[pk[WIN]] / (pitch[pk[WIN]] + pitch[pk[LOS]])), 3 ) * 100 if pitch[pk[WIN]] > 0 else 0
         print(F"{wlp}"[:4].rjust(STD_PITCH_SPACE), end = '')
         print(" ")
 
