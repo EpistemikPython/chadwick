@@ -77,7 +77,7 @@ def clear(stats:dict, totals:dict):
 
 def print_ul():
     print(F"{''}".rjust(STD_BAT_SPACE), end = '')
-    for sp in range(0, len(BATTING_HDRS)):
+    for sp in range( len(BATTING_HDRS) ):
         print(F"{'---'}".rjust(STD_BAT_SPACE), end = '')
     print(" ")
 
@@ -105,7 +105,7 @@ class PrintBattingStats:
         players.insert( 1, MyCwlib.box_get_starter(p_box,1,1) )
 
         while slots[0] <= 9 or slots[1] <= 9 :
-            for t in range(0,2):
+            for t in range(2):
                 if slots[t] <= 9:
                     player = players[t].contents.player_id.decode("UTF-8")
                     self.lgr.debug(F"player = {player}")

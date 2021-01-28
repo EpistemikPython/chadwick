@@ -90,7 +90,7 @@ def clear(stats:dict, totals:dict):
 
 def print_ul():
     print(F"{''}".rjust(STD_PITCH_SPACE), end = '')
-    for sp in range(0, len(PITCHING_HDRS)):
+    for sp in range( len(PITCHING_HDRS) ):
         print(F"{'---'}".rjust(STD_PITCH_SPACE), end = '')
     print(" ")
 
@@ -113,7 +113,7 @@ class PrintPitchingStats:
     def collect_stats(self, p_box:pointer, pit_id:str, stats:dict, year:str):
         self.lgr.debug(F"player = {pit_id}; collect stats for year = {year}")
         pk = PITCHING_KEYS
-        for t in range(0, 2):
+        for t in range(2):
             p_pitcher = MyCwlib.box_get_starting_pitcher(p_box, t)
             while p_pitcher:
                 pitcher = p_pitcher.contents

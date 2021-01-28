@@ -88,7 +88,7 @@ class MyChadwickTools:
         elif player.pr_inn > 0 and player.positions[0] != 12:
             posstr = "pr"
 
-        for pos in range(0, player.num_positions):
+        for pos in range( player.num_positions ):
             if len(posstr) > 0:
                 posstr += "-"
             posstr += POSITIONS[player.positions[pos]]
@@ -227,7 +227,7 @@ class MyChadwickTools:
 
         pitching = pitcher.pitching.contents
         if pitching.xbinn > 0 and pitching.xb > 0:
-            for i in range(0, (self.note_count // 3)+1):
+            for i in range( (self.note_count // 3)+1 ):
                 name += MARKERS[self.note_count % 3]
             self.note_count += 1
 
@@ -352,13 +352,13 @@ class MyChadwickTools:
         self.lgr.info("print_pitcher_apparatus():\n----------------------------------")
 
         count = 0
-        for t in range(0, 2):
+        for t in range(2):
             pitcher = MyCwlib.box_get_starting_pitcher(p_box, t)
             while pitcher:
                 pitching = pitcher.contents.pitching.contents
                 if pitching.xbinn > 0 and pitching.xb > 0:
                     print("  ", end = '')
-                    for i in range(0, (count // 3)+1):
+                    for i in range( (count // 3)+1 ):
                         print(F"{MARKERS[count % 3]}", end = '')
                     print(F" Pitched to {pitching.xb} batter{'' if pitching.xb == 1 else 's'} in {pitching.xbinn}", end = '')
                     if pitching.xbinn % 10 == 1 and pitching.xbinn != 11:
