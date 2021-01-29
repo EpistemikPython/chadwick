@@ -61,7 +61,7 @@ class PrintGameSummary:
         self.lgr.info("print_linescore():\n----------------------------------")
 
         linescore = p_box.contents.linescore
-        for t in range(0,2):
+        for t in range(2):
             runs = 0
             if t == 0:
                 print(F"{c_char_p_to_str(p_vis.contents.city, 16):16}" if p_vis
@@ -128,7 +128,7 @@ class PrintGameSummary:
         print(F"  {vis_city:18} PA  AB   H  BB  SO  R RBI      {home_city:18} PA  AB   H  BB  SO  R RBI    ")
 
         while slots[0] <= 9 or slots[1] <= 9 :
-            for t in range(0,2):
+            for t in range(2):
                 if slots[t] <= 9:
                     self.cwtools.print_player(players[t], p_vis if (t == 0) else p_home)
                     # NOTE: misspelling 'battiing' in the python wrapper file
@@ -168,7 +168,7 @@ class PrintGameSummary:
         self.print_linescore(p_game, p_box, p_vis, p_home)
         print("")
 
-        for t in range(0, 2):
+        for t in range(2):
             pitcher = MyCwlib.box_get_starting_pitcher(p_box, t)
             if t == 0:
                 print(F"  {vis_city:18}   IP  H  R ER BB SO  TP TS GB FB")

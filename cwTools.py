@@ -302,18 +302,16 @@ class MyChadwickTools:
 
             if p_vis:
                 batter = MyCwlib.roster_player_find(p_vis, event.contents.players[0])
-            if not batter and p_home:
-                batter = MyCwlib.roster_player_find(p_home, event.contents.players[0])
+                pitcher = MyCwlib.roster_player_find(p_vis, event.contents.players[1])
+            if p_home:
+                if not batter: batter = MyCwlib.roster_player_find(p_home, event.contents.players[0])
+                if not pitcher: pitcher = MyCwlib.roster_player_find(p_home, event.contents.players[1])
             if not batter:
                 batter_name = event.contents.players[0].decode('UTF8')
                 self.lgr.warning("roster NOT available for batter!")
-            if p_vis:
-                pitcher = MyCwlib.roster_player_find(p_vis, event.contents.players[1])
-            if not pitcher and p_home:
-                pitcher = MyCwlib.roster_player_find(p_home, event.contents.players[1])
             if not pitcher:
-                self.lgr.warning("roster NOT available for pitcher!")
                 pitcher_name = event.contents.players[1].decode('UTF8')
+                self.lgr.warning("roster NOT available for pitcher!")
             if comma: print(", ", end = '')
 
             if pitcher:
