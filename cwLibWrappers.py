@@ -3,18 +3,18 @@
 #
 # cwLibWrappers.py -- Chadwick baseball library wrappers for Python3
 #
-# Original C code Copyright (c) 2002-2020
-# Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
+# based on source code by Ben Dilday for the pychadwick project
+# https://github.com/bdilday/pychadwick
 #
-# Port to Python3 and modifications Copyright (c) 2019-2021 Mark Sattolo <epistemik@gmail.com>
+# Copyright (c) 2019-2021 Mark Sattolo <epistemik@gmail.com>
 
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-01-21"
+__updated__ = "2021-01-31"
 
 from ctypes import c_void_p
-from pychadwick.box import CWBoxPlayer, CWBoxPitcher
+from pychadwick.box import CWBoxPlayer, CWBoxPitcher, CWBoxscore
 from pychadwick.chadwick import *
 from pychadwick.roster import CWPlayer
 
