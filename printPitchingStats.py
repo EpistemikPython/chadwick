@@ -3,7 +3,7 @@
 #
 # printPitchingStats.py -- print pitching stats for a player using Retrosheet data
 #
-# Original C code Copyright (c) 2002-2020
+# Original C code Copyright (c) 2002-2021
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
 #
 # Port to Python3, additions & modifications Copyright (c) 2019-2021 Mark Sattolo <epistemik@gmail.com>
@@ -269,7 +269,7 @@ def process_input_parameters(argx:list):
         loglevel = "INFO"
 
     logging.basicConfig(level = loglevel)
-    logging.warning(F"process_input_parameters(): Level = {loglevel}\n--------------------------------------")
+    logging.warning(F"process_input_parameters(): Level = {loglevel}\n----------------------------------------")
     logging.info(F"args = \n{args}")
 
     # TODO: process 'postseason' flag

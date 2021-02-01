@@ -3,7 +3,7 @@
 #
 # printGameSummary.py -- print a summary of baseball game or games using Retrosheet data
 #
-# Original C code Copyright (c) 2002-2020
+# Original C code Copyright (c) 2002-2021
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
 #
 # Port to Python3 and modifications Copyright (c) 2019-2021 Mark Sattolo <epistemik@gmail.com>
@@ -131,8 +131,7 @@ class PrintGameSummary:
             for t in range(2):
                 if slots[t] <= 9:
                     self.cwtools.print_player(players[t], p_vis if (t == 0) else p_home)
-                    # NOTE: misspelling 'battiing' in the python wrapper file
-                    batting = players[t].contents.battiing.contents
+                    batting = players[t].contents.batting.contents
                     ab[t] += batting.ab
                     r[t]  += batting.r
                     h[t]  += batting.h
@@ -216,7 +215,7 @@ def process_input_parameters(argx:list):
         loglevel = "INFO"
 
     logging.basicConfig(level = loglevel)
-    logging.warning(F"process_input_parameters(): Level = {loglevel}\n--------------------------------------")
+    logging.warning(F"process_input_parameters(): Level = {loglevel}\n----------------------------------------")
     logging.info(F"args = \n{args}")
 
     # TODO: process 'postseason' flag

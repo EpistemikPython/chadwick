@@ -3,7 +3,7 @@
 #
 # cwTools.py -- Chadwick baseball tools coded in Python3
 #
-# Original C code Copyright (c) 2002-2020
+# Original C code Copyright (c) 2002-2021
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
 #
 # Port to Python3 and modifications Copyright (c) 2019-2021 Mark Sattolo <epistemik@gmail.com>
@@ -105,8 +105,7 @@ class MyChadwickTools:
 
         self.lgr.info(F"outstr = {outstr}")
 
-        # NOTE: misspelling 'battiing' in the python wrapper file
-        batting = player.battiing.contents
+        batting = player.batting.contents
         print(F"{outstr:20}{batting.pa:3}{batting.ab:4}{batting.h:4}{batting.bb:4}{batting.so:4}{batting.r:3}", end = '')
         print(F"{batting.bi:3}" if batting.bi >= 0 else "", end = '')
 

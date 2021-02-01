@@ -3,7 +3,7 @@
 #
 # printBattingStats.py -- print batting stats for a player using Retrosheet data
 #
-# Original C code Copyright (c) 2002-2020
+# Original C code Copyright (c) 2002-2021
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
 #
 # Port to Python3, additions & modifications Copyright (c) 2019-2021 Mark Sattolo <epistemik@gmail.com>
@@ -111,8 +111,7 @@ class PrintBattingStats:
                     self.lgr.debug(F"player = {player}")
                     if player == play_id:
                         self.lgr.debug(F"found player = {play_id}")
-                        # NOTE: misspelling 'battiing' in the python wrapper file
-                        batting = players[t].contents.battiing.contents
+                        batting = players[t].contents.batting.contents
                         stats[ bk[GM] ]  += batting.g
                         stats[ bk[PA] ]  += batting.pa
                         stats[ bk[AB] ]  += batting.ab
@@ -250,7 +249,7 @@ def process_input_parameters(argx:list):
         loglevel = "INFO"
 
     logging.basicConfig(level = loglevel)
-    logging.warning(F"process_input_parameters(): Level = {loglevel}\n--------------------------------------")
+    logging.warning(F"process_input_parameters(): Level = {loglevel}\n----------------------------------------")
     logging.info(F"args = \n{args}")
 
     playid = args.player_id.strip() if len(args.player_id) >= 8 and \
