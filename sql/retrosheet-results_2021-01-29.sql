@@ -324,7 +324,7 @@ http://mariadb.org
 
 List of all client commands:
 Note that all text commands must be first on line and end with ';'
-?         (\?) Synonym for `help'.
+?         (\?) Synonym for 'help'.
 clear     (\c) Clear the current input statement.
 connect   (\r) Reconnect to the server. Optional arguments are db and host.
 delimiter (\d) Set statement delimiter.
@@ -334,7 +334,7 @@ exit      (\q) Exit mysql. Same as quit.
 go        (\g) Send command to MariaDB server.
 help      (\h) Display this help.
 nopager   (\n) Disable pager, print to stdout.
-notee     (\t) Don't write into outfile.
+notee     (\t) Don''t write into outfile.
 pager     (\P) Set PAGER [to_pager]. Print the query results via PAGER.
 print     (\p) Print current command.
 prompt    (\R) Change your mysql prompt.
@@ -347,7 +347,7 @@ tee       (\T) Set outfile [to_outfile]. Append everything into given outfile.
 use       (\u) Use another database. Takes database name as argument.
 charset   (\C) Switch to another charset. Might be needed for processing binlog with multi-byte charsets.
 warnings  (\W) Show warnings after every statement.
-nowarning (\w) Don't show warnings after every statement.
+nowarning (\w) Don''t show warnings after every statement.
 
 For server side help, type 'help contents'
 
