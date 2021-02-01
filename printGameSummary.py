@@ -229,20 +229,11 @@ def process_input_parameters(argx:list):
     year = str(args.year) if 1871 <= args.year <= 2020 else "1993"
     logging.warning(F"year = {year}")
 
-    if args.start:
-        start = args.start.strip()
-        if not start.isdecimal() or not len(start) == 4:
-            start = "9999"
-    else:
-        start = "0301"
+    start = args.start.strip() if args.start and args.start.isdecimal() and len(args.start) == 4 else "0701"
     logging.warning(F"start = {start}")
 
-    if args.end:
-        end = args.end.strip()
-        if not end.isdecimal() or not len(end) == 4:
-            end = "0000"
-    else:
-        end = "1031"
+    end = args.end.strip() if args.end and args.end.isdecimal() and len(args.end) == 4 else start
+    if end < start: end = start
     logging.warning(F"end = {end}")
 
     return team, year, start, end, loglevel
