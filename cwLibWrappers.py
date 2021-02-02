@@ -11,7 +11,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-01-31"
+__updated__ = "2021-02-01"
 
 from ctypes import c_void_p
 from pychadwick.box import CWBoxPlayer, CWBoxPitcher, CWBoxscore

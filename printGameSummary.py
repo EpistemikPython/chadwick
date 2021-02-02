@@ -11,7 +11,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-01-21"
+__updated__ = "2021-02-01"
 
 import csv
 import os
@@ -226,26 +226,18 @@ def process_input_parameters(argx:list):
         print(F"Problem with log level: {repr(ae)}")
         loglevel = "INFO"
 
-    # logging.basicConfig(level = logging.ERROR)
-    # logging.warning(F"process_input_parameters(): Level = {loglevel}\n----------------------------------------")
-    # logging.info(F"args = \n{args}")
-
     # TODO: process 'postseason' flag
 
     team = args.team.strip().upper() if args.team.isalpha() and len(args.team.strip()) >= 3 else "TOR"
     if len(team) > 3:
         team = team[:3]
-    # logging.warning(F"team = {team}")
 
     year = str(args.year) if 1871 <= args.year <= 2020 else "1993"
-    # logging.warning(F"year = {year}")
 
     start = args.start.strip() if args.start and args.start.isdecimal() and len(args.start) == 4 else "0701"
-    # logging.warning(F"start = {start}")
 
     end = args.end.strip() if args.end and args.end.isdecimal() and len(args.end) == 4 else start
     if end < start: end = start
-    # logging.warning(F"end = {end}")
 
     return team, year, start, end, loglevel
 

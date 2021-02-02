@@ -11,7 +11,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-01-26"
+__updated__ = "2021-02-01"
 
 import logging
 from ctypes import c_char_p, pointer
@@ -45,11 +45,6 @@ def get_logger(name:str, file_time:str, level:str) -> logging.Logger:
     # add handlers to the logger
     lgr.addHandler(ch)
     lgr.addHandler(fh)
-    # for h in lgr.handlers:
-    #     h.setFormatter(formatter)
-    #     h.setLevel(loglevel)
-    #     print(F"found handler: {repr(h)}")
-    # lgr.debug(F"lgr handlers:\n{str(lgr.handlers)}")
     return lgr
 
 
