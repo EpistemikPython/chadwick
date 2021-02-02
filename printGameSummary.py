@@ -14,6 +14,7 @@ __created__ = "2019-11-07"
 __updated__ = "2021-02-02"
 
 import csv
+import glob
 import sys
 from argparse import ArgumentParser
 from cwLibWrappers import chadwick, cwlib
@@ -226,12 +227,16 @@ def process_input_parameters(argx:list):
     end = args.end.strip() if args.end and args.end.isdecimal() and len(args.end) == 4 else start
     if end < start: end = start
 
-    return team, year, start, end, loglevel
+    if args.post:
+        start = "0901"
+        end = "1231"
+
+    return team, year, start, end, args.post, loglevel
 
 
 def main_game_summary(args:list):
 
-    team, year, start, end, loglevel = process_input_parameters(args)
+    team, year, start, end, post, loglevel = process_input_parameters(args)
 
     lgr = get_logger(__file__, file_ts, loglevel)
     lgr.debug(F"loglevel = {repr(loglevel)}")
@@ -239,6 +244,7 @@ def main_game_summary(args:list):
 
     cwtools = MyChadwickTools(lgr)
     pgs = PrintGameSummary(cwtools, lgr)
+    season = "post-season" if post else "regular season"
     try:
         # get the team files
         team_file_name = REGULAR_SEASON_FOLDER + "TEAM" + year
@@ -261,11 +267,23 @@ def main_game_summary(args:list):
                 roster_read_result = MyCwlib.roster_read(pgs.rosters[rteam], roster_fptr)
                 lgr.info("roster read result = " + ("Success." if roster_read_result > 0 else "Failure!"))
                 chadwick.fclose(roster_fptr)
-                # find and store the event file paths
-                event_file = REGULAR_SEASON_FOLDER + year + rteam + ".EV" + row[1]
-                if not os.path.exists(event_file):
-                    raise FileNotFoundError(F"CANNOT find event file {event_file}!")
-                pgs.event_files[rteam] = event_file
+                if not post:
+                    # find and store the event file paths
+                    rfile = REGULAR_SEASON_FOLDER + year + rteam + ".EV" + row[1]
+                    if not os.path.exists(rfile):
+                        raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
+                    pgs.event_files[rteam] = rfile
+
+        if post:
+            # find and store the event file paths for the requested years
+            post_files = POST_SEASON_FOLDER + str(year) + "*"
+            for pfile in glob.glob(post_files):
+                _, fname = os.path.split(pfile)
+                basename, _ = os.path.splitext(fname)
+                lgr.debug(F"{season} file name = {basename}")
+                if not os.path.exists(pfile):
+                    raise FileNotFoundError(F"CANNOT find {season} event file {pfile}!")
+                pgs.event_files[basename] = pfile
 
         for item in pgs.rosters.values():
             lgr.debug(item)
@@ -278,8 +296,9 @@ def main_game_summary(args:list):
         lgr.info(F"end id = {end_id}")
 
         # get all the games for the requested team in the supplied date range
+        ptype = "file" if post else "team"
         for evteam in pgs.event_files:
-            lgr.info(F"found events for team = {evteam}")
+            lgr.info(F"found events for {ptype} = {evteam}")
             cwgames = chadwick.games( pgs.event_files[evteam] )
             for game in cwgames:
                 game_id = game.contents.game_id.decode(encoding='UTF-8')
