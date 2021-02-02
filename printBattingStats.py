@@ -11,14 +11,13 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-01-27"
+__updated__ = "2021-02-02"
 
 import copy
 import csv
 import glob
 import sys
 from argparse import ArgumentParser
-from datetime import datetime as dt
 from cwLibWrappers import chadwick, cwlib
 from cwTools import *
 
@@ -176,6 +175,8 @@ class PrintBattingStats:
 
     def print_ave_line(self, totals:dict, period:int):
         self.lgr.info(F"print average of each counting stat over span of {period} years")
+        # NOTE: subtract years where games = 0 ?
+        # NOTE: ave for each 150 games ?
         averages = copy.copy(STATS_DICT)
         for item in totals.keys():
             averages[item] = round(totals[item] / period)
@@ -248,33 +249,25 @@ def process_input_parameters(argx:list):
         print(F"Problem with log level: {repr(ae)}")
         loglevel = "INFO"
 
-    logging.basicConfig(level = loglevel)
-    logging.warning(F"process_input_parameters(): Level = {loglevel}\n----------------------------------------")
-    logging.info(F"args = \n{args}")
-
     playid = args.player_id.strip() if len(args.player_id) >= 8 and \
                 args.player_id[:5].isalpha() and args.player_id[5:8].isdecimal() else "maysw101"
     if len(playid) > 8:
         playid = playid[:8]
-    logging.warning(F"id = {playid}")
 
     start = args.start if 1871 <= args.start <= 2020 else 1954
-    logging.warning(F"start = {start}")
 
     end = args.end if args.end and 1871 <= args.end <= 2020 else start
     if end < start: end = start
-    logging.warning(F"end = {end}")
 
     return playid, start, end, args.post, loglevel
 
 
 def main_batting_stats(args:list):
-    lgr = logging.getLogger("PrintBattingStats")
 
     playid, start, end, post, loglevel = process_input_parameters(args)
 
-    lgr.setLevel(loglevel)
-    lgr.debug( str(lgr.handlers) )
+    lgr = get_logger(__file__, file_ts, loglevel)
+    lgr.debug(F"loglevel = {repr(loglevel)}")
     lgr.warning(F" id = {playid}; years = {start}->{end}")
 
     bat_stats = PrintBattingStats(lgr)
@@ -343,9 +336,9 @@ def main_batting_stats(args:list):
 if __name__ == "__main__":
     run_start_time = dt.now()
     if '-q' not in sys.argv:
-        logging.critical(F"Run Start time = {run_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+        print(F"Run Start time = {run_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
     main_batting_stats(sys.argv[1:])
     if '-q' not in sys.argv:
         run_time = (dt.now() - run_start_time).total_seconds()
-        logging.critical(F" Running time = {(run_time // 60)} minutes, {(run_time % 60):2.3} seconds")
+        print(F" Running time = {(run_time // 60)} minutes, {(run_time % 60):2.3} seconds")
     exit()

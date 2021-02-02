@@ -11,26 +11,13 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-02-01"
+__updated__ = "2021-02-02"
 
 import csv
-import os
 import sys
 from argparse import ArgumentParser
-from datetime import datetime as dt
 from cwLibWrappers import chadwick, cwlib
 from cwTools import *
-
-FXN_TIME_STR:str  = "%H:%M:%S:%f"
-FXN_DATE_STR:str = "%Y-%m-%d"
-FILE_DATE_STR:str = "D%Y-%m-%d"
-FILE_TIME_STR:str = "T%Hh%M"
-FILE_DATETIME_FORMAT = FILE_DATE_STR + FILE_TIME_STR
-RUN_DATETIME_FORMAT  = FXN_DATE_STR + '_' + FXN_TIME_STR
-
-start_dt:dt  = dt.now()
-run_ts:str = start_dt.strftime(RUN_DATETIME_FORMAT)
-file_ts:str = start_dt.strftime(FILE_DATETIME_FORMAT)
 
 
 class PrintGameSummary:
@@ -248,11 +235,10 @@ def main_game_summary(args:list):
 
     lgr = get_logger(__file__, file_ts, loglevel)
     lgr.debug(F"loglevel = {repr(loglevel)}")
-    lgr.info(F" team = {team}; year = {year}")
+    lgr.warning(F" team = {team}; year = {year}")
 
     cwtools = MyChadwickTools(lgr)
     pgs = PrintGameSummary(cwtools, lgr)
-
     try:
         # get the team files
         team_file_name = REGULAR_SEASON_FOLDER + "TEAM" + year

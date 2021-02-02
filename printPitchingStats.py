@@ -11,13 +11,12 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-25"
-__updated__ = "2021-01-26"
+__updated__ = "2021-02-02"
 
 import copy
 import csv
 import sys
 from argparse import ArgumentParser
-from datetime import datetime as dt
 from cwLibWrappers import chadwick
 from cwTools import *
 
@@ -95,7 +94,6 @@ def print_ul():
     print(" ")
 
 def print_hdr():
-    # print(F"{'':18}   IP  H  R ER BB SO  TP TS GB FB")
     print(F"{''}".rjust(STD_PITCH_SPACE), end = '')
     for key in sorted(PITCHING_HDRS):
         print(F"{PITCHING_HDRS[key]}".rjust(STD_PITCH_SPACE), end = '')
@@ -220,6 +218,7 @@ class PrintPitchingStats:
                       end = '')
                 diff = 0
         # calculate and print the rate stats: ERA, WHIP, H9, HR9, SO9, BB9, SO/BB, WL%
+        # NOTE: add TS% ?
         era = round( (pitch[pk[ER]] * 27 / pitch[pk[OUT]]), 2 ) if pitch[pk[OUT]] > 0 else 0
         print(F"{era}".rjust(STD_PITCH_SPACE), end = '')
         whip = (pitch[pk[BB]] + pitch[pk[HIT]]) / pitch[pk[OUT]] * 3 if pitch[pk[OUT]] > 0 else 0
@@ -268,35 +267,27 @@ def process_input_parameters(argx:list):
         print(F"Problem with log level: {repr(ae)}")
         loglevel = "INFO"
 
-    logging.basicConfig(level = loglevel)
-    logging.warning(F"process_input_parameters(): Level = {loglevel}\n----------------------------------------")
-    logging.info(F"args = \n{args}")
-
     # TODO: process 'postseason' flag
 
     pitcher_id = args.pitcher_id.strip() if len(args.pitcher_id) >= 8 and \
                  args.pitcher_id[:5].isalpha() and args.pitcher_id[5:8].isdecimal() else "kersc001"
     if len(pitcher_id) > 8:
         pitcher_id = pitcher_id[:8]
-    logging.warning(F"id = {pitcher_id}")
 
     start = args.start if 1871 <= args.start <= 2020 else 2014
-    logging.warning(F"start = {start}")
 
     end = args.end if args.end and 1871 <= args.end <= 2020 else start
     if end < start: end = start
-    logging.warning(F"end = {end}")
 
     return pitcher_id, start, end, loglevel
 
 
 def main_pitching_stats(args:list):
-    lgr = logging.getLogger("PrintPitchingStats")
 
     pers_id, start, end, loglevel = process_input_parameters(args)
 
-    lgr.setLevel(loglevel)
-    lgr.debug( str(lgr.handlers) )
+    lgr = get_logger(__file__, file_ts, loglevel)
+    lgr.debug(F"loglevel = {repr(loglevel)}")
     lgr.warning(F" id = {pers_id}; years = {start}->{end}")
 
     pitch_stats = PrintPitchingStats(lgr)
@@ -353,9 +344,9 @@ def main_pitching_stats(args:list):
 if __name__ == "__main__":
     run_start_time = dt.now()
     if '-q' not in sys.argv:
-        logging.critical(F"Run Start time = {run_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+        print(F"Run Start time = {run_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
     main_pitching_stats(sys.argv[1:])
     if '-q' not in sys.argv:
         run_time = (dt.now() - run_start_time).total_seconds()
-        logging.critical(F" Running time = {(run_time // 60)} minutes, {(run_time % 60):2.3} seconds")
+        print(F" Running time = {(run_time // 60)} minutes, {(run_time % 60):2.3} seconds")
     exit()
