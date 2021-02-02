@@ -22,7 +22,6 @@ from cwLibWrappers import chadwick
 from cwTools import *
 
 STD_PITCH_SPACE = 6
-TOTAL = "Total"
 
 GM  = 0         # 0
 GS  = GM + 1    # 1
@@ -108,6 +107,7 @@ class PrintPitchingStats:
         self.lgr = logger
         self.lgr.warning(F" Start {self.__class__.__name__}")
         self.event_files = {}
+        self.num_years = 0
 
     def collect_stats(self, p_box:pointer, pit_id:str, stats:dict, year:str):
         self.lgr.debug(F"player = {pit_id}; collect stats for year = {year}")
@@ -177,20 +177,19 @@ class PrintPitchingStats:
         print_ul()
         print_hdr()
         self.print_stat_line(TOTAL, totals)
-        self.print_ave_line(totals, yrend-yrstart+1)
+        self.print_ave_line(totals)
         print("")
 
-    def print_ave_line(self, totals:dict, period:int):
-        self.lgr.info(F"print average of each counting stat over span of {period} years")
+    def print_ave_line(self, totals:dict):
         diff = 0
         averages = copy.copy(STATS_DICT)
         for key in totals.keys():
             # adjust from outs to innings pitched
             if key == PITCHING_KEYS[OUT]:
-                outs = round(totals[key] / period)
+                outs = round(totals[key] / self.num_years)
                 averages[key] = (outs // 3) + (outs % 3)/10
             else:
-                averages[key] = round(totals[key] / period)
+                averages[key] = round(totals[key] / self.num_years)
         print("Ave".ljust(STD_PITCH_SPACE), end = '')
         for key in sorted( averages.keys() ):
             if key == PITCHING_KEYS[OUT]:
@@ -199,13 +198,15 @@ class PrintPitchingStats:
             else:
                 print(F"{averages[key]}".rjust(STD_PITCH_SPACE+diff), end = '')
                 diff = 0
-        print(" ")
+        print("\n")
+        self.lgr.warning(F"printed Average of each counting stat for {self.num_years} ACTIVE years")
 
     def print_stat_line(self, year:str, pitch:dict):
         self.lgr.info(F"print stat line for year = {year}")
         pk = PITCHING_KEYS
         diff = 0
         print(F"{year.ljust(STD_PITCH_SPACE)}", end = '')
+
         # print all the counting stats from the retrosheet data
         for key in sorted( pitch.keys() ):
             # adjust from outs to innings pitched
@@ -218,7 +219,12 @@ class PrintPitchingStats:
                 print(F"{pitch[key]}".rjust(STD_PITCH_SPACE+diff) if pitch[key] >= 0 else F"{''}".rjust(STD_PITCH_SPACE+diff),
                       end = '')
                 diff = 0
+
         # calculate and print the rate stats: ERA, WHIP, H9, HR9, SO9, BB9, SO/BB, WL%
+        games = pitch[ pk[GM] ]
+        # keep track of ACTIVE years
+        if year != TOTAL and games > 0: self.num_years += 1
+
         # NOTE: add TS% ?
         era = round( (pitch[pk[ER]] * 27 / pitch[pk[OUT]]), 2 ) if pitch[pk[OUT]] > 0 else 0
         print(F"{era}".rjust(STD_PITCH_SPACE), end = '')
@@ -236,8 +242,7 @@ class PrintPitchingStats:
         sobb = round( (pitch[pk[SO]] / pitch[pk[BB]]), 2 ) if pitch[pk[BB]] > 0 else 0
         print(F"{sobb}".rjust(STD_PITCH_SPACE), end = '')
         wlp = round( (pitch[pk[WIN]] / (pitch[pk[WIN]] + pitch[pk[LOS]])), 3 ) * 100 if pitch[pk[WIN]] > 0 else 0
-        print(F"{wlp}"[:4].rjust(STD_PITCH_SPACE), end = '')
-        print(" ")
+        print(F"{wlp}"[:4].rjust(STD_PITCH_SPACE))
 
 # END class PrintPitchingStats
 

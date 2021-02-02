@@ -95,6 +95,7 @@ class PrintBattingStats:
         self.lgr = logger
         self.lgr.warning(F" Start {self.__class__.__name__}")
         self.event_files = {}
+        self.num_years = 0
 
     def collect_stats( self, p_box:pointer, play_id:str, stats:dict, year:str ):
         self.lgr.debug(F"player = {play_id}; collect stats for year = {year}")
@@ -146,7 +147,7 @@ class PrintBattingStats:
         stats = copy.copy(STATS_DICT)
         totals = copy.copy(STATS_DICT)
 
-        print(F"\t{name} {season} Stats:")
+        print(F"\n\t{name.upper()} {season} Stats:")
         print_hdr()
 
         # get all the games in the supplied date range
@@ -171,36 +172,39 @@ class PrintBattingStats:
         print_ul()
         print_hdr()
         self.print_stat_line("Total", totals)
-        self.print_ave_line(totals, yrend-yrstart+1)
+        self.print_ave_line(totals)
         print("")
 
-    def print_ave_line(self, totals:dict, period:int):
-        self.lgr.info(F"print average of each counting stat over span of {period} years")
-        # NOTE: subtract years where games = 0 ?
+    def print_ave_line(self, totals:dict):
         # NOTE: ave for each 150 games ?
         averages = copy.copy(STATS_DICT)
         for item in totals.keys():
-            averages[item] = round(totals[item] / period)
+            averages[item] = round(totals[item] / self.num_years)
         print("Ave".ljust(STD_BAT_SPACE), end = '')
         for key in sorted( averages.keys() ):
             print(F"{averages[key]}".rjust(STD_BAT_SPACE), end = '')
         # add Total Bases average
         tb = totals[BATTING_KEYS[HIT]] + totals[BATTING_KEYS[B2]] + totals[BATTING_KEYS[B3]]*2 + totals[BATTING_KEYS[HR]]*3
-        tbave = round(tb / period)
-        print(F"{tbave}".rjust(STD_BAT_SPACE), end = '')
-        print(" ")
+        tbave = round(tb / self.num_years)
+        print( F"{tbave}\n".rjust(STD_BAT_SPACE) )
+        self.lgr.warning(F"printed Average of each counting stat for {self.num_years} ACTIVE years")
 
     def print_stat_line(self, year:str, bat:dict):
         self.lgr.info(F"print stat line for year = {year}")
         print(F"{year.ljust(STD_BAT_SPACE)}", end = '')
+
         # print all the counting stats from the retrosheet data
         for key in sorted( bat.keys() ):
             print(F"{bat[key]}".rjust(STD_BAT_SPACE) if bat[key] >= 0 else F"{''}".rjust(STD_BAT_SPACE), end = '')
         # add Total Bases
         tb = bat[BATTING_KEYS[HIT]] + bat[BATTING_KEYS[B2]] + bat[BATTING_KEYS[B3]]*2 + bat[BATTING_KEYS[HR]]*3
         print(F"{tb}".rjust(STD_BAT_SPACE) if tb >= 0 else F"{''}".rjust(STD_BAT_SPACE), end = '')
+
         # calculate and print the rate stats
-        games = bat[BATTING_KEYS[GM]]
+        games = bat[ BATTING_KEYS[GM] ]
+        # keep track of ACTIVE years
+        if year != TOTAL and games > 0: self.num_years += 1
+
         ba = bat[ BATTING_KEYS[HIT] ] / bat[ BATTING_KEYS[AB] ] * 10000 if bat[ BATTING_KEYS[AB] ] > 0 else 0.0
         pba = str(int(ba))[:4] if ba > 0.0 else 'x' if games == 0 else "00"
         if pba != 'x' and len(pba) < 4: pba = '0' + pba
@@ -218,8 +222,7 @@ class PrintBattingStats:
         ops = obp + slg
         pops = str(int(ops))[:5] if ops > 10000 else str(ops)[:4] if ops > 0.0 else 'x' if games == 0 else "00"
         if pops != 'x' and len(pops) < 4: pops = '0' + pops
-        print(F"{pops}".rjust(STD_BAT_SPACE), end = '')
-        print(" ")
+        print( F"{pops}".rjust(STD_BAT_SPACE) )
 
 # END class PrintBattingStats
 
