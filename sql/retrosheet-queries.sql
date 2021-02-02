@@ -1,0 +1,26 @@
+
+-- longest 9-inning games by clock time: all that were at least 250 minutes
+SELECT GAME_ID, AWAY_TEAM_ID, HOME_TEAM_ID, AWAY_SCORE_CT, HOME_SCORE_CT, INN_CT, MINUTES_GAME_CT 
+FROM games  WHERE INN_CT = 9 AND MINUTES_GAME_CT >= 250 
+ORDER BY MINUTES_GAME_CT DESC;
+
+-- 50 longest 9-inning Blue Jay games by minutes
+SELECT GAME_ID, AWAY_TEAM_ID, HOME_TEAM_ID, AWAY_SCORE_CT, HOME_SCORE_CT, INN_CT, MINUTES_GAME_CT 
+FROM games WHERE INN_CT = 9 AND ( HOME_TEAM_ID = 'TOR' OR AWAY_TEAM_ID = 'TOR' ) 
+ORDER BY MINUTES_GAME_CT DESC LIMIT 50;
+
+-- 50 top strikeout games of Roger Clemens in order
+SELECT GAME_ID AS 'Game', PIT_ID AS 'Pitcher', COUNT(*) AS 'Strikeouts' 
+FROM events WHERE PIT_ID = 'clemr001' AND EVENT_CD = '3'
+GROUP BY GAME_ID ORDER BY COUNT(*) DESC LIMIT 50;
+
+-- alL RBIs of H Aaron in 1956, by game
+SELECT GAME_ID AS 'Game', BAT_ID AS 'Batter', SUM(RBI_CT) AS 'RBIs' 
+FROM events WHERE YEAR_ID = '1956' AND BAT_ID = 'aaroh101' AND RBI_CT >= 1 
+GROUP BY GAME_ID ORDER BY GAME_ID DESC;
+
+-- sum of RBIs by H Aaron in 1956
+SELECT SUM(RBI_CT) AS 'H Aaron RBIs in 1956' 
+FROM events WHERE YEAR_ID = '1956' AND BAT_ID = 'aaroh101' AND RBI_CT >= 1 
+GROUP BY YEAR_ID;
+

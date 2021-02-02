@@ -3,8 +3,10 @@
 2001 > sudo mysql -u mhsatto -p
 [sudo] password for marksa:        
 Sorry, try again.
-[sudo] password for marksa:          
+[sudo] password for marksa: 
+< marksa pswd for sudo >
 Enter password: 
+< mhsatto pswd for mysql >
 Welcome to the MariaDB monitor.  Commands end with ; or \g.
 Your MariaDB connection id is 46
 Server version: 10.4.10-MariaDB-1:10.4.10+maria~bionic mariadb.org binary distribution
