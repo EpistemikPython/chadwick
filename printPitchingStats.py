@@ -15,6 +15,7 @@ __updated__ = "2021-02-02"
 
 import copy
 import csv
+import glob
 import sys
 from argparse import ArgumentParser
 from cwLibWrappers import chadwick
@@ -269,28 +270,29 @@ def process_input_parameters(argx:list):
 
     # TODO: process 'postseason' flag
 
-    pitcher_id = args.pitcher_id.strip() if len(args.pitcher_id) >= 8 and \
-                 args.pitcher_id[:5].isalpha() and args.pitcher_id[5:8].isdecimal() else "kersc001"
-    if len(pitcher_id) > 8:
-        pitcher_id = pitcher_id[:8]
+    pitch_id = args.pitcher_id.strip() if len(args.pitcher_id) >= 8 and \
+               args.pitcher_id[:5].isalpha() and args.pitcher_id[5:8].isdecimal() else "kersc001"
+    if len(pitch_id) > 8:
+        pitch_id = pitch_id[:8]
 
     start = args.start if 1871 <= args.start <= 2020 else 2014
 
     end = args.end if args.end and 1871 <= args.end <= 2020 else start
     if end < start: end = start
 
-    return pitcher_id, start, end, loglevel
+    return pitch_id, start, end, args.post, loglevel
 
 
 def main_pitching_stats(args:list):
 
-    pers_id, start, end, loglevel = process_input_parameters(args)
+    pers_id, start, end, post, loglevel = process_input_parameters(args)
 
     lgr = get_logger(__file__, file_ts, loglevel)
     lgr.debug(F"loglevel = {repr(loglevel)}")
     lgr.warning(F" id = {pers_id}; years = {start}->{end}")
 
     pitch_stats = PrintPitchingStats(lgr)
+    season = "post-season" if post else "regular season"
     need_name = True
     fam_name = pers_id
     giv_name = ""
@@ -322,11 +324,22 @@ def main_pitching_stats(args:list):
                                     giv_name = rrow[2]
                                     need_name = False
                                     break
-                    # find and store the event file paths for the requested years
-                    event_file = REGULAR_SEASON_FOLDER + str(year) + rteam + ".EV" + trow[1]
-                    if not os.path.exists(event_file):
-                        raise FileNotFoundError(F"CANNOT find event file {event_file}!")
-                    year_events.append(event_file)
+                    if not post:
+                        # find and store the event file paths for the requested years
+                        rfile = REGULAR_SEASON_FOLDER + str(year) + rteam + ".EV" + trow[1]
+                        if not os.path.exists(rfile):
+                            raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
+                        year_events.append(rfile)
+
+            if post:
+                # find and store the event file paths for the requested years
+                post_files = POST_SEASON_FOLDER + str(year) + "*"
+                for pfile in glob.glob(post_files):
+                    lgr.debug(F"{season} file name = {pfile}")
+                    if not os.path.exists(pfile):
+                        raise FileNotFoundError(F"CANNOT find {season} event file {pfile}!")
+                    year_events.append(pfile)
+
             pitch_stats.event_files[str(year)] = year_events
 
         name = F"{giv_name} {fam_name}"
