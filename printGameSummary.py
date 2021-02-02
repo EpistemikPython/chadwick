@@ -22,6 +22,7 @@ from cwTools import *
 
 
 class PrintGameSummary:
+    """print MLB game summaries using Retrosheet data"""
     def __init__(self, cwt:MyChadwickTools, logger:logging.Logger):
         self.cwtools = cwt
         self.lgr = logger
@@ -33,7 +34,6 @@ class PrintGameSummary:
     # void cwbox_print_header(CWGame *game, CWRoster *visitors, CWRoster *home)
     def print_header( self, p_game:pointer, p_vis:pointer, p_home:pointer ):
         self.lgr.info("\n----------------------------------")
-
         dn_code = "?"
         day_night = MyCwlib.game_info_lookup(p_game, b"daynight")
         if day_night:
@@ -59,7 +59,6 @@ class PrintGameSummary:
     # void cwbox_print_linescore(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_linescore( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
         self.lgr.info("\n----------------------------------")
-
         linescore = p_box.contents.linescore
         for t in range(2):
             runs = 0
@@ -100,7 +99,6 @@ class PrintGameSummary:
     # void cwbox_print_text(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_summary( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
         self.lgr.info("\n----------------------------------")
-
         self.cwtools.note_count = 0
         slots = [1,1]
         players = list()
@@ -121,10 +119,8 @@ class PrintGameSummary:
         players.insert(1, player1)
 
         self.print_header(p_game, p_vis, p_home)
-
         vis_city = c_char_p_to_str(p_vis.contents.city) if p_vis else MyCwlib.game_info_lookup(p_game, b"visteam")
         home_city = c_char_p_to_str(p_home.contents.city) if p_home else MyCwlib.game_info_lookup(p_game, b"hometeam")
-
         print(F"  {vis_city:18} PA  AB   H  BB  SO  R RBI      {home_city:18} PA  AB   H  BB  SO  R RBI    ")
 
         while slots[0] <= 9 or slots[1] <= 9 :
@@ -236,7 +232,6 @@ def process_input_parameters(argx:list):
 
 
 def main_game_summary(args:list):
-
     team, year, start, end, post, loglevel = process_input_parameters(args)
 
     lgr = get_logger(__file__, file_ts, loglevel)
