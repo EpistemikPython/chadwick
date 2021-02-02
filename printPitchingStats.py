@@ -48,14 +48,14 @@ HBP = WP + 1    # 20
 BK  = HBP + 1   # 21
 PIT = BK + 1    # 22
 STR = PIT + 1   # 23
+LAST = STR
 # CWBoxPitching: g, gs, cg, sho, gf, outs, ab, r, er, h, b2, b3, hr, hrslam, bb, ibb, so, bf, bk, wp, hb;
 #                gdp, sh, sf, xi, pk, w, l, sv, inr, inrs, gb, fb, pitches, strikes
 # baseball-ref.com: W L W-L% ERA G GS GF CG SHO SV IP H R ER HR BB IBB SO HBP BK WP BF ERA+ FIP WHIP H9 HR9 BB9 SO9 SO/BB
-# G GS GF CG SHO outs/IP H R ER HR SO BB IBB BF W L SV GB FB WP HBP BK pit/TP str/TS
 STATS_DICT = { "01G":0, "02GS":0, "03GF":0, "04CG":0, "05SHO":0, "06IP":0, "07H":0, "08R":0, "09ER":0, "10HR":0,
                "11SO":0, "12BB":0, "13IBB":0, "14BF":0, "15W":0, "16L":0, "17SV":0, "18GBO":0, "19FBO":0, "20WP":0,
                "21HBP":0, "22BK":0, "23TP":0, "24TS":0 }
-PITCHING_KEYS = list(STATS_DICT.keys())
+PITCHING_KEYS = list( STATS_DICT.keys() )
 PITCHING_HDRS = { PITCHING_KEYS[GM][:2] :F"{PITCHING_KEYS[GM][2:]} ",
                   PITCHING_KEYS[GS][:2] :F"{PITCHING_KEYS[GS][2:]}",
                   PITCHING_KEYS[GF][:2] :F"{PITCHING_KEYS[GF][2:]}",
@@ -80,8 +80,8 @@ PITCHING_HDRS = { PITCHING_KEYS[GM][:2] :F"{PITCHING_KEYS[GM][2:]} ",
                   PITCHING_KEYS[BK][:2] :F"{PITCHING_KEYS[BK][2:]}",
                   PITCHING_KEYS[PIT][:2]:F"{PITCHING_KEYS[PIT][2:]}",
                   PITCHING_KEYS[STR][:2]:F"{PITCHING_KEYS[STR][2:]}",
-                  F"{str(STR + 2)}":"ERA", F"{str(STR + 3)}":"WHIP", F"{str(STR + 4)}":"H9", F"{str(STR + 5)}":"HR9",
-                  F"{str(STR + 6)}":"SO9", F"{str(STR + 7)}":"BB9" , F"{str(STR + 8)}":"SO/BB", F"{str(STR + 9)}":"WL%"}
+                  F"{str(LAST + 2)}":"ERA", F"{str(LAST + 3)}":"WHIP", F"{str(LAST + 4)}":"H9", F"{str(LAST + 5)}":"HR9",
+                  F"{str(LAST + 6)}":"SO9", F"{str(LAST + 7)}":"BB9" , F"{str(LAST + 8)}":"SO/BB", F"{str(LAST + 9)}":"WL%"}
 
 def clear(stats:dict, totals:dict):
     for item in stats.keys():

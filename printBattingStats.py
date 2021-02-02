@@ -42,6 +42,7 @@ SH  = CS+1    # 15
 SF  = SH+1    # 16
 HBP = SF+1    # 17
 GDP = HBP+1   # 18
+LAST = GDP
 # CWBoxBatting: int g, pa, ab, r, h, b2, b3, hr, hrslam, bi, bi2out, gw, bb, ibb, so, gdp, hp, sh, sf, sb, cs, xi;
 # baseball-ref.com: G  PA  AB  R  H  2B  3B  HR  RBI  SB  CS  BB  SO  BA  OBP  SLG  OPS  OPS+  TB  GDP  HBP  SH  SF IBB
 STATS_DICT = { "01G":0, "02PA":0, "03AB":0, "04R":0, "05H":0, "062B":0, "073B":0, "08HR":0, "09XBH":0, "10RBI":0,
@@ -66,8 +67,8 @@ BATTING_HDRS = { BATTING_KEYS[GM][:2] :F"{BATTING_KEYS[GM][2:]} ",
                  BATTING_KEYS[SF][:2] :F"{BATTING_KEYS[SF][2:]}",
                  BATTING_KEYS[HBP][:2]:F"{BATTING_KEYS[HBP][2:]}",
                  BATTING_KEYS[GDP][:2]:F"{BATTING_KEYS[GDP][2:]}",
-                 F"{str(GDP+2)}":" TB", F"{str(GDP+3)}":" BA", F"{str(GDP+4)}":"OBP",
-                 F"{str(GDP+5)}":"SLG", F"{str(GDP+6)}":"OPS" }
+                 F"{str(LAST+2)}":" TB", F"{str(LAST+3)}":" BA", F"{str(LAST+4)}":"OBP",
+                 F"{str(LAST+5)}":"SLG", F"{str(LAST+6)}":"OPS" }
 
 def clear(stats:dict, totals:dict):
     for item in stats.keys():
