@@ -6,7 +6,7 @@
 # Original C code Copyright (c) 2002-2021
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
 #
-# Port to Python3 and modifications Copyright (c) 2019-2021 Mark Sattolo <epistemik@gmail.com>
+# Port to Python3, additions & modifications Copyright (c) 2019-2021 Mark Sattolo <epistemik@gmail.com>
 
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
@@ -214,18 +214,19 @@ def process_input_parameters(argx:list):
         print(F"Problem with log level: {repr(ae)}")
         loglevel = "INFO"
 
-    # TODO: process 'postseason' flag
-
     team = args.team.strip().upper() if args.team.isalpha() and len(args.team.strip()) >= 3 else "TOR"
     if len(team) > 3:
         team = team[:3]
 
     year = str(args.year) if 1871 <= args.year <= 2020 else "1993"
 
-    start = args.start.strip() if args.start and args.start.isdecimal() and len(args.start) == 4 else "0701"
-
-    end = args.end.strip() if args.end and args.end.isdecimal() and len(args.end) == 4 else start
-    if end < start: end = start
+    if args.start:
+        start = args.start.strip() if args.start.isdecimal() and len(args.start) == 4 else "0701"
+        end = args.end.strip() if args.end and args.end.isdecimal() and len(args.end) == 4 else start
+        if end < start: end = start
+    else: # the entire year
+        start = "0301"
+        end = "1031"
 
     if args.post:
         start = "0901"
@@ -240,7 +241,7 @@ def main_game_summary(args:list):
 
     lgr = get_logger(__file__, file_ts, loglevel)
     lgr.debug(F"loglevel = {repr(loglevel)}")
-    lgr.warning(F" team = {team}; year = {year}")
+    lgr.warning(F" team = {team}; year = {year}; start = {start}; end = {end}")
 
     cwtools = MyChadwickTools(lgr)
     pgs = PrintGameSummary(cwtools, lgr)
@@ -314,6 +315,7 @@ def main_game_summary(args:list):
                         lgr.warning(F" Found game id = {game_id}")
                         pgs.games[game_id[3:]] = game
 
+        lgr.warning(F" Found {len(pgs.games)} {season} games")
         # sort the games and print out the information
         for key in sorted( pgs.games.keys() ):
             game = pgs.games[key]
