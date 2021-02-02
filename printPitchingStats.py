@@ -268,8 +268,6 @@ def process_input_parameters(argx:list):
         print(F"Problem with log level: {repr(ae)}")
         loglevel = "INFO"
 
-    # TODO: process 'postseason' flag
-
     pitch_id = args.pitcher_id.strip() if len(args.pitcher_id) >= 8 and \
                args.pitcher_id[:5].isalpha() and args.pitcher_id[5:8].isdecimal() else "kersc001"
     if len(pitch_id) > 8:
@@ -296,6 +294,7 @@ def main_pitching_stats(args:list):
     need_name = True
     fam_name = pers_id
     giv_name = ""
+    num_files = 0
     try:
         for year in range(start, end+1):
             year_events = list()
@@ -330,6 +329,7 @@ def main_pitching_stats(args:list):
                         if not os.path.exists(rfile):
                             raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
                         year_events.append(rfile)
+                        num_files += 1
 
             if post:
                 # find and store the event file paths for the requested years
@@ -339,12 +339,13 @@ def main_pitching_stats(args:list):
                     if not os.path.exists(pfile):
                         raise FileNotFoundError(F"CANNOT find {season} event file {pfile}!")
                     year_events.append(pfile)
+                    num_files += 1
 
             pitch_stats.event_files[str(year)] = year_events
 
         name = F"{giv_name} {fam_name}"
         lgr.warning(F"name = {name}")
-        lgr.warning(F"found {len(pitch_stats.event_files)} year-event files")
+        lgr.warning(F"found {num_files} {season} event files over {len(pitch_stats.event_files)} years.")
         for item in pitch_stats.event_files:
             lgr.debug(item)
 

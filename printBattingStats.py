@@ -275,6 +275,7 @@ def main_batting_stats(args:list):
     need_name = True
     fam_name = playid
     giv_name = ""
+    num_files = 0
     try:
         for year in range(start, end+1):
             year_events = list()
@@ -309,6 +310,7 @@ def main_batting_stats(args:list):
                         if not os.path.exists(event_file):
                             raise FileNotFoundError(F"CANNOT find {season} event file {event_file}!")
                         year_events.append(event_file)
+                        num_files += 1
 
             if post:
                 # find and store the event file paths for the requested years
@@ -318,12 +320,13 @@ def main_batting_stats(args:list):
                     if not os.path.exists(pfile):
                         raise FileNotFoundError(F"CANNOT find {season} event file {pfile}!")
                     year_events.append(pfile)
+                    num_files += 1
 
             bat_stats.event_files[str(year)] = year_events
 
         name = F"{giv_name} {fam_name}"
         lgr.warning(F"name = {name}")
-        lgr.warning(F"found {len(bat_stats.event_files)} {season} event files")
+        lgr.warning(F"found {num_files} {season} event files over {len(bat_stats.event_files)} years.")
         for item in bat_stats.event_files:
             lgr.debug(item)
 
