@@ -279,9 +279,8 @@ def main_game_summary(args:list):
             # find and store the event file paths for the requested years
             post_files = POST_SEASON_FOLDER + str(year) + "*"
             for pfile in glob.glob(post_files):
-                _, fname = os.path.split(pfile)
-                basename, _ = os.path.splitext(fname)
-                lgr.debug(F"{season} file name = {basename}")
+                basename = get_basename(pfile)
+                lgr.debug(F"{season} base file name = {basename}")
                 if not os.path.exists(pfile):
                     raise FileNotFoundError(F"CANNOT find {season} event file {pfile}!")
                 pgs.event_files[basename] = pfile

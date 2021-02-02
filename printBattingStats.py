@@ -155,7 +155,7 @@ class PrintBattingStats:
             if str(year) not in self.event_files.keys():
                 continue
             for efile in self.event_files[str(year)]:
-                self.lgr.info(F"found events for team/year = {efile[-11:-4]}")
+                self.lgr.info(F"found events for team/year = {get_basename(efile)}")
                 cwgames = chadwick.games(efile)
                 for game in cwgames:
                     game_id = game.contents.game_id.decode(encoding = 'UTF-8')
@@ -307,10 +307,10 @@ def main_batting_stats(args:list):
                                     break
                     if not post:
                         # find and store the event file paths for the requested years
-                        event_file = REGULAR_SEASON_FOLDER + str(year) + rteam + ".EV" + trow[1]
-                        if not os.path.exists(event_file):
-                            raise FileNotFoundError(F"CANNOT find {season} event file {event_file}!")
-                        year_events.append(event_file)
+                        rfile = REGULAR_SEASON_FOLDER + str(year) + rteam + ".EV" + trow[1]
+                        if not os.path.exists(rfile):
+                            raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
+                        year_events.append(rfile)
                         num_files += 1
 
             if post:

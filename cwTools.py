@@ -39,6 +39,12 @@ REGULAR_SEASON_FOLDER = RETROSHEET_FOLDER + "event/regular/"
 POST_SEASON_FOLDER = RETROSHEET_FOLDER + "event/post/"
 
 
+def get_basename(filename:str) ->str:
+    _, fname = os.path.split(filename)
+    basename, _ = os.path.splitext(fname)
+    return basename
+
+
 def get_logger(name:str, file_time:str, level:str) -> logging.Logger:
     _, fname = os.path.split(name)
     basename, _ = os.path.splitext(fname)

@@ -161,7 +161,7 @@ class PrintPitchingStats:
             if str(year) not in self.event_files.keys():
                 continue
             for efile in self.event_files[str(year)]:
-                self.lgr.info(F"found events for team/year = {efile[-11:-4]}")
+                self.lgr.info(F"found events for team/year = {get_basename(efile)}")
                 cwgames = chadwick.games(efile)
                 for game in cwgames:
                     game_id = game.contents.game_id.decode(encoding = 'UTF-8')
