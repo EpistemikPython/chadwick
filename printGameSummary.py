@@ -221,12 +221,8 @@ def process_input_parameters(argx:list):
         end = args.end.strip() if args.end and args.end.isdecimal() and len(args.end) == 4 else start
         if end < start: end = start
     else: # the entire year
-        start = "0301"
-        end = "1031"
-
-    if args.post:
-        start = "0901"
-        end = "1231"
+        start = "0901" if args.post else "0301"
+        end = "1231" if args.post else "1031"
 
     return team, year, start, end, args.post, loglevel
 
