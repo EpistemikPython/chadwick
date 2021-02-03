@@ -39,12 +39,13 @@ ROSTERS_FOLDER = RETROSHEET_FOLDER + "rosters/"
 REGULAR_SEASON_FOLDER = RETROSHEET_FOLDER + "event/regular/"
 POST_SEASON_FOLDER = RETROSHEET_FOLDER + "event/post/"
 
+DEFAULT_LOG_LEVEL = "WARNING"
+QUIET_LOG_LEVEL = "CRITICAL"
 
 def get_basename(filename:str) ->str:
     _, fname = os.path.split(filename)
     basename, _ = os.path.splitext(fname)
     return basename
-
 
 def get_logger(name:str, file_time:str, level:str) -> logging.Logger:
     _, fname = os.path.split(name)
@@ -55,21 +56,22 @@ def get_logger(name:str, file_time:str, level:str) -> logging.Logger:
     lgr.setLevel(logging.DEBUG)
 
     fh = logging.FileHandler("logs/" + basename + '_' + file_time + ".log")
-    # default for filehandler: all messages DEBUG or higher
+    # default for file handler: all messages DEBUG or higher
     fh.setLevel(logging.DEBUG)
 
     ch = logging.StreamHandler() # console handler
-    # only log in console to the level requested on the command line
+    # log to console at the level requested on the command line
     ch.setLevel(level)
+
     # create formatter and add it to the handlers
     formatter = logging.Formatter("%(levelname)s - %(asctime)s | %(funcName)s > %(message)s")
     ch.setFormatter(formatter)
     fh.setFormatter(formatter)
+
     # add handlers to the logger
     lgr.addHandler(ch)
     lgr.addHandler(fh)
     return lgr
-
 
 def c_char_p_to_str(lpcc:c_char_p, maxlen:int=20) -> str:
     """Convert a C-type char array to a python string:

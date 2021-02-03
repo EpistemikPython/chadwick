@@ -196,19 +196,19 @@ def process_args():
     arg_parser.add_argument('-e', '--end', help="end date to print out games (mmdd)")
     arg_parser.add_argument('-p', '--post', action="store_true", help="find postseason games instead of regular season")
     arg_parser.add_argument('-q', '--quiet', action="store_true", help="NO logging")
-    arg_parser.add_argument('-l', '--level', default="INFO", help="set LEVEL of logging output")
+    arg_parser.add_argument('-l', '--level', default=DEFAULT_LOG_LEVEL, help="set LEVEL of logging output")
 
     return arg_parser
 
 
 def process_input_parameters(argx:list):
     args = process_args().parse_args(argx)
-    loglevel = "CRITICAL" if args.quiet else args.level.strip().upper()
+    loglevel = QUIET_LOG_LEVEL if args.quiet else args.level.strip().upper()
     try:
         getattr( logging, loglevel )
     except AttributeError as ae:
         print(F"Problem with log level: {repr(ae)}")
-        loglevel = "INFO"
+        loglevel = DEFAULT_LOG_LEVEL
 
     team = args.team.strip().upper() if args.team.isalpha() and len(args.team.strip()) >= 3 else "TOR"
     if len(team) > 3:
