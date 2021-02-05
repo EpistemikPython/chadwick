@@ -47,40 +47,14 @@ HBP = WP + 1    # 20
 BK  = HBP + 1   # 21
 PIT = BK + 1    # 22
 STR = PIT + 1   # 23
-LAST = STR
+LAST = STR + 1  # end of counting stat headers
 # CWBoxPitching: g, gs, cg, sho, gf, outs, ab, r, er, h, b2, b3, hr, hrslam, bb, ibb, so, bf, bk, wp, hb;
 #                gdp, sh, sf, xi, pk, w, l, sv, inr, inrs, gb, fb, pitches, strikes
 # baseball-ref.com: W L W-L% ERA G GS GF CG SHO SV IP H R ER HR BB IBB SO HBP BK WP BF ERA+ FIP WHIP H9 HR9 BB9 SO9 SO/BB
-STATS_DICT = { "01G":0, "02GS":0, "03GF":0, "04CG":0, "05SHO":0, "06IP":0, "07H":0, "08R":0, "09ER":0, "10HR":0,
-               "11SO":0, "12BB":0, "13IBB":0, "14BF":0, "15W":0, "16L":0, "17SV":0, "18GBO":0, "19FBO":0, "20WP":0,
-               "21HBP":0, "22BK":0, "23TP":0, "24TS":0 }
-PITCHING_KEYS = list( STATS_DICT.keys() )
-PITCHING_HDRS = { PITCHING_KEYS[GM][:2] :F"{PITCHING_KEYS[GM][2:]} ",
-                  PITCHING_KEYS[GS][:2] :F"{PITCHING_KEYS[GS][2:]}",
-                  PITCHING_KEYS[GF][:2] :F"{PITCHING_KEYS[GF][2:]}",
-                  PITCHING_KEYS[CG][:2] :F"{PITCHING_KEYS[CG][2:]}",
-                  PITCHING_KEYS[SHO][:2]:F"{PITCHING_KEYS[SHO][2:]}",
-                  PITCHING_KEYS[OUT][:2]:F"{PITCHING_KEYS[OUT][2:]}",
-                  PITCHING_KEYS[HIT][:2]:F"{PITCHING_KEYS[HIT][2:]} ",
-                  PITCHING_KEYS[RUN][:2]:F"{PITCHING_KEYS[RUN][2:]} ",
-                  PITCHING_KEYS[ER][:2] :F"{PITCHING_KEYS[ER][2:]}",
-                  PITCHING_KEYS[HR][:2] :F"{PITCHING_KEYS[HR][2:]}",
-                  PITCHING_KEYS[SO][:2] :F"{PITCHING_KEYS[SO][2:]}",
-                  PITCHING_KEYS[BB][:2] :F"{PITCHING_KEYS[BB][2:]}",
-                  PITCHING_KEYS[IBB][:2]:F"{PITCHING_KEYS[IBB][2:]}",
-                  PITCHING_KEYS[BF][:2] :F"{PITCHING_KEYS[BF][2:]}",
-                  PITCHING_KEYS[WIN][:2]:F"{PITCHING_KEYS[WIN][2:]} ",
-                  PITCHING_KEYS[LOS][:2]:F"{PITCHING_KEYS[LOS][2:]} ",
-                  PITCHING_KEYS[SAV][:2]:F"{PITCHING_KEYS[SAV][2:]}",
-                  PITCHING_KEYS[GB][:2] :F"{PITCHING_KEYS[GB][2:]}",
-                  PITCHING_KEYS[FB][:2] :F"{PITCHING_KEYS[FB][2:]}",
-                  PITCHING_KEYS[WP][:2] :F"{PITCHING_KEYS[WP][2:]}",
-                  PITCHING_KEYS[HBP][:2]:F"{PITCHING_KEYS[HBP][2:]}",
-                  PITCHING_KEYS[BK][:2] :F"{PITCHING_KEYS[BK][2:]}",
-                  PITCHING_KEYS[PIT][:2]:F"{PITCHING_KEYS[PIT][2:]}",
-                  PITCHING_KEYS[STR][:2]:F"{PITCHING_KEYS[STR][2:]}",
-                  F"{str(LAST + 2)}":"ERA", F"{str(LAST + 3)}":"WHIP", F"{str(LAST + 4)}":"H9", F"{str(LAST + 5)}":"HR9",
-                  F"{str(LAST + 6)}":"SO9", F"{str(LAST + 7)}":"BB9" , F"{str(LAST + 8)}":"SO/BB", F"{str(LAST + 9)}":"WL%"}
+STATS_DICT = { "G ":0, "GS":0, "GF":0, "CG":0, "SHO":0, "IP":0, "H ":0, "R ":0, "ER":0, "HR":0, "SO":0,
+               "BB":0, "IBB":0, "BF":0, "W ":0, "L ":0, "SV":0, "GBO":0, "FBO":0, "WP":0, "HBP":0, "BK":0,
+               "TP":0, "TS":0, "ERA":0, "WHIP":0, "H9":0, "HR9":0, "SO9":0, "BB9":0, "SO/BB":0, "WL%":0 }
+PITCHING_HDRS = list( STATS_DICT.keys() )
 
 def clear(stats:dict, totals:dict):
     for item in stats.keys():
@@ -95,8 +69,8 @@ def print_ul():
 
 def print_hdr():
     print(F"{''}".rjust(STD_PITCH_SPACE), end = '')
-    for key in sorted(PITCHING_HDRS):
-        print(F"{PITCHING_HDRS[key]}".rjust(STD_PITCH_SPACE), end = '')
+    for key in PITCHING_HDRS:
+        print(F"{key}".rjust(STD_PITCH_SPACE), end = '')
     print(" ")
     print_ul()
 
@@ -111,7 +85,7 @@ class PrintPitchingStats:
 
     def collect_stats(self, p_box:pointer, pit_id:str, stats:dict, year:str):
         self.lgr.debug(F"player = {pit_id}; collect stats for year = {year}")
-        pk = PITCHING_KEYS
+        hdrs = PITCHING_HDRS
         for t in range(2):
             p_pitcher = MyCwlib.box_get_starting_pitcher(p_box, t)
             while p_pitcher:
@@ -121,30 +95,30 @@ class PrintPitchingStats:
                 if pitcher_id == pit_id:
                     self.lgr.debug(F"found pitcher = {pit_id}")
                     pitching = pitcher.pitching.contents
-                    stats[pk[GM]]  += pitching.g
-                    stats[pk[GS]]  += pitching.gs
-                    stats[pk[GF]]  += pitching.gf
-                    stats[pk[CG]]  += pitching.cg
-                    stats[pk[SHO]] += pitching.sho
-                    stats[pk[OUT]] += pitching.outs
-                    stats[pk[HIT]] += pitching.h
-                    stats[pk[RUN]] += pitching.r
-                    stats[pk[ER]]  += pitching.er
-                    stats[pk[HR]]  += pitching.hr
-                    stats[pk[BB]]  += pitching.bb
-                    stats[pk[IBB]] += pitching.ibb
-                    stats[pk[SO]]  += pitching.so
-                    stats[pk[BF]]  += pitching.bf
-                    stats[pk[WIN]] += pitching.w
-                    stats[pk[LOS]] += pitching.l
-                    stats[pk[SAV]] += pitching.sv
-                    stats[pk[GB]]  += pitching.gb
-                    stats[pk[FB]]  += pitching.fb
-                    stats[pk[WP]]  += pitching.wp
-                    stats[pk[HBP]] += pitching.hb
-                    stats[pk[BK]]  += pitching.bk
-                    stats[pk[PIT]] += pitching.pitches
-                    stats[pk[STR]] += pitching.strikes
+                    stats[hdrs[GM]]  += pitching.g
+                    stats[hdrs[GS]]  += pitching.gs
+                    stats[hdrs[GF]]  += pitching.gf
+                    stats[hdrs[CG]]  += pitching.cg
+                    stats[hdrs[SHO]] += pitching.sho
+                    stats[hdrs[OUT]] += pitching.outs
+                    stats[hdrs[HIT]] += pitching.h
+                    stats[hdrs[RUN]] += pitching.r
+                    stats[hdrs[ER]]  += pitching.er
+                    stats[hdrs[HR]]  += pitching.hr
+                    stats[hdrs[BB]]  += pitching.bb
+                    stats[hdrs[IBB]] += pitching.ibb
+                    stats[hdrs[SO]]  += pitching.so
+                    stats[hdrs[BF]]  += pitching.bf
+                    stats[hdrs[WIN]] += pitching.w
+                    stats[hdrs[LOS]] += pitching.l
+                    stats[hdrs[SAV]] += pitching.sv
+                    stats[hdrs[GB]]  += pitching.gb
+                    stats[hdrs[FB]]  += pitching.fb
+                    stats[hdrs[WP]]  += pitching.wp
+                    stats[hdrs[HBP]] += pitching.hb
+                    stats[hdrs[BK]]  += pitching.bk
+                    stats[hdrs[PIT]] += pitching.pitches
+                    stats[hdrs[STR]] += pitching.strikes
                 p_pitcher = p_pitcher.contents.next
 
     def print_stats(self, persid:str, name:str, yrstart:int, yrend:int):
@@ -185,32 +159,35 @@ class PrintPitchingStats:
         averages = copy.copy(STATS_DICT)
         for key in totals.keys():
             # adjust from outs to innings pitched
-            if key == PITCHING_KEYS[OUT]:
+            if key == PITCHING_HDRS[OUT]:
                 outs = round(totals[key] / self.num_years)
                 averages[key] = (outs // 3) + (outs % 3)/10
             else:
                 averages[key] = round(totals[key] / self.num_years)
         print("Ave".ljust(STD_PITCH_SPACE), end = '')
-        for key in sorted( averages.keys() ):
-            if key == PITCHING_KEYS[OUT]:
+        for key in PITCHING_HDRS:
+            if key == PITCHING_HDRS[LAST]:
+                print(F"\n\nprinted Average of each counting stat for {self.num_years} ACTIVE years")
+                break
+            if key == PITCHING_HDRS[OUT]:
                 diff = -1 # have to adjust for the extra space required to print IP
                 print(F"{averages[key]}".rjust(STD_PITCH_SPACE+1), end = '')
             else:
                 print(F"{averages[key]}".rjust(STD_PITCH_SPACE+diff), end = '')
                 diff = 0
-        print("\n")
-        self.lgr.warning(F"printed Average of each counting stat for {self.num_years} ACTIVE years")
 
     def print_stat_line(self, year:str, pitch:dict):
         self.lgr.info(F"print stat line for year = {year}")
-        pk = PITCHING_KEYS
+        hdrs = PITCHING_HDRS
         diff = 0
         print(F"{year.ljust(STD_PITCH_SPACE)}", end = '')
 
         # print all the counting stats from the retrosheet data
-        for key in sorted( pitch.keys() ):
+        for key in hdrs:
+            if key == hdrs[LAST]:
+                break
             # adjust from outs to innings pitched
-            if key == PITCHING_KEYS[OUT]:
+            if key == hdrs[OUT]:
                 diff = 1 # have to adjust for the extra space required to print IP
                 outs = pitch[key]
                 print(F"{outs // 3}.{outs % 3}".rjust(STD_PITCH_SPACE+diff), end = '')
@@ -221,27 +198,27 @@ class PrintPitchingStats:
                 diff = 0
 
         # calculate and print the rate stats: ERA, WHIP, H9, HR9, SO9, BB9, SO/BB, WL%
-        games = pitch[ pk[GM] ]
+        games = pitch[ hdrs[GM] ]
         # keep track of ACTIVE years
         if year != TOTAL and games > 0: self.num_years += 1
 
         # NOTE: add TS% ?
-        era = round( (pitch[pk[ER]] * 27 / pitch[pk[OUT]]), 2 ) if pitch[pk[OUT]] > 0 else 0
+        era = round( (pitch[hdrs[ER]] * 27 / pitch[hdrs[OUT]]), 2 ) if pitch[hdrs[OUT]] > 0 else 0
         print(F"{era}".rjust(STD_PITCH_SPACE), end = '')
-        whip = (pitch[pk[BB]] + pitch[pk[HIT]]) / pitch[pk[OUT]] * 3 if pitch[pk[OUT]] > 0 else 0
+        whip = (pitch[hdrs[BB]] + pitch[hdrs[HIT]]) / pitch[hdrs[OUT]] * 3 if pitch[hdrs[OUT]] > 0 else 0
         pwhip = round(whip,3)
         print(F"{pwhip}".rjust(STD_PITCH_SPACE), end = '')
-        h9 = round( (pitch[pk[HIT]] * 27 / pitch[pk[OUT]]), 2 ) if pitch[pk[OUT]] > 0 else 0
+        h9 = round( (pitch[hdrs[HIT]] * 27 / pitch[hdrs[OUT]]), 2 ) if pitch[hdrs[OUT]] > 0 else 0
         print(F"{h9}".rjust(STD_PITCH_SPACE), end = '')
-        hr9 = round( (pitch[pk[HR]] * 27 / pitch[pk[OUT]]), 2 ) if pitch[pk[OUT]] > 0 else 0
+        hr9 = round( (pitch[hdrs[HR]] * 27 / pitch[hdrs[OUT]]), 2 ) if pitch[hdrs[OUT]] > 0 else 0
         print(F"{hr9}".rjust(STD_PITCH_SPACE), end = '')
-        so9 = round( (pitch[pk[SO]] * 27 / pitch[pk[OUT]]), 2 ) if pitch[pk[OUT]] > 0 else 0
+        so9 = round( (pitch[hdrs[SO]] * 27 / pitch[hdrs[OUT]]), 2 ) if pitch[hdrs[OUT]] > 0 else 0
         print(F"{so9}".rjust(STD_PITCH_SPACE), end = '')
-        bb9 = round( (pitch[pk[BB]] * 27 / pitch[pk[OUT]]), 2 ) if pitch[pk[OUT]] > 0 else 0
+        bb9 = round( (pitch[hdrs[BB]] * 27 / pitch[hdrs[OUT]]), 2 ) if pitch[hdrs[OUT]] > 0 else 0
         print(F"{bb9}".rjust(STD_PITCH_SPACE), end = '')
-        sobb = round( (pitch[pk[SO]] / pitch[pk[BB]]), 2 ) if pitch[pk[BB]] > 0 else 0
+        sobb = round( (pitch[hdrs[SO]] / pitch[hdrs[BB]]), 2 ) if pitch[hdrs[BB]] > 0 else 0
         print(F"{sobb}".rjust(STD_PITCH_SPACE), end = '')
-        wlp = round( (pitch[pk[WIN]] / (pitch[pk[WIN]] + pitch[pk[LOS]])), 3 ) * 100 if pitch[pk[WIN]] > 0 else 0
+        wlp = round( (pitch[hdrs[WIN]] / (pitch[hdrs[WIN]] + pitch[hdrs[LOS]])), 3 ) * 100 if pitch[hdrs[WIN]] > 0 else 0
         print(F"{wlp}"[:4].rjust(STD_PITCH_SPACE))
 
 # END class PrintPitchingStats
