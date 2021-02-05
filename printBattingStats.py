@@ -11,7 +11,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-02-02"
+__updated__ = "2021-02-05"
 
 import copy
 import csv
@@ -42,33 +42,13 @@ SH  = CS+1    # 15
 SF  = SH+1    # 16
 HBP = SF+1    # 17
 GDP = HBP+1   # 18
-LAST = GDP
+LAST = GDP+1  # end of available counting stats
 # CWBoxBatting: int g, pa, ab, r, h, b2, b3, hr, hrslam, bi, bi2out, gw, bb, ibb, so, gdp, hp, sh, sf, sb, cs, xi;
 # baseball-ref.com: G  PA  AB  R  H  2B  3B  HR  RBI  SB  CS  BB  SO  BA  OBP  SLG  OPS  OPS+  TB  GDP  HBP  SH  SF IBB
-STATS_DICT = { "01G":0, "02PA":0, "03AB":0, "04R":0, "05H":0, "062B":0, "073B":0, "08HR":0, "09XBH":0, "10RBI":0,
-               "11SO":0, "12BB":0, "13IBB":0, "14SB":0, "15CS":0, "16SH":0, "17SF":0, "18HBP":0, "19GDP":0 }
-BATTING_KEYS = list( STATS_DICT.keys() )
-BATTING_HDRS = { BATTING_KEYS[GM][:2] :F"{BATTING_KEYS[GM][2:]} ",
-                 BATTING_KEYS[PA][:2] :F"{BATTING_KEYS[PA][2:]}",
-                 BATTING_KEYS[AB][:2] :F"{BATTING_KEYS[AB][2:]}",
-                 BATTING_KEYS[RUN][:2]:F"{BATTING_KEYS[RUN][2:]} ",
-                 BATTING_KEYS[HIT][:2]:F"{BATTING_KEYS[HIT][2:]} ",
-                 BATTING_KEYS[B2][:2] :F"{BATTING_KEYS[B2][2:]}",
-                 BATTING_KEYS[B3][:2] :F"{BATTING_KEYS[B3][2:]}",
-                 BATTING_KEYS[HR][:2] :F"{BATTING_KEYS[HR][2:]}",
-                 BATTING_KEYS[XBH][:2]:F"{BATTING_KEYS[XBH][2:]}",
-                 BATTING_KEYS[RBI][:2]:F"{BATTING_KEYS[RBI][2:]}",
-                 BATTING_KEYS[SO][:2] :F"{BATTING_KEYS[SO][2:]}",
-                 BATTING_KEYS[BB][:2] :F"{BATTING_KEYS[BB][2:]}",
-                 BATTING_KEYS[IBB][:2]:F"{BATTING_KEYS[IBB][2:]}",
-                 BATTING_KEYS[SB][:2] :F"{BATTING_KEYS[SB][2:]}",
-                 BATTING_KEYS[CS][:2] :F"{BATTING_KEYS[CS][2:]}",
-                 BATTING_KEYS[SH][:2] :F"{BATTING_KEYS[SH][2:]}",
-                 BATTING_KEYS[SF][:2] :F"{BATTING_KEYS[SF][2:]}",
-                 BATTING_KEYS[HBP][:2]:F"{BATTING_KEYS[HBP][2:]}",
-                 BATTING_KEYS[GDP][:2]:F"{BATTING_KEYS[GDP][2:]}",
-                 F"{str(LAST+2)}":" TB", F"{str(LAST+3)}":" BA", F"{str(LAST+4)}":"OBP",
-                 F"{str(LAST+5)}":"SLG", F"{str(LAST+6)}":"OPS" }
+STATS_DICT = { "G ":0, "PA":0, "AB":0, "R ":0, "H ":0, "2B":0, "3B":0, "HR":0, "XBH":0, "RBI":0, "SO":0,
+               "BB":0, "IBB":0, "SB":0, "CS":0, "SH":0, "SF":0, "HBP":0, "GDP":0, "TB":0, "BA":0, "OBP":0,
+               "SLG":0, "OPS":0 }
+BATTING_HDRS = list( STATS_DICT.keys() )
 
 def clear(stats:dict, totals:dict):
     for item in stats.keys():
@@ -83,8 +63,8 @@ def print_ul():
 
 def print_hdr():
     print(F"{''}".rjust(STD_BAT_SPACE), end = '')
-    for key in sorted(BATTING_HDRS):
-        print(F"{BATTING_HDRS[key]}".rjust(STD_BAT_SPACE), end = '')
+    for key in BATTING_HDRS:
+        print(F"{key}".rjust(STD_BAT_SPACE), end = '')
     print(" ")
     print_ul()
 
@@ -99,7 +79,7 @@ class PrintBattingStats:
 
     def collect_stats( self, p_box:pointer, play_id:str, stats:dict, year:str ):
         self.lgr.debug(F"player = {play_id}; collect stats for year = {year}")
-        bk = BATTING_KEYS
+        hdrs = BATTING_HDRS
         slots = [1,1]
         players = list()
         players.insert( 0, MyCwlib.box_get_starter(p_box,0,1) )
@@ -113,28 +93,28 @@ class PrintBattingStats:
                     if player == play_id:
                         self.lgr.debug(F"found player = {play_id}")
                         batting = players[t].contents.batting.contents
-                        stats[ bk[GM] ]  += batting.g
-                        stats[ bk[PA] ]  += batting.pa
-                        stats[ bk[AB] ]  += batting.ab
-                        stats[ bk[RUN] ] += batting.r
-                        stats[ bk[HIT] ] += batting.h
-                        stats[ bk[B2] ]  += batting.b2
-                        stats[ bk[B3] ]  += batting.b3
-                        stats[ bk[HR] ]  += batting.hr
-                        stats[ bk[XBH] ] += (batting.b2 + batting.b3 + batting.hr)
+                        stats[ hdrs[GM] ]  += batting.g
+                        stats[ hdrs[PA] ]  += batting.pa
+                        stats[ hdrs[AB] ]  += batting.ab
+                        stats[ hdrs[RUN] ] += batting.r
+                        stats[ hdrs[HIT] ] += batting.h
+                        stats[ hdrs[B2] ]  += batting.b2
+                        stats[ hdrs[B3] ]  += batting.b3
+                        stats[ hdrs[HR] ]  += batting.hr
+                        stats[ hdrs[XBH] ] += (batting.b2 + batting.b3 + batting.hr)
                         if batting.bi != -1:
-                            stats[ bk[RBI] ] += batting.bi
+                            stats[ hdrs[RBI] ] += batting.bi
                         else:
-                            stats[ bk[RBI] ] = -1
-                        stats[ bk[BB] ]  += batting.bb
-                        stats[ bk[IBB] ] += batting.ibb
-                        stats[ bk[SO] ]  += batting.so
-                        stats[ bk[SB] ]  += batting.sb
-                        stats[ bk[CS] ]  += batting.cs
-                        stats[ bk[SH] ]  += batting.sh
-                        stats[ bk[SF] ]  += batting.sf
-                        stats[ bk[HBP] ] += batting.hp
-                        stats[ bk[GDP] ] += batting.gdp
+                            stats[ hdrs[RBI] ] = -1
+                        stats[ hdrs[BB] ]  += batting.bb
+                        stats[ hdrs[IBB] ] += batting.ibb
+                        stats[ hdrs[SO] ]  += batting.so
+                        stats[ hdrs[SB] ]  += batting.sb
+                        stats[ hdrs[CS] ]  += batting.cs
+                        stats[ hdrs[SH] ]  += batting.sh
+                        stats[ hdrs[SF] ]  += batting.sf
+                        stats[ hdrs[HBP] ] += batting.hp
+                        stats[ hdrs[GDP] ] += batting.gdp
                     players[t] = players[t].contents.next
                     if not players[t]:
                         while slots[t] <= 9 and not players[t]:
@@ -181,50 +161,54 @@ class PrintBattingStats:
         for item in totals.keys():
             averages[item] = round(totals[item] / self.num_years)
         print("Ave".ljust(STD_BAT_SPACE), end = '')
-        for key in sorted( averages.keys() ):
+        for key in BATTING_HDRS:
+            if key == BATTING_HDRS[LAST]:
+                break
             print(F"{averages[key]}".rjust(STD_BAT_SPACE), end = '')
         # add Total Bases average
-        tb = totals[BATTING_KEYS[HIT]] + totals[BATTING_KEYS[B2]] + totals[BATTING_KEYS[B3]]*2 + totals[BATTING_KEYS[HR]]*3
+        tb = totals[BATTING_HDRS[HIT]] + totals[BATTING_HDRS[B2]] + totals[BATTING_HDRS[B3]]*2 + totals[BATTING_HDRS[HR]]*3
         tbave = round(tb / self.num_years)
-        print( F"{tbave}\n".rjust(STD_BAT_SPACE) )
-        self.lgr.warning(F"printed Average of each counting stat for {self.num_years} ACTIVE years")
+        print( F"{tbave}".rjust(STD_BAT_SPACE) )
+        print(F"\nprinted Average of each counting stat for {self.num_years} ACTIVE years")
 
     def print_stat_line(self, year:str, bat:dict):
         self.lgr.info(F"print stat line for year = {year}")
         print(F"{year.ljust(STD_BAT_SPACE)}", end = '')
-        bk = BATTING_KEYS
+        hdrs = BATTING_HDRS
 
         # print all the counting stats from the retrosheet data
-        for key in sorted( bat.keys() ):
+        for key in hdrs:
+            if key == BATTING_HDRS[LAST]:
+                break
             print(F"{bat[key]}".rjust(STD_BAT_SPACE) if bat[key] >= 0 else F"{''}".rjust(STD_BAT_SPACE), end = '')
         # add Total Bases
-        tb = bat[ bk[HIT] ] + bat[ bk[B2] ] + bat[ bk[B3] ]*2 + bat[ bk[HR] ]*3
+        tb = bat[ hdrs[HIT] ] + bat[ hdrs[B2] ] + bat[ hdrs[B3] ]*2 + bat[ hdrs[HR] ]*3
         print(F"{tb}".rjust(STD_BAT_SPACE) if tb >= 0 else F"{''}".rjust(STD_BAT_SPACE), end = '')
 
         # calculate and print the rate stats
-        games = bat[ bk[GM] ]
+        games = bat[ hdrs[GM] ]
         # keep track of ACTIVE years
         if year != TOTAL and games > 0: self.num_years += 1
 
-        ba = bat[ bk[HIT] ] / bat[ bk[AB] ] * 10000 if bat[ bk[AB] ] > 0 else 0.0
+        ba = bat[ hdrs[HIT] ] / bat[ hdrs[AB] ] * 10000 if bat[ hdrs[AB] ] > 0 else 0.0
         pba = str(int(ba))[:4] if ba > 0.0 else 'x' if games == 0 else "00"
         if pba != 'x' and len(pba) < 4: pba = '0' + pba
         print(F"{pba}".rjust(STD_BAT_SPACE), end = '')
 
-        obp_num = bat[ bk[HIT] ] + bat[ bk[BB] ] + bat[ bk[HBP] ]
-        obp_denom = bat[ bk[AB] ] + bat[ bk[BB] ] + bat[ bk[HBP] ] + bat[ bk[SF] ]
+        obp_num = bat[ hdrs[HIT] ] + bat[ hdrs[BB] ] + bat[ hdrs[HBP] ]
+        obp_denom = bat[ hdrs[AB] ] + bat[ hdrs[BB] ] + bat[ hdrs[HBP] ] + bat[ hdrs[SF] ]
         obp = obp_num / obp_denom * 10000 if obp_denom > 0 else 0.0
         pobp = str(int(obp))[:4] if obp > 0.0 else 'x' if games == 0 else "00"
         if pobp != 'x' and len(pobp) < 4: pobp = '0' + pobp
         print(F"{pobp}".rjust(STD_BAT_SPACE), end = '')
 
-        slg = tb / bat[ bk[AB] ] * 10000 if bat[ bk[AB] ] > 0 else 0.0
+        slg = tb / bat[ hdrs[AB] ] * 10000 if bat[ hdrs[AB] ] > 0 else 0.0
         pslg = str(int(slg))[:4] if slg > 0.0 else 'x' if games == 0 else "00"
         if pslg != 'x' and len(pslg) < 4: pslg = '0' + pslg
         print(F"{pslg}".rjust(STD_BAT_SPACE), end = '')
 
-        ops = obp + slg
-        pops = str(int(ops))[:5] if ops > 10000 else str(ops)[:4] if ops > 0.0 else 'x' if games == 0 else "00"
+        ops = int( obp + slg )
+        pops = str(ops)[:5] if ops > 10000 else str(ops)[:4] if ops > 0 else 'x' if games == 0 else "00"
         if pops != 'x' and len(pops) < 4: pops = '0' + pops
         print( F"{pops}".rjust(STD_BAT_SPACE) )
 
