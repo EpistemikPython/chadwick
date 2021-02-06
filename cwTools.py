@@ -11,7 +11,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-02-02"
+__updated__ = "2021-02-05"
 
 import logging
 import os
@@ -38,6 +38,7 @@ RETROSHEET_FOLDER = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/"
 ROSTERS_FOLDER = RETROSHEET_FOLDER + "rosters/"
 REGULAR_SEASON_FOLDER = RETROSHEET_FOLDER + "event/regular/"
 POST_SEASON_FOLDER = RETROSHEET_FOLDER + "event/post/"
+BOXSCORE_FOLDER = "/newdata/dev/Retrosheet/data/boxscores/"
 
 DEFAULT_LOG_LEVEL = "WARNING"
 QUIET_LOG_LEVEL = "CRITICAL"

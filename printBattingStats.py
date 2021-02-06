@@ -74,11 +74,12 @@ class PrintBattingStats:
     def __init__(self, logger:logging.Logger):
         self.lgr = logger
         self.lgr.warning(F" Start {self.__class__.__name__}")
-        self.event_files = {}
+        self.event_files = dict()
+        self.game_ids = list()
         self.num_years = 0
 
-    def collect_stats( self, p_box:pointer, play_id:str, stats:dict, year:str ):
-        self.lgr.debug(F"player = {play_id}; collect stats for year = {year}")
+    def collect_stats(self, p_box:pointer, player_id:str, stats:dict, year:str, game_id:str):
+        self.lgr.debug(F"player = {player_id} for year = {year}")
         hdrs = BATTING_HDRS
         slots = [1,1]
         players = list()
@@ -90,8 +91,9 @@ class PrintBattingStats:
                 if slots[t] <= 9:
                     player = players[t].contents.player_id.decode("UTF-8")
                     self.lgr.debug(F"player = {player}")
-                    if player == play_id:
-                        self.lgr.debug(F"found player = {play_id}")
+                    if player == player_id:
+                        self.lgr.info(F"found player = {player_id} in game = {game_id}")
+                        self.game_ids.append(game_id)
                         batting = players[t].contents.batting.contents
                         stats[ hdrs[GM] ]  += batting.g
                         stats[ hdrs[PA] ]  += batting.pa
@@ -102,10 +104,8 @@ class PrintBattingStats:
                         stats[ hdrs[B3] ]  += batting.b3
                         stats[ hdrs[HR] ]  += batting.hr
                         stats[ hdrs[XBH] ] += (batting.b2 + batting.b3 + batting.hr)
-                        if batting.bi != -1:
+                        if batting.bi > 0:
                             stats[ hdrs[RBI] ] += batting.bi
-                        else:
-                            stats[ hdrs[RBI] ] = -1
                         stats[ hdrs[BB] ]  += batting.bb
                         stats[ hdrs[IBB] ] += batting.ibb
                         stats[ hdrs[SO] ]  += batting.so
@@ -121,6 +121,63 @@ class PrintBattingStats:
                             slots[t] += 1
                             if slots[t] <= 9:
                                 players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
+        self.lgr.debug(F"found {len(self.game_ids)} games with {player_id} stats.")
+
+    def check_boxscores(self, player_id:str, year:str, stats:dict):
+        """check the Retrosheet boxscore files for stats missing from the event files"""
+        self.lgr.info(F"check boxscore files for year = {year}")
+        hdrs = BATTING_HDRS
+        # TODO: find boxscore files (N,A) for this year, if exist
+        #       for each id line: see if a bline for this player
+        #           if a bline: check if the current game id is in game_ids list
+        #               if NOT in the list: parse the bline and add all the non-zero entries to the stats dict
+        boxscore_files = [BOXSCORE_FOLDER + year + ".EBN", BOXSCORE_FOLDER + year + ".EBA"]
+        for bfile in boxscore_files:
+            try:
+                with open(bfile, newline = '') as box_csvfile:
+                    self.lgr.info(F"search boxscore file {bfile}")
+                    box_reader = csv.reader(box_csvfile)
+                    find_player = False
+                    for brow in box_reader:
+                        if brow[0] == "id":
+                            current_id = brow[1]
+                            if current_id in self.game_ids:
+                                self.lgr.info(F"found duplicate game = {current_id} in Boxscore file.")
+                                find_player = False
+                                continue
+                            else:
+                                find_player = True
+                        elif find_player:
+                            if brow[1] == "bline" and brow[2] == player_id:
+                                self.lgr.info(F"found player {player_id} in game {current_id}")
+                                # parse stats
+                                # Syntax: stat, bline, id,  side, pos, seq, ab, r,   h, 2b,
+                                #         3b,   hr,    rbi, sh,   sf,  hbp, bb, ibb, k, sb,
+                                #         cs,   gidp,  int
+                                stats[hdrs[GM]]  += 1
+                                stats[hdrs[PA]]  += ( int(brow[6]) + int(brow[13]) + int(brow[14]) + int(brow[15])
+                                                      + int(brow[16]) + int(brow[22]) )
+                                stats[hdrs[AB]]  += int(brow[6])
+                                stats[hdrs[RUN]] += int(brow[7])
+                                stats[hdrs[HIT]] += int(brow[8])
+                                stats[hdrs[B2]]  += int(brow[9])
+                                stats[hdrs[B3]]  += int(brow[10])
+                                stats[hdrs[HR]]  += int(brow[11])
+                                stats[hdrs[XBH]] += ( int(brow[9]) + int(brow[10]) + int(brow[11]) )
+                                if int(brow[12]) >= 0:
+                                    stats[hdrs[RBI]] += int(brow[12])
+                                stats[hdrs[BB]]  += int(brow[16])
+                                stats[hdrs[IBB]] += int(brow[17])
+                                stats[hdrs[SO]]  += int(brow[18])
+                                stats[hdrs[SB]]  += int(brow[19])
+                                stats[hdrs[CS]]  += int(brow[20])
+                                stats[hdrs[SH]]  += int(brow[13])
+                                stats[hdrs[SF]]  += int(brow[14])
+                                stats[hdrs[HBP]] += int(brow[15])
+                                stats[hdrs[GDP]] += int(brow[21])
+                                find_player = False
+            except FileNotFoundError:
+                continue
 
     def print_stats(self, playid:str, name:str, season:str, yrstart:int, yrend:int):
         self.lgr.info(F"print {season} stats for years {yrstart}->{yrend}")
@@ -133,6 +190,7 @@ class PrintBattingStats:
         # get all the games in the supplied date range
         for year in range(yrstart, yrend+1):
             self.lgr.info(F"collect stats for year: {year}")
+            self.game_ids.clear()
             if str(year) not in self.event_files.keys():
                 continue
             for efile in self.event_files[str(year)]:
@@ -144,15 +202,19 @@ class PrintBattingStats:
                     self.lgr.debug(F" Found game id = {game_id}; date = {game_date}")
 
                     box = MyCwlib.box_create(game)
-                    self.collect_stats(box, playid, stats, str(year))
+                    self.collect_stats(box, playid, stats, str(year), game_id)
+
+            if year < 1974:
+                self.check_boxscores(playid, str(year), stats)
 
             self.print_stat_line(str(year), stats)
             clear(stats, totals)
 
-        print_ul()
-        print_hdr()
-        self.print_stat_line("Total", totals)
-        self.print_ave_line(totals)
+        if yrstart != yrend:
+            print_ul()
+            print_hdr()
+            self.print_stat_line("Total", totals)
+            self.print_ave_line(totals)
         print("")
 
     def print_ave_line(self, totals:dict):
