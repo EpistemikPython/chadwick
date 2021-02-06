@@ -11,7 +11,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-02-05"
+__updated__ = "2021-02-06"
 
 import logging
 import os
@@ -48,7 +48,7 @@ def get_basename(filename:str) ->str:
     basename, _ = os.path.splitext(fname)
     return basename
 
-def get_logger(name:str, file_time:str, level:str) -> logging.Logger:
+def get_logger(name:str, level:str, file_time:str=file_ts) -> logging.Logger:
     _, fname = os.path.split(name)
     basename, _ = os.path.splitext(fname)
 
@@ -62,7 +62,10 @@ def get_logger(name:str, file_time:str, level:str) -> logging.Logger:
 
     ch = logging.StreamHandler() # console handler
     # log to console at the level requested on the command line
-    ch.setLevel(level)
+    try:
+        ch.setLevel(level)
+    except ValueError:
+        ch.setLevel(DEFAULT_LOG_LEVEL)
 
     # create formatter and add it to the handlers
     formatter = logging.Formatter("%(levelname)s - %(asctime)s | %(funcName)s > %(message)s")

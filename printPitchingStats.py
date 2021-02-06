@@ -3,6 +3,9 @@
 #
 # printPitchingStats.py -- print pitching stats for a player using Retrosheet data
 #
+# The information used here was obtained free of charge from and is copyrighted by Retrosheet.
+# Interested parties may contact Retrosheet at 20 Sunset Rd., Newark, DE 19711.
+#
 # Original C code Copyright (c) 2002-2021
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
 #
@@ -11,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-25"
-__updated__ = "2021-02-04"
+__updated__ = "2021-02-06"
 
 import copy
 import csv
@@ -84,7 +87,7 @@ class PrintPitchingStats:
         self.num_years = 0
 
     def collect_stats(self, p_box:pointer, pit_id:str, stats:dict, year:str):
-        self.lgr.debug(F"player = {pit_id}; collect stats for year = {year}")
+        self.lgr.debug(F"player = {pit_id} for year = {year}")
         hdrs = PITCHING_HDRS
         for t in range(2):
             p_pitcher = MyCwlib.box_get_starting_pitcher(p_box, t)
@@ -267,7 +270,7 @@ def main_pitching_stats(args:list):
 
     pers_id, start, end, post, loglevel = process_input_parameters(args)
 
-    lgr = get_logger(__file__, file_ts, loglevel)
+    lgr = get_logger(__file__, loglevel)
     lgr.debug(F"loglevel = {repr(loglevel)}")
     lgr.warning(F" id = {pers_id}; years = {start}->{end}")
 
