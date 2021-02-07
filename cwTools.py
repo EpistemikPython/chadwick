@@ -11,7 +11,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-02-06"
+__updated__ = "2021-02-07"
 
 import logging
 import os
@@ -33,6 +33,7 @@ file_ts:str = start_dt.strftime(FILE_DATETIME_FORMAT)
 POSITIONS = ["", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"]
 MARKERS = ['*', '+', '#']
 TOTAL = "Total"
+STD_HDR_SIZE = 4
 
 RETROSHEET_FOLDER = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/"
 ROSTERS_FOLDER = RETROSHEET_FOLDER + "rosters/"

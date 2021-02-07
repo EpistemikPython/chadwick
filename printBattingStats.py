@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-02-06"
+__updated__ = "2021-02-07"
 
 import copy
 import csv
@@ -96,7 +96,7 @@ class PrintBattingStats:
             if str(year) not in self.event_files.keys():
                 continue
             for efile in self.event_files[str(year)]:
-                self.lgr.info(F"found events for team/year = {get_basename(efile)}")
+                self.lgr.debug(F"found events for team/year = {get_basename(efile)}")
                 cwgames = chadwick.games(efile)
                 for game in cwgames:
                     game_id = game.contents.game_id.decode(encoding = 'UTF-8')
@@ -121,8 +121,8 @@ class PrintBattingStats:
             self.print_ave_line(totals)
         print("")
 
-    def collect_stats(self, p_box:pointer, player_id:str, stats:dict, year:str, game_id:str):
-        self.lgr.debug(F"player = {player_id} for year = {year}")
+    def collect_stats(self, p_box:pointer, bat_id:str, stats:dict, year:str, game_id:str):
+        self.lgr.debug(F"player = {bat_id} for year = {year}")
         hdrs = BATTING_HDRS
         slots = [1,1]
         players = list()
@@ -133,8 +133,8 @@ class PrintBattingStats:
             for t in range(2):
                 if slots[t] <= 9:
                     player = players[t].contents.player_id.decode("UTF-8")
-                    if player == player_id:
-                        self.lgr.info(F"found player = {player_id} in game = {game_id}")
+                    if player == bat_id:
+                        self.lgr.info(F"found batter = {bat_id} in game = {game_id}")
                         self.game_ids.append(game_id)
                         batting = players[t].contents.batting.contents
                         stats[ hdrs[GM] ]  += batting.g
@@ -164,7 +164,7 @@ class PrintBattingStats:
                             if slots[t] <= 9:
                                 players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
 
-    def check_boxscores(self, player_id:str, year:str, stats:dict):
+    def check_boxscores(self, bat_id:str, year:str, stats:dict):
         """check the Retrosheet boxscore files for stats missing from the event files"""
         self.lgr.debug(F"check boxscore files for year = {year}")
         hdrs = BATTING_HDRS
@@ -185,8 +185,8 @@ class PrintBattingStats:
                             else:
                                 find_player = True
                         elif find_player:
-                            if brow[1] == "bline" and brow[2] == player_id:
-                                self.lgr.info(F"found player {player_id} in game {current_id}")
+                            if brow[1] == "bline" and brow[2] == bat_id:
+                                self.lgr.info(F"found player {bat_id} in game {current_id}")
                                 # parse stats
                                 # Syntax: stat, bline, id,  side, pos, seq, ab, r,   h, 2b,
                                 #         3b,   hr,    rbi, sh,   sf,  hbp, bb, ibb, k, sb,
@@ -236,25 +236,26 @@ class PrintBattingStats:
         if year != TOTAL and games > 0: self.num_years += 1
 
         ba = bat[ hdrs[HIT] ] / bat[ hdrs[AB] ] * 10000 if bat[ hdrs[AB] ] > 0 else 0.0
-        pba = str(int(ba))[:4] if ba > 0.0 else 'x' if games == 0 else "00"
-        if pba != 'x' and len(pba) < 4: pba = '0' + pba
+        pba = str(int(ba))[:STD_HDR_SIZE] if ba > 0.0 else 'x' if games == 0 else "00"
+        if pba != 'x' and len(pba) < STD_HDR_SIZE: pba = '0' + pba
         print(F"{pba}".rjust(STD_BAT_SPACE), end = '')
 
         obp_num = bat[ hdrs[HIT] ] + bat[ hdrs[BB] ] + bat[ hdrs[HBP] ]
         obp_denom = bat[ hdrs[AB] ] + bat[ hdrs[BB] ] + bat[ hdrs[HBP] ] + bat[ hdrs[SF] ]
         obp = obp_num / obp_denom * 10000 if obp_denom > 0 else 0.0
-        pobp = str(int(obp))[:4] if obp > 0.0 else 'x' if games == 0 else "00"
-        if pobp != 'x' and len(pobp) < 4: pobp = '0' + pobp
+        pobp = str(int(obp))[:STD_HDR_SIZE] if obp > 0.0 else 'x' if games == 0 else "00"
+        if pobp != 'x' and len(pobp) < STD_HDR_SIZE: pobp = '0' + pobp
         print(F"{pobp}".rjust(STD_BAT_SPACE), end = '')
 
         slg = tb / bat[ hdrs[AB] ] * 10000 if bat[ hdrs[AB] ] > 0 else 0.0
-        pslg = str(int(slg))[:4] if slg > 0.0 else 'x' if games == 0 else "00"
-        if pslg != 'x' and len(pslg) < 4: pslg = '0' + pslg
+        pslg = str(int(slg))[:STD_HDR_SIZE] if slg > 0.0 else 'x' if games == 0 else "00"
+        if pslg != 'x' and len(pslg) < STD_HDR_SIZE: pslg = '0' + pslg
         print(F"{pslg}".rjust(STD_BAT_SPACE), end = '')
 
         ops = int( obp + slg )
-        pops = str(ops)[:5] if ops > 10000 else str(ops)[:4] if ops > 0 else 'x' if games == 0 else "00"
-        if pops != 'x' and len(pops) < 4: pops = '0' + pops
+        pops = str(ops)[:(STD_HDR_SIZE+1)] if ops > 10000 else str(ops)[:STD_HDR_SIZE] \
+                if ops > 0 else 'x' if games == 0 else "00"
+        if pops != 'x' and len(pops) < STD_HDR_SIZE: pops = '0' + pops
         print( F"{pops}".rjust(STD_BAT_SPACE) )
 
     def print_ave_line(self, totals: dict):
