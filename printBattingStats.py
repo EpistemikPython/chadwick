@@ -3,6 +3,9 @@
 #
 # printBattingStats.py -- print batting stats for a player using Retrosheet data
 #
+# The information used here was obtained free of charge from and is copyrighted by Retrosheet.
+# Interested parties may contact Retrosheet at 20 Sunset Rd., Newark, DE 19711.
+#
 # Original C code Copyright (c) 2002-2021
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
 #
@@ -11,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-02-05"
+__updated__ = "2021-02-06"
 
 import copy
 import csv
@@ -45,9 +48,9 @@ GDP = HBP+1   # 18
 LAST = GDP+1  # end of available counting stats
 # CWBoxBatting: int g, pa, ab, r, h, b2, b3, hr, hrslam, bi, bi2out, gw, bb, ibb, so, gdp, hp, sh, sf, sb, cs, xi;
 # baseball-ref.com: G  PA  AB  R  H  2B  3B  HR  RBI  SB  CS  BB  SO  BA  OBP  SLG  OPS  OPS+  TB  GDP  HBP  SH  SF IBB
-STATS_DICT = { "G ":0, "PA":0, "AB":0, "R ":0, "H ":0, "2B":0, "3B":0, "HR":0, "XBH":0, "RBI":0, "SO":0,
-               "BB":0, "IBB":0, "SB":0, "CS":0, "SH":0, "SF":0, "HBP":0, "GDP":0, "TB":0, "BA":0, "OBP":0,
-               "SLG":0, "OPS":0 }
+STATS_DICT = { "G ":0, "PA":0, "AB":0, "R ":0, "H ":0, "2B":0, "3B":0, "HR":0, "XBH":0, "RBI":0,
+               "SO":0, "BB":0, "IBB":0, "SB":0, "CS":0, "SH":0, "SF":0, "HBP":0, "GDP":0,
+               "TB":0, "BA":0, "OBP":0, "SLG":0, "OPS":0 }
 BATTING_HDRS = list( STATS_DICT.keys() )
 
 def clear(stats:dict, totals:dict):
@@ -78,6 +81,46 @@ class PrintBattingStats:
         self.game_ids = list()
         self.num_years = 0
 
+    def print_stats(self, playid:str, name:str, season:str, yrstart:int, yrend:int):
+        self.lgr.info(F"print {season} stats for years {yrstart}->{yrend}")
+        stats = copy.copy(STATS_DICT)
+        totals = copy.copy(STATS_DICT)
+
+        print(F"\n\t{name.upper()} {season} Stats:")
+        print_hdr()
+
+        # get all the games in the supplied date range
+        for year in range(yrstart, yrend+1):
+            self.lgr.info(F"collect stats for year: {year}")
+            self.game_ids.clear()
+            if str(year) not in self.event_files.keys():
+                continue
+            for efile in self.event_files[str(year)]:
+                self.lgr.info(F"found events for team/year = {get_basename(efile)}")
+                cwgames = chadwick.games(efile)
+                for game in cwgames:
+                    game_id = game.contents.game_id.decode(encoding = 'UTF-8')
+                    game_date = game_id[3:11]
+                    self.lgr.debug(F" Found game id = {game_id}; date = {game_date}")
+
+                    box = MyCwlib.box_create(game)
+                    self.collect_stats(box, playid, stats, str(year), game_id)
+
+            self.lgr.info(F"found {len(self.game_ids)} games with {playid} stats.")
+
+            if year < 1974:
+                self.check_boxscores(playid, str(year), stats)
+
+            self.print_stat_line(str(year), stats)
+            clear(stats, totals)
+
+        if yrstart != yrend:
+            print_ul()
+            print_hdr()
+            self.print_stat_line("Total", totals)
+            self.print_ave_line(totals)
+        print("")
+
     def collect_stats(self, p_box:pointer, player_id:str, stats:dict, year:str, game_id:str):
         self.lgr.debug(F"player = {player_id} for year = {year}")
         hdrs = BATTING_HDRS
@@ -90,7 +133,6 @@ class PrintBattingStats:
             for t in range(2):
                 if slots[t] <= 9:
                     player = players[t].contents.player_id.decode("UTF-8")
-                    self.lgr.debug(F"player = {player}")
                     if player == player_id:
                         self.lgr.info(F"found player = {player_id} in game = {game_id}")
                         self.game_ids.append(game_id)
@@ -121,16 +163,11 @@ class PrintBattingStats:
                             slots[t] += 1
                             if slots[t] <= 9:
                                 players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
-        self.lgr.debug(F"found {len(self.game_ids)} games with {player_id} stats.")
 
     def check_boxscores(self, player_id:str, year:str, stats:dict):
         """check the Retrosheet boxscore files for stats missing from the event files"""
-        self.lgr.info(F"check boxscore files for year = {year}")
+        self.lgr.debug(F"check boxscore files for year = {year}")
         hdrs = BATTING_HDRS
-        # TODO: find boxscore files (N,A) for this year, if exist
-        #       for each id line: see if a bline for this player
-        #           if a bline: check if the current game id is in game_ids list
-        #               if NOT in the list: parse the bline and add all the non-zero entries to the stats dict
         boxscore_files = [BOXSCORE_FOLDER + year + ".EBN", BOXSCORE_FOLDER + year + ".EBA"]
         for bfile in boxscore_files:
             try:
@@ -164,7 +201,7 @@ class PrintBattingStats:
                                 stats[hdrs[B3]]  += int(brow[10])
                                 stats[hdrs[HR]]  += int(brow[11])
                                 stats[hdrs[XBH]] += ( int(brow[9]) + int(brow[10]) + int(brow[11]) )
-                                if int(brow[12]) >= 0:
+                                if int(brow[12]) > 0:
                                     stats[hdrs[RBI]] += int(brow[12])
                                 stats[hdrs[BB]]  += int(brow[16])
                                 stats[hdrs[IBB]] += int(brow[17])
@@ -178,60 +215,6 @@ class PrintBattingStats:
                                 find_player = False
             except FileNotFoundError:
                 continue
-
-    def print_stats(self, playid:str, name:str, season:str, yrstart:int, yrend:int):
-        self.lgr.info(F"print {season} stats for years {yrstart}->{yrend}")
-        stats = copy.copy(STATS_DICT)
-        totals = copy.copy(STATS_DICT)
-
-        print(F"\n\t{name.upper()} {season} Stats:")
-        print_hdr()
-
-        # get all the games in the supplied date range
-        for year in range(yrstart, yrend+1):
-            self.lgr.info(F"collect stats for year: {year}")
-            self.game_ids.clear()
-            if str(year) not in self.event_files.keys():
-                continue
-            for efile in self.event_files[str(year)]:
-                self.lgr.info(F"found events for team/year = {get_basename(efile)}")
-                cwgames = chadwick.games(efile)
-                for game in cwgames:
-                    game_id = game.contents.game_id.decode(encoding = 'UTF-8')
-                    game_date = game_id[3:11]
-                    self.lgr.debug(F" Found game id = {game_id}; date = {game_date}")
-
-                    box = MyCwlib.box_create(game)
-                    self.collect_stats(box, playid, stats, str(year), game_id)
-
-            if year < 1974:
-                self.check_boxscores(playid, str(year), stats)
-
-            self.print_stat_line(str(year), stats)
-            clear(stats, totals)
-
-        if yrstart != yrend:
-            print_ul()
-            print_hdr()
-            self.print_stat_line("Total", totals)
-            self.print_ave_line(totals)
-        print("")
-
-    def print_ave_line(self, totals:dict):
-        # NOTE: ave for each 150 games ?
-        averages = copy.copy(STATS_DICT)
-        for item in totals.keys():
-            averages[item] = round(totals[item] / self.num_years)
-        print("Ave".ljust(STD_BAT_SPACE), end = '')
-        for key in BATTING_HDRS:
-            if key == BATTING_HDRS[LAST]:
-                break
-            print(F"{averages[key]}".rjust(STD_BAT_SPACE), end = '')
-        # add Total Bases average
-        tb = totals[BATTING_HDRS[HIT]] + totals[BATTING_HDRS[B2]] + totals[BATTING_HDRS[B3]]*2 + totals[BATTING_HDRS[HR]]*3
-        tbave = round(tb / self.num_years)
-        print( F"{tbave}".rjust(STD_BAT_SPACE) )
-        print(F"\nprinted Average of each counting stat for {self.num_years} ACTIVE years")
 
     def print_stat_line(self, year:str, bat:dict):
         self.lgr.info(F"print stat line for year = {year}")
@@ -273,6 +256,22 @@ class PrintBattingStats:
         pops = str(ops)[:5] if ops > 10000 else str(ops)[:4] if ops > 0 else 'x' if games == 0 else "00"
         if pops != 'x' and len(pops) < 4: pops = '0' + pops
         print( F"{pops}".rjust(STD_BAT_SPACE) )
+
+    def print_ave_line(self, totals: dict):
+        # NOTE: ave for each 150 games ?
+        averages = copy.copy(STATS_DICT)
+        for item in totals.keys():
+            averages[item] = round(totals[item] / self.num_years)
+        print("Ave".ljust(STD_BAT_SPACE), end = '')
+        for key in BATTING_HDRS:
+            if key == BATTING_HDRS[LAST]:
+                break
+            print(F"{averages[key]}".rjust(STD_BAT_SPACE), end = '')
+        # add Total Bases average
+        tb = totals[BATTING_HDRS[HIT]] + totals[BATTING_HDRS[B2]] + totals[BATTING_HDRS[B3]] * 2 + totals[BATTING_HDRS[HR]] * 3
+        tbave = round(tb / self.num_years)
+        print(F"{tbave}".rjust(STD_BAT_SPACE))
+        print(F"\nprinted Average of each counting stat for {self.num_years} ACTIVE years")
 
 # END class PrintBattingStats
 
@@ -320,7 +319,7 @@ def main_batting_stats(args:list):
 
     playid, start, end, post, loglevel = process_input_parameters(args)
 
-    lgr = get_logger(__file__, file_ts, loglevel)
+    lgr = get_logger(__file__, loglevel)
     lgr.debug(F"loglevel = {repr(loglevel)}")
     lgr.warning(F" id = {playid}; years = {start}->{end}")
 
