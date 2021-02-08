@@ -223,28 +223,6 @@ class PrintPitchingStats:
             except FileNotFoundError:
                 continue
 
-    def print_ave_line(self, totals:dict):
-        diff = 0
-        averages = copy.copy(STATS_DICT)
-        for key in totals.keys():
-            # adjust from outs to innings pitched
-            if key == PITCHING_HDRS[OUT]:
-                outs = round(totals[key] / self.num_years)
-                averages[key] = (outs // 3) + (outs % 3)/10
-            else:
-                averages[key] = round(totals[key] / self.num_years)
-        print("Ave".ljust(STD_PITCH_SPACE), end = '')
-        for key in PITCHING_HDRS:
-            if key == PITCHING_HDRS[LAST]:
-                print(F"\n\nprinted Average of each counting stat for {self.num_years} ACTIVE years")
-                break
-            if key == PITCHING_HDRS[OUT]:
-                diff = -1 # have to adjust for the extra space required to print IP
-                print(F"{averages[key]}".rjust(STD_PITCH_SPACE+1), end = '')
-            else:
-                print(F"{averages[key]}".rjust(STD_PITCH_SPACE+diff), end = '')
-                diff = 0
-
     def print_stat_line(self, year:str, pitch:dict):
         self.lgr.info(F"print stat line for year = {year}")
         hdrs = PITCHING_HDRS
@@ -290,6 +268,28 @@ class PrintPitchingStats:
         wlp = round( (pitch[hdrs[WIN]] / (pitch[hdrs[WIN]] + pitch[hdrs[LOS]])), 3 ) * 100 if pitch[hdrs[WIN]] > 0 else 0
         print(F"{wlp}"[:STD_HDR_SIZE].rjust(STD_PITCH_SPACE))
 
+    def print_ave_line(self, totals: dict):
+        diff = 0
+        averages = copy.copy(STATS_DICT)
+        for key in totals.keys():
+            # adjust from outs to innings pitched
+            if key == PITCHING_HDRS[OUT]:
+                outs = round(totals[key] / self.num_years)
+                averages[key] = (outs // 3) + (outs % 3) / 10
+            else:
+                averages[key] = round(totals[key] / self.num_years)
+        print("Ave".ljust(STD_PITCH_SPACE), end = '')
+        for key in PITCHING_HDRS:
+            if key == PITCHING_HDRS[LAST]:
+                print(F"\n\nprinted Average of each counting stat for {self.num_years} ACTIVE years")
+                break
+            if key == PITCHING_HDRS[OUT]:
+                diff = -1  # have to adjust for the extra space required to print IP
+                print(F"{averages[key]}".rjust(STD_PITCH_SPACE + 1), end = '')
+            else:
+                print(F"{averages[key]}".rjust(STD_PITCH_SPACE + diff), end = '')
+                diff = 0
+
 # END class PrintPitchingStats
 
 
@@ -310,30 +310,29 @@ def process_args():
     return arg_parser
 
 
-def process_input_parameters(argx:list):
-    args = process_args().parse_args(argx)
-    loglevel = QUIET_LOG_LEVEL if args.quiet else args.level.strip().upper()
+def process_input_parameters(argl:list):
+    argp = process_args().parse_args(argl)
+    loglevel = QUIET_LOG_LEVEL if argp.quiet else argp.level.strip().upper()
     try:
         getattr( logging, loglevel )
     except AttributeError as ae:
         print(F"Problem with log level: {repr(ae)}")
         loglevel = DEFAULT_LOG_LEVEL
 
-    pitch_id = args.pitcher_id.strip() if len(args.pitcher_id) >= 8 and \
-               args.pitcher_id[:5].isalpha() and args.pitcher_id[5:8].isdecimal() else "kersc001"
+    pitch_id = argp.pitcher_id.strip() if len(argp.pitcher_id) >= 8 and \
+               argp.pitcher_id[:5].isalpha() and argp.pitcher_id[5:8].isdecimal() else "kersc001"
     if len(pitch_id) > 8:
         pitch_id = pitch_id[:8]
 
-    start = args.start if 1871 <= args.start <= 2020 else 2014
+    start = argp.start if 1871 <= argp.start <= 2020 else 2014
 
-    end = args.end if args.end and 1871 <= args.end <= 2020 else start
+    end = argp.end if argp.end and 1871 <= argp.end <= 2020 else start
     if end < start: end = start
 
-    return pitch_id, start, end, args.post, loglevel
+    return pitch_id, start, end, argp.post, loglevel
 
 
 def main_pitching_stats(args:list):
-
     pers_id, start, end, post, loglevel = process_input_parameters(args)
 
     lgr = get_logger(__file__, loglevel)
@@ -351,7 +350,7 @@ def main_pitching_stats(args:list):
             year_events = list()
             # get the team files
             team_file_name = REGULAR_SEASON_FOLDER + "TEAM" + str(year)
-            lgr.info(F"team file name = {team_file_name}")
+            lgr.debug(F"team file name = {team_file_name}")
             if not os.path.exists(team_file_name):
                 lgr.exception(F"CANNOT find team file {team_file_name}!")
                 continue

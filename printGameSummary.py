@@ -204,30 +204,30 @@ def process_args():
     return arg_parser
 
 
-def process_input_parameters(argx:list):
-    args = process_args().parse_args(argx)
-    loglevel = QUIET_LOG_LEVEL if args.quiet else args.level.strip().upper()
+def process_input_parameters(argl:list):
+    argp = process_args().parse_args(argl)
+    loglevel = QUIET_LOG_LEVEL if argp.quiet else argp.level.strip().upper()
     try:
         getattr( logging, loglevel )
     except AttributeError as ae:
         print(F"Problem with log level: {repr(ae)}")
         loglevel = DEFAULT_LOG_LEVEL
 
-    team = args.team.strip().upper() if args.team.isalpha() and len(args.team.strip()) >= 3 else "TOR"
+    team = argp.team.strip().upper() if argp.team.isalpha() and len(argp.team.strip()) >= 3 else "TOR"
     if len(team) > 3:
         team = team[:3]
 
-    year = str(args.year) if 1871 <= args.year <= 2020 else "1993"
+    year = str(argp.year) if 1871 <= argp.year <= 2020 else "1993"
 
-    if args.start:
-        start = args.start.strip() if args.start.isdecimal() and len(args.start) == 4 else "0701"
-        end = args.end.strip() if args.end and args.end.isdecimal() and len(args.end) == 4 else start
+    if argp.start:
+        start = argp.start.strip() if argp.start.isdecimal() and len(argp.start) == 4 else "0701"
+        end = argp.end.strip() if argp.end and argp.end.isdecimal() and len(argp.end) == 4 else start
         if end < start: end = start
     else: # the entire year
-        start = "0901" if args.post else "0301"
-        end = "1231" if args.post else "1031"
+        start = "0901" if argp.post else "0301"
+        end = "1231" if argp.post else "1031"
 
-    return team, year, start, end, args.post, loglevel
+    return team, year, start, end, argp.post, loglevel
 
 
 def main_game_summary(args:list):
@@ -248,7 +248,7 @@ def main_game_summary(args:list):
             teamreader = csv.reader(csvfile)
             for row in teamreader:
                 rteam = row[0]
-                lgr.info(F"Found team {rteam}")
+                lgr.debug(F"Found team {rteam}")
                 if rteam == team:
                     lgr.info(F"\t-- league is {row[1]}L; city is {row[2]}; nickname is {row[3]}")
                 # create the rosters
@@ -260,7 +260,7 @@ def main_game_summary(args:list):
                 roster_fptr = chadwick.fopen( bytes(roster_file, "utf8") )
                 # fill the rosters
                 roster_read_result = MyCwlib.roster_read(pgs.rosters[rteam], roster_fptr)
-                lgr.info("roster read result = " + ("Success." if roster_read_result > 0 else "Failure!"))
+                lgr.debug("roster read result = " + ("Success." if roster_read_result > 0 else "Failure!"))
                 chadwick.fclose(roster_fptr)
                 if not post:
                     # find and store the event file paths
@@ -285,19 +285,18 @@ def main_game_summary(args:list):
             lgr.debug(item)
 
         start_id = year + start
-        lgr.info(F"start id = {start_id}")
         end_id = year + end
-        lgr.info(F"end id = {end_id}")
+        lgr.info(F"start date = {start_id}; end date = {end_id}")
 
         # get all the games for the requested team in the supplied date range
         ptype = "file" if post else "team"
         for evteam in pgs.event_files:
-            lgr.info(F"found events for {ptype} = {evteam}")
+            lgr.debug(F"found events for {ptype} = {evteam}")
             cwgames = chadwick.games( pgs.event_files[evteam] )
             for game in cwgames:
                 game_id = game.contents.game_id.decode(encoding='UTF-8')
                 game_date = game_id[3:11]
-                lgr.debug(F" Found game id = {game_id}; date = {game_date}")
+                lgr.info(F" Found game id = {game_id}; date = {game_date}")
 
                 if end_id >= game_date >= start_id:
                     proc_game = chadwick.process_game(game)

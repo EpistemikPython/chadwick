@@ -294,30 +294,29 @@ def process_args():
     return arg_parser
 
 
-def process_input_parameters(argx:list):
-    args = process_args().parse_args(argx)
-    loglevel = QUIET_LOG_LEVEL if args.quiet else args.level.strip().upper()
+def process_input_parameters(argl:list):
+    argp = process_args().parse_args(argl)
+    loglevel = QUIET_LOG_LEVEL if argp.quiet else argp.level.strip().upper()
     try:
         getattr( logging, loglevel )
     except AttributeError as ae:
         print(F"Problem with log level: {repr(ae)}")
         loglevel = DEFAULT_LOG_LEVEL
 
-    playid = args.player_id.strip() if len(args.player_id) >= 8 and \
-                args.player_id[:5].isalpha() and args.player_id[5:8].isdecimal() else "maysw101"
+    playid = argp.player_id.strip() if len(argp.player_id) >= 8 and \
+                argp.player_id[:5].isalpha() and argp.player_id[5:8].isdecimal() else "maysw101"
     if len(playid) > 8:
         playid = playid[:8]
 
-    start = args.start if 1871 <= args.start <= 2020 else 1954
+    start = argp.start if 1871 <= argp.start <= 2020 else 1954
 
-    end = args.end if args.end and 1871 <= args.end <= 2020 else start
+    end = argp.end if argp.end and 1871 <= argp.end <= 2020 else start
     if end < start: end = start
 
-    return playid, start, end, args.post, loglevel
+    return playid, start, end, argp.post, loglevel
 
 
 def main_batting_stats(args:list):
-
     playid, start, end, post, loglevel = process_input_parameters(args)
 
     lgr = get_logger(__file__, loglevel)
@@ -335,7 +334,7 @@ def main_batting_stats(args:list):
             year_events = list()
             # get the team files
             team_file_name = REGULAR_SEASON_FOLDER + "TEAM" + str(year)
-            lgr.info(F"team file name = {team_file_name}")
+            lgr.debug(F"team file name = {team_file_name}")
             if not os.path.exists(team_file_name):
                 lgr.exception(F"CANNOT find team file {team_file_name}!")
                 continue
