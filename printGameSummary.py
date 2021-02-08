@@ -189,7 +189,7 @@ class PrintGameSummary:
 
 def process_args():
     arg_parser = ArgumentParser(description="Print boxscore(s) from retrosheet data for the specified team and date range",
-                                prog='main_chadwick_py3.py')
+                                prog='main_game_summary.py')
     # required arguments
     required = arg_parser.add_argument_group('REQUIRED')
     required.add_argument('-t', '--team', required=True, help="Retrosheet 3-character id for a team, e.g. TOR, LAN")
@@ -279,48 +279,41 @@ def main_game_summary(args:list):
                     raise FileNotFoundError(F"CANNOT find {season} event file {pfile}!")
                 pgs.event_files[basename] = pfile
 
-        for item in pgs.rosters.values():
-            lgr.debug(item)
-        for item in pgs.event_files.values():
-            lgr.debug(item)
+        if lgr.level <= logging.DEBUG:
+            for item in pgs.rosters.values(): lgr.debug(item)
+            for item in pgs.event_files.values(): lgr.debug(item)
 
-        start_id = year + start
-        end_id = year + end
-        lgr.info(F"start date = {start_id}; end date = {end_id}")
+        start_date = year + start
+        end_date = year + end
+        lgr.info(F"start date = {start_date}; end date = {end_date}")
 
         # get all the games for the requested team in the supplied date range
-        ptype = "file" if post else "team"
         for evteam in pgs.event_files:
-            lgr.debug(F"found events for {ptype} = {evteam}")
+            lgr.debug(F"found event file for {('file' if post else 'team')} = {evteam}")
             cwgames = chadwick.games( pgs.event_files[evteam] )
             for game in cwgames:
                 game_id = game.contents.game_id.decode(encoding='UTF-8')
                 game_date = game_id[3:11]
-                lgr.info(F" Found game id = {game_id}; date = {game_date}")
+                lgr.debug(F" Found game id = {game_id}; date = {game_date}")
 
-                if end_id >= game_date >= start_id:
+                if end_date >= game_date >= start_date:
                     proc_game = chadwick.process_game(game)
                     g_results = tuple(proc_game)
-                    home_team = g_results[0]['HOME_TEAM_ID']
-                    away_team = g_results[0]['AWAY_TEAM_ID']
-                    if home_team == team or away_team == team:
+                    if team == g_results[0]['HOME_TEAM_ID'] or team == g_results[0]['AWAY_TEAM_ID']:
                         lgr.warning(F" Found game id = {game_id}")
                         pgs.games[game_id[3:]] = game
 
         lgr.warning(F" Found {len(pgs.games)} {season} games")
         # sort the games and print out the information
         for key in sorted( pgs.games.keys() ):
-            game = pgs.games[key]
-            box = MyCwlib.box_create(game)
-            events = chadwick.process_game(game)
+            kgame = pgs.games[key]
+            box = MyCwlib.box_create(kgame)
+            events = chadwick.process_game(kgame)
             e_results = tuple(events)
+            visitor = pgs.rosters[ e_results[0]['AWAY_TEAM_ID'] ]
+            home = pgs.rosters[ e_results[0]['HOME_TEAM_ID'] ]
 
-            away_team = e_results[0]['AWAY_TEAM_ID']
-            visitor = pgs.rosters[away_team]
-            home_team = e_results[0]['HOME_TEAM_ID']
-            home = pgs.rosters[home_team]
-
-            pgs.print_summary(game, box, visitor, home)
+            pgs.print_summary(kgame, box, visitor, home)
 
     except Exception as ex:
         lgr.exception(F"Exception: {repr(ex)}")
