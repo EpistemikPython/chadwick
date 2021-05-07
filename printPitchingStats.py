@@ -82,12 +82,12 @@ class PrintPitchingStats:
     """print pitching stats for a player using Retrosheet data"""
     def __init__(self, logger:logging.Logger):
         self.lgr = logger
-        self.lgr.warning(F" Start {self.__class__.__name__}")
+        self.lgr.warning(F"Start {self.__class__.__name__}")
         self.event_files = dict()
         self.game_ids = list()
         self.num_years = 0
 
-    def print_stats(self, persid:str, name:str, season:str, yrstart:int, yrend:int):
+    def print_stats(self, pit_id:str, name:str, season:str, yrstart:int, yrend:int):
         self.lgr.info(F"print {season} stats for years {yrstart}->{yrend}")
         stats = copy.copy(STATS_DICT)
         totals = copy.copy(STATS_DICT)
@@ -97,27 +97,28 @@ class PrintPitchingStats:
 
         # get all the games in the supplied date range
         for year in range(yrstart, yrend+1):
-            self.lgr.info(F"collect stats for year: {year}")
+            str_year = str(year)
+            self.lgr.info(F"collect stats for year: {str_year}")
             self.game_ids.clear()
-            if str(year) not in self.event_files.keys():
+            if str_year not in self.event_files.keys():
                 continue
-            for efile in self.event_files[str(year)]:
+            for efile in self.event_files[str_year]:
                 self.lgr.debug(F"found events for team/year = {get_basename(efile)}")
                 cwgames = chadwick.games(efile)
                 for game in cwgames:
                     game_id = game.contents.game_id.decode(encoding = 'UTF-8')
                     game_date = game_id[3:11]
-                    self.lgr.debug(F" Found game id = {game_id}; date = {game_date}")
+                    self.lgr.debug(F"Found game id = {game_id}; date = {game_date}")
 
                     box = MyCwlib.box_create(game)
-                    self.collect_stats(box, persid, stats, str(year), game_id)
+                    self.collect_stats(box, pit_id, stats, str_year, game_id)
 
-            self.lgr.info(F"found {len(self.game_ids)} games with {persid} stats.")
+            self.lgr.info(F"found {len(self.game_ids)} games with {pit_id} stats.")
 
             if year < 1974:
-                self.check_boxscores(persid, str(year), stats)
+                self.check_boxscores(pit_id, str_year, stats)
 
-            self.print_stat_line(str(year), stats)
+            self.print_stat_line(str_year, stats)
             clear(stats, totals)
 
         if yrstart != yrend:
@@ -197,14 +198,11 @@ class PrintPitchingStats:
                             if brow[1] == "pline" and brow[2] == pit_id:
                                 self.lgr.info(F"found player {pit_id} in game {current_id}")
                                 # parse stats
-                                # Syntax: stat, pline, id, side, seq, ip*3, no-out, bfp, h,  2b,
-                                #         3b,   hr,    r,  er,   bb,  ibb,  k,      hbp, wp, balk, sh, sf
+                                # order: stat, pline, id, side, seq, ip*3, no-out, bfp, h, 2b, 3b, hr, r, er, bb, ibb, k, hbp,
+                                #        wp, balk, sh, sf
                                 stats[hdrs[GM]]  += 1
                                 if brow[4] == '1':
                                     stats[hdrs[GS]] += 1
-                                # stats[hdrs[GF]]  += pitching.gf
-                                # stats[hdrs[CG]]  += pitching.cg
-                                # stats[hdrs[SHO]] += pitching.sho
                                 stats[hdrs[OUT]] += int(brow[5])
                                 stats[hdrs[HIT]] += int(brow[8])
                                 stats[hdrs[RUN]] += int(brow[12])
