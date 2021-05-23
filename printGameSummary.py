@@ -3,7 +3,7 @@
 #
 # printGameSummary.py -- print a summary of baseball game or games using Retrosheet data
 #
-# The information used here was obtained free of charge from and is copyrighted by Retrosheet.
+# The data processed by this software was obtained free of charge from and is copyrighted by Retrosheet.
 # Interested parties may contact Retrosheet at 20 Sunset Rd., Newark, DE 19711.
 #
 # Original C code Copyright (c) 2002-2021
@@ -14,11 +14,10 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-02-06"
+__updated__ = "2021-05-23"
 
 import csv
 import glob
-import sys
 from argparse import ArgumentParser
 from cwLibWrappers import chadwick, cwlib
 from cwTools import *
@@ -26,7 +25,7 @@ from cwTools import *
 
 class PrintGameSummary:
     """print MLB game summaries using Retrosheet data"""
-    def __init__(self, cwt:MyChadwickTools, logger:logging.Logger):
+    def __init__(self, cwt:MyChadwickTools, logger:lg.Logger):
         self.cwtools = cwt
         self.lgr = logger
         self.lgr.warning(F" Start {self.__class__.__name__}")
@@ -199,7 +198,7 @@ def process_args():
     arg_parser.add_argument('-e', '--end', help="end date to print out games (mmdd)")
     arg_parser.add_argument('-p', '--post', action="store_true", help="find postseason games instead of regular season")
     arg_parser.add_argument('-q', '--quiet', action="store_true", help="NO logging")
-    arg_parser.add_argument('-l', '--level', default=DEFAULT_LOG_LEVEL, help="set LEVEL of logging output")
+    arg_parser.add_argument('-l', '--level', default=lg.getLevelName(DEFAULT_CONSOLE_LEVEL), help="set LEVEL of logging output")
 
     return arg_parser
 
@@ -208,10 +207,10 @@ def process_input_parameters(argl:list):
     argp = process_args().parse_args(argl)
     loglevel = QUIET_LOG_LEVEL if argp.quiet else argp.level.strip().upper()
     try:
-        getattr( logging, loglevel )
+        getattr( lg, loglevel )
     except AttributeError as ae:
         print(F"Problem with log level: {repr(ae)}")
-        loglevel = DEFAULT_LOG_LEVEL
+        loglevel = DEFAULT_CONSOLE_LEVEL
 
     team = argp.team.strip().upper() if argp.team.isalpha() and len(argp.team.strip()) >= 3 else "TOR"
     if len(team) > 3:
@@ -233,7 +232,7 @@ def process_input_parameters(argl:list):
 def main_game_summary(args:list):
     team, year, start, end, post, loglevel = process_input_parameters(args)
 
-    lgr = get_logger(__file__, loglevel)
+    lgr = get_simple_logger(__file__, level = loglevel)
     lgr.debug(F"loglevel = {repr(loglevel)}")
     lgr.warning(F" team = {team}; year = {year}; start = {start}; end = {end}")
 
@@ -255,7 +254,7 @@ def main_game_summary(args:list):
                 pgs.rosters[rteam] = MyCwlib.roster_create(rteam, int(year), row[1]+"L", row[2], row[3])
                 roster_file = ROSTERS_FOLDER + rteam + year + ".ROS"
                 lgr.debug(F"roster file name = {roster_file}")
-                if not os.path.exists(roster_file):
+                if not osp.exists(roster_file):
                     raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
                 roster_fptr = chadwick.fopen( bytes(roster_file, "utf8") )
                 # fill the rosters
@@ -265,7 +264,7 @@ def main_game_summary(args:list):
                 if not post:
                     # find and store the event file paths
                     rfile = REGULAR_SEASON_FOLDER + year + rteam + ".EV" + row[1]
-                    if not os.path.exists(rfile):
+                    if not osp.exists(rfile):
                         raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
                     pgs.event_files[rteam] = rfile
 
@@ -273,13 +272,13 @@ def main_game_summary(args:list):
             # find and store the event file paths for the requested years
             post_files = POST_SEASON_FOLDER + str(year) + "*"
             for pfile in glob.glob(post_files):
-                basename = get_basename(pfile)
+                basename = get_base_filename(pfile)
                 lgr.debug(F"{season} base file name = {basename}")
-                if not os.path.exists(pfile):
+                if not osp.exists(pfile):
                     raise FileNotFoundError(F"CANNOT find {season} event file {pfile}!")
                 pgs.event_files[basename] = pfile
 
-        if lgr.level <= logging.DEBUG:
+        if lgr.level <= lg.DEBUG:
             for item in pgs.rosters.values(): lgr.debug(item)
             for item in pgs.event_files.values(): lgr.debug(item)
 
@@ -300,7 +299,7 @@ def main_game_summary(args:list):
                     proc_game = chadwick.process_game(game)
                     g_results = tuple(proc_game)
                     if team == g_results[0]['HOME_TEAM_ID'] or team == g_results[0]['AWAY_TEAM_ID']:
-                        lgr.warning(F" Found game id = {game_id}")
+                        lgr.info(F" Found game id = {game_id}")
                         pgs.games[game_id[3:]] = game
 
         lgr.warning(F" Found {len(pgs.games)} {season} games")
@@ -324,6 +323,6 @@ if __name__ == "__main__":
         print(F"\tRun Start time = {run_ts}")
     main_game_summary(sys.argv[1:])
     if '-q' not in sys.argv:
-        run_time = (dt.now() - start_dt).total_seconds()
+        run_time = (dt.now() - now_dt).total_seconds()
         print(F"\tRunning time = {(run_time // 60)} minutes, {(run_time % 60):2.3} seconds")
     exit()

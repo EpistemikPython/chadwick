@@ -11,24 +11,14 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-02-07"
+__updated__ = "2021-05-23"
 
-import logging
-import os
-from datetime import datetime as dt
+import sys
 from ctypes import c_char_p, pointer
 from cwLibWrappers import MyCwlib
-
-FXN_DATE_STR:str  = "%Y-%m-%d"
-FXN_TIME_STR:str  = "%H:%M:%S:%f"
-FILE_DATE_STR:str = "D%Y-%m-%d"
-FILE_TIME_STR:str = "T%Hh%M"
-FILE_DATETIME_FORMAT = FILE_DATE_STR + FILE_TIME_STR
-RUN_DATETIME_FORMAT  = FXN_DATE_STR + '_' + FXN_TIME_STR
-
-start_dt:dt = dt.now()
-run_ts:str  = start_dt.strftime(RUN_DATETIME_FORMAT)
-file_ts:str = start_dt.strftime(FILE_DATETIME_FORMAT)
+sys.path.append("/newdata/dev/git/Python/utils")
+from mhsUtils import dt, run_ts, now_dt, lg, get_base_filename, osp
+from mhsLogging import get_simple_logger, DEFAULT_CONSOLE_LEVEL, QUIET_LOG_LEVEL
 
 POSITIONS = ["", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"]
 MARKERS = ['*', '+', '#']
@@ -41,42 +31,6 @@ REGULAR_SEASON_FOLDER = RETROSHEET_FOLDER + "event/regular/"
 POST_SEASON_FOLDER = RETROSHEET_FOLDER + "event/post/"
 BOXSCORE_FOLDER = "/newdata/dev/Retrosheet/data/boxscores/"
 
-DEFAULT_LOG_LEVEL = "WARNING"
-QUIET_LOG_LEVEL = "CRITICAL"
-
-def get_basename(filename:str) ->str:
-    _, fname = os.path.split(filename)
-    basename, _ = os.path.splitext(fname)
-    return basename
-
-def get_logger(name:str, level:str, file_time:str=file_ts) -> logging.Logger:
-    _, fname = os.path.split(name)
-    basename, _ = os.path.splitext(fname)
-
-    lgr = logging.getLogger(basename)
-    # default for logger: all messages DEBUG or higher
-    lgr.setLevel(logging.DEBUG)
-
-    fh = logging.FileHandler("logs/" + basename + '_' + file_time + ".log")
-    # default for file handler: all messages DEBUG or higher
-    fh.setLevel(logging.DEBUG)
-
-    ch = logging.StreamHandler() # console handler
-    # log to console at the level requested on the command line
-    try:
-        ch.setLevel(level)
-    except ValueError:
-        ch.setLevel(DEFAULT_LOG_LEVEL)
-
-    # create formatter and add it to the handlers
-    formatter = logging.Formatter("%(levelname)s - %(asctime)s | %(funcName)s > %(message)s")
-    ch.setFormatter(formatter)
-    fh.setFormatter(formatter)
-
-    # add handlers to the logger
-    lgr.addHandler(ch)
-    lgr.addHandler(fh)
-    return lgr
 
 def c_char_p_to_str(lpcc:c_char_p, maxlen:int=20) -> str:
     """Convert a C-type char array to a python string:
@@ -100,13 +54,13 @@ def c_char_p_to_str(lpcc:c_char_p, maxlen:int=20) -> str:
 
 class MyChadwickTools:
     def __init__(self, logger):
-        self.lgr = logger
-        self.lgr.warning(F" Start {self.__class__.__name__}")
+        self._lgr = logger
+        self._lgr.warning(F" Start {self.__class__.__name__}")
         self.note_count = 0
 
     # void cwbox_print_timeofgame(CWGame * game)
     def print_time_of_game(self, p_game:pointer):
-        self.lgr.info("\n----------------------------------")
+        self._lgr.info("\n----------------------------------")
         tog = int(MyCwlib.game_info_lookup(p_game, b'timeofgame'))
         if tog and tog > 0:
             minutes = str(tog % 60)
@@ -115,12 +69,12 @@ class MyChadwickTools:
 
     # void cwbox_print_attendance(CWGame * game)
     def print_attendance(self, p_game:pointer):
-        self.lgr.info("\n----------------------------------")
+        self._lgr.info("\n----------------------------------")
         print(F"A -- {MyCwlib.game_info_lookup(p_game, b'attendance')}")
 
     # void cwbox_print_player(CWBoxPlayer *player, CWRoster *roster)
     def print_player( self, p_player:pointer, p_roster:pointer ):
-        self.lgr.info("\n----------------------------------")
+        self._lgr.info("\n----------------------------------")
 
         bio = None
         posstr = ""
@@ -133,7 +87,7 @@ class MyChadwickTools:
             name = c_char_p_to_str(bio.contents.last_name) + " " + c_char_p_to_str(bio.contents.first_name, 1)
         else:
             name = player.name
-        self.lgr.info(F"player name = {name}")
+        self._lgr.info(F"player name = {name}")
 
         if player.ph_inn > 0 and player.positions[0] != 11:
             posstr = "ph"
@@ -155,7 +109,7 @@ class MyChadwickTools:
             # When there are a lot of positions, can't do much sensibly...
             outstr = F"{name}, {POSITIONS[player.positions[0]]}..."
 
-        self.lgr.info(F"outstr = {outstr}")
+        self._lgr.info(F"outstr = {outstr}")
 
         batting = player.batting.contents
         print(F"{outstr:20}{batting.pa:3}{batting.ab:4}{batting.h:4}{batting.bb:4}{batting.so:4}{batting.r:3}", end = '')
@@ -165,7 +119,7 @@ class MyChadwickTools:
     # cwbox_print_player_apparatus(CWGame *game, CWBoxEvent *list, int index, char *label, CWRoster *visitors, CWRoster *home)
     def print_player_apparatus(self, p_events:pointer, index:int, label:str, p_vis:pointer, p_home:pointer):
         # Generic output for list of events (2B, 3B, WP, etc)
-        self.lgr.info("\n----------------------------------")
+        self._lgr.info("\n----------------------------------")
         if not p_events:
             return
         event = p_events.contents
@@ -191,7 +145,7 @@ class MyChadwickTools:
                 bio = MyCwlib.roster_player_find(p_home, event.players[index])
             if not bio:
                 name = event.players[index].decode('UTF8')
-                self.lgr.warning("bio NOT available!")
+                self._lgr.warning("bio NOT available!")
             if comma:
                 print(", ", end = '')
             if count == 1:
@@ -221,7 +175,7 @@ class MyChadwickTools:
     # void cwbox_print_apparatus(CWGame * game, CWBoxscore * boxscore, CWRoster * visitors, CWRoster * home)
     def print_apparatus( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
         # Output the apparatus (list of events and other miscellaneous game information)
-        self.lgr.info("\n----------------------------------")
+        self._lgr.info("\n----------------------------------")
 
         boxscore = p_box.contents
         self.print_player_apparatus(boxscore.err_list, 0, "E", p_vis, p_home)
@@ -244,31 +198,31 @@ class MyChadwickTools:
 
     # void cwbox_print_pitcher(CWGame * game, CWBoxPitcher * pitcher, CWRoster * roster, int * note_count)
     def print_pitcher( self, p_game:pointer, p_pitcher:pointer, p_roster:pointer ):
-        self.lgr.info("\n----------------------------------")
+        self._lgr.info("\n----------------------------------")
         # Output one pitcher's pitching line. The parameter 'note_count' keeps track of how many apparatus notes
         # have been emitted (for pitchers who do not record an out in an inning)
         bio = None
         roster = p_roster.contents
         pitcher = p_pitcher.contents
         player_id = pitcher.player_id.decode("UTF8")
-        self.lgr.info(F"player id = {player_id}")
-        self.lgr.debug(F"type(player id) = {type(player_id)}")
+        self._lgr.info(F"player id = {player_id}")
+        self._lgr.debug(F"type(player id) = {type(player_id)}")
         if roster:
             bio = MyCwlib.roster_player_find(p_roster, bytes(pitcher.player_id))
         if bio:
             name = c_char_p_to_str(bio.contents.last_name) + " " + c_char_p_to_str(bio.contents.first_name, 1)
         else:
             name = pitcher.name
-        self.lgr.info(F"pitcher name = {name}")
+        self._lgr.info(F"pitcher name = {name}")
 
         game = p_game.contents
         wp = MyCwlib.game_info_lookup(game, b"wp")
-        self.lgr.info(F"winning pitcher id = {wp}")
-        self.lgr.debug(F"type(wp) = {type(wp)}")
+        self._lgr.info(F"winning pitcher id = {wp}")
+        self._lgr.debug(F"type(wp) = {type(wp)}")
         lp = MyCwlib.game_info_lookup(game, b"lp")
-        self.lgr.info(F"losing pitcher id = {lp}")
+        self._lgr.info(F"losing pitcher id = {lp}")
         save = MyCwlib.game_info_lookup(game, b"save")
-        self.lgr.info(F"save pitcher id = {save}")
+        self._lgr.info(F"save pitcher id = {save}")
         if wp and wp == player_id:
             name += " (W)"
         elif lp and lp == player_id:
@@ -293,7 +247,7 @@ class MyChadwickTools:
 
     # void cwbox_print_double_play(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_double_plays(self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer):
-        self.lgr.info("\n----------------------------------")
+        self._lgr.info("\n----------------------------------")
         dp = p_box.contents.dp
         if dp[0] == 0 and dp[1] == 0:
             return
@@ -311,7 +265,7 @@ class MyChadwickTools:
 
     # void cwbox_print_triple_play(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_triple_plays(self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer):
-        self.lgr.info("\n----------------------------------")
+        self._lgr.info("\n----------------------------------")
         tp = p_box.contents.tp
         if tp[0] == 0 and tp[1] == 0:
             return
@@ -329,7 +283,7 @@ class MyChadwickTools:
 
     # void cwbox_print_hbp_apparatus(CWGame *game, CWBoxEvent *list,  CWRoster *visitors, CWRoster *home)
     def print_hbp(self, p_event:pointer, p_vis:pointer, p_home:pointer):
-        self.lgr.info("\n----------------------------------")
+        self._lgr.info("\n----------------------------------")
         if not p_event:
             return
         event = p_event
@@ -359,10 +313,10 @@ class MyChadwickTools:
                 if not pitcher: pitcher = MyCwlib.roster_player_find(p_home, event.contents.players[1])
             if not batter:
                 batter_name = event.contents.players[0].decode('UTF8')
-                self.lgr.warning("roster NOT available for batter!")
+                self._lgr.warning("roster NOT available for batter!")
             if not pitcher:
                 pitcher_name = event.contents.players[1].decode('UTF8')
-                self.lgr.warning("roster NOT available for pitcher!")
+                self._lgr.warning("roster NOT available for pitcher!")
             if comma: print(", ", end = '')
 
             if pitcher:
@@ -387,7 +341,7 @@ class MyChadwickTools:
 
     # void cwbox_print_lob(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_lob(self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer):
-        self.lgr.info("\n----------------------------------")
+        self._lgr.info("\n----------------------------------")
         lob = p_box.contents.lob
         if lob[0] == 0 and lob[1] == 0:
             return
@@ -398,7 +352,7 @@ class MyChadwickTools:
     # void cwbox_print_pitcher_apparatus(CWBoxscore * boxscore)
     def print_pitcher_apparatus(self, p_box:pointer):
         # Output the pitching apparatus (list of pitchers who did not record an out in an inning)
-        self.lgr.info("\n----------------------------------")
+        self._lgr.info("\n----------------------------------")
 
         count = 0
         for t in range(2):

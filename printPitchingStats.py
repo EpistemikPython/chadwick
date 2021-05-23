@@ -3,7 +3,7 @@
 #
 # printPitchingStats.py -- print pitching stats for a player using Retrosheet data
 #
-# The information used here was obtained free of charge from and is copyrighted by Retrosheet.
+# The data processed by this software was obtained free of charge from and is copyrighted by Retrosheet.
 # Interested parties may contact Retrosheet at 20 Sunset Rd., Newark, DE 19711.
 #
 # Original C code Copyright (c) 2002-2021
@@ -14,12 +14,11 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-25"
-__updated__ = "2021-02-07"
+__updated__ = "2021-05-23"
 
 import copy
 import csv
 import glob
-import sys
 from argparse import ArgumentParser
 from cwLibWrappers import chadwick
 from cwTools import *
@@ -80,7 +79,7 @@ def print_hdr():
 
 class PrintPitchingStats:
     """print pitching stats for a player using Retrosheet data"""
-    def __init__(self, logger:logging.Logger):
+    def __init__(self, logger:lg.Logger):
         self.lgr = logger
         self.lgr.warning(F"Start {self.__class__.__name__}")
         self.event_files = dict()
@@ -103,7 +102,7 @@ class PrintPitchingStats:
             if str_year not in self.event_files.keys():
                 continue
             for efile in self.event_files[str_year]:
-                self.lgr.debug(F"found events for team/year = {get_basename(efile)}")
+                self.lgr.debug(F"found events for team/year = {get_base_filename(efile)}")
                 cwgames = chadwick.games(efile)
                 for game in cwgames:
                     game_id = game.contents.game_id.decode(encoding = 'UTF-8')
@@ -303,7 +302,7 @@ def process_args():
     arg_parser.add_argument('-e', '--end', type=int, help="end year to find stats (yyyy)")
     arg_parser.add_argument('-p', '--post', action="store_true", help="find postseason games instead of regular season")
     arg_parser.add_argument('-q', '--quiet', action="store_true", help="NO logging")
-    arg_parser.add_argument('-l', '--level', default=DEFAULT_LOG_LEVEL, help="set LEVEL of logging output")
+    arg_parser.add_argument('-l', '--level', default=lg.getLevelName(DEFAULT_CONSOLE_LEVEL), help="set LEVEL of logging output")
 
     return arg_parser
 
@@ -312,10 +311,10 @@ def process_input_parameters(argl:list):
     argp = process_args().parse_args(argl)
     loglevel = QUIET_LOG_LEVEL if argp.quiet else argp.level.strip().upper()
     try:
-        getattr( logging, loglevel )
+        getattr( lg, loglevel )
     except AttributeError as ae:
         print(F"Problem with log level: {repr(ae)}")
-        loglevel = DEFAULT_LOG_LEVEL
+        loglevel = DEFAULT_CONSOLE_LEVEL
 
     pitch_id = argp.pitcher_id.strip() if len(argp.pitcher_id) >= 8 and \
                argp.pitcher_id[:5].isalpha() and argp.pitcher_id[5:8].isdecimal() else "kersc001"
@@ -333,7 +332,7 @@ def process_input_parameters(argl:list):
 def main_pitching_stats(args:list):
     pers_id, start, end, post, loglevel = process_input_parameters(args)
 
-    lgr = get_logger(__file__, loglevel)
+    lgr = get_simple_logger(__file__, level = loglevel)
     lgr.debug(F"loglevel = {repr(loglevel)}")
     lgr.warning(F" id = {pers_id}; years = {start}->{end}")
 
@@ -349,7 +348,7 @@ def main_pitching_stats(args:list):
             # get the team files
             team_file_name = REGULAR_SEASON_FOLDER + "TEAM" + str(year)
             lgr.debug(F"team file name = {team_file_name}")
-            if not os.path.exists(team_file_name):
+            if not osp.exists(team_file_name):
                 lgr.exception(F"CANNOT find team file {team_file_name}!")
                 continue
             with open(team_file_name, newline = '') as team_csvfile:
@@ -361,7 +360,7 @@ def main_pitching_stats(args:list):
                     if need_name:
                         roster_file = ROSTERS_FOLDER + rteam + str(year) + ".ROS"
                         lgr.debug(F"roster file name = {roster_file}")
-                        if not os.path.exists(roster_file):
+                        if not osp.exists(roster_file):
                             raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
                         with open(roster_file, newline = '') as roster_csvfile:
                             ros_reader = csv.reader(roster_csvfile)
@@ -374,7 +373,7 @@ def main_pitching_stats(args:list):
                     if not post:
                         # find and store the event file paths for the requested years
                         rfile = REGULAR_SEASON_FOLDER + str(year) + rteam + ".EV" + trow[1]
-                        if not os.path.exists(rfile):
+                        if not osp.exists(rfile):
                             raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
                         year_events.append(rfile)
                         num_files += 1
@@ -384,7 +383,7 @@ def main_pitching_stats(args:list):
                 post_files = POST_SEASON_FOLDER + str(year) + "*"
                 for pfile in glob.glob(post_files):
                     lgr.debug(F"{season} file name = {pfile}")
-                    if not os.path.exists(pfile):
+                    if not osp.exists(pfile):
                         raise FileNotFoundError(F"CANNOT find {season} event file {pfile}!")
                     year_events.append(pfile)
                     num_files += 1
@@ -404,11 +403,10 @@ def main_pitching_stats(args:list):
 
 
 if __name__ == "__main__":
-    run_start_time = dt.now()
     if '-q' not in sys.argv:
-        print(F"Run Start time = {run_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+        print(F"Run Start time = {run_ts}")
     main_pitching_stats(sys.argv[1:])
     if '-q' not in sys.argv:
-        run_time = (dt.now() - run_start_time).total_seconds()
+        run_time = (dt.now() - now_dt).total_seconds()
         print(F" Running time = {(run_time // 60)} minutes, {(run_time % 60):2.3} seconds")
     exit()
