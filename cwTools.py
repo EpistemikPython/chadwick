@@ -25,11 +25,11 @@ MARKERS = ['*', '+', '#']
 TOTAL = "Total"
 STD_HDR_SIZE = 4
 
-RETROSHEET_FOLDER = "/home/marksa/dev/git/fork/ChadwickBureau/retrosheet/"
-ROSTERS_FOLDER = RETROSHEET_FOLDER + "rosters/"
+RETROSHEET_FOLDER     = "/newdata/dev/git/fork/ChadwickBureau/retrosheet/"
+ROSTERS_FOLDER        = RETROSHEET_FOLDER + "rosters/"
 REGULAR_SEASON_FOLDER = RETROSHEET_FOLDER + "event/regular/"
-POST_SEASON_FOLDER = RETROSHEET_FOLDER + "event/post/"
-BOXSCORE_FOLDER = "/newdata/dev/Retrosheet/data/boxscores/"
+POST_SEASON_FOLDER    = RETROSHEET_FOLDER + "event/post/"
+BOXSCORE_FOLDER       = "/newdata/dev/Retrosheet/data/boxscores/"
 
 
 def c_char_p_to_str(lpcc:c_char_p, maxlen:int=20) -> str:
@@ -144,18 +144,18 @@ class MyChadwickTools:
             if not bio and p_home:
                 bio = MyCwlib.roster_player_find(p_home, event.players[index])
             if not bio:
-                name = event.players[index].decode('UTF8')
+                name = event.players[index].decode("UTF8")
                 self._lgr.warning("bio NOT available!")
             if comma:
                 print(", ", end = '')
             if count == 1:
                 if bio:
-                    print(F"{c_char_p_to_str(bio.contents.last_name)} "
-                          F"{c_char_p_to_str(bio.contents.first_name[0],1)}", end = '')
+                    print( c_char_p_to_str(bio.contents.last_name) + " "
+                           + c_char_p_to_str(bio.contents.first_name[0],1), end = '' )
                 elif name:
-                    print(F"{name}", end = '')
+                    print(name, end = '')
                 else:
-                    print(F"{event.players[index].decode('UTF8')}", end = '')
+                    print(event.players[index].decode("UTF8"), end = '')
             else:
                 if bio:
                     print(F"{c_char_p_to_str(bio.contents.last_name)} "
@@ -312,10 +312,10 @@ class MyChadwickTools:
                 if not batter: batter = MyCwlib.roster_player_find(p_home, event.contents.players[0])
                 if not pitcher: pitcher = MyCwlib.roster_player_find(p_home, event.contents.players[1])
             if not batter:
-                batter_name = event.contents.players[0].decode('UTF8')
+                batter_name = event.contents.players[0].decode("UTF8")
                 self._lgr.warning("roster NOT available for batter!")
             if not pitcher:
-                pitcher_name = event.contents.players[1].decode('UTF8')
+                pitcher_name = event.contents.players[1].decode("UTF8")
                 self._lgr.warning("roster NOT available for pitcher!")
             if comma: print(", ", end = '')
 
