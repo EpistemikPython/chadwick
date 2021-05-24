@@ -309,7 +309,7 @@ def process_args():
 
 def process_input_parameters(argl:list):
     argp = process_args().parse_args(argl)
-    loglevel = QUIET_LOG_LEVEL if argp.quiet else argp.level.strip().upper()
+    loglevel = lg.getLevelName(QUIET_LOG_LEVEL) if argp.quiet else argp.level.strip().upper()
     try:
         getattr( lg, loglevel )
     except AttributeError as ae:
@@ -404,7 +404,7 @@ def main_pitching_stats(args:list):
 
 if __name__ == "__main__":
     if '-q' not in sys.argv:
-        print(F"Run Start time = {run_ts}")
+        print(F"Start time = {run_ts}")
     main_pitching_stats(sys.argv[1:])
     if '-q' not in sys.argv:
         run_time = (dt.now() - now_dt).total_seconds()
