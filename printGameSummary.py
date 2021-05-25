@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-05-23"
+__updated__ = "2021-05-25"
 
 import csv
 import glob
@@ -151,19 +151,19 @@ class PrintGameSummary:
                                 # ?? using this function WITHOUT the python wrapper works fine here
                                 players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
                 else:
-                    print(F"{''.ljust(45)}", end = '')
+                    print(''.ljust(45), end = '')
                 print("     ", end = ''),
-            print("")
+            print('')
 
         print(F"{''.ljust(20)} --  --  --  --  -- -- -- {''.ljust(24)} --  --  --  --  -- -- --")
         print(F"{''.ljust(20)}{pa[0]:3}{ab[0]:4}{h[0]:4}{bb[0]:4}{so[0]:4}{r[0]:3}", end = '')
         print(F"{bi[0]:3} " if bi[0] >= 0 else "    ", end = '')
         print(F"{''.ljust(24)}{pa[1]:3}{ab[1]:4}{h[1]:4}{bb[1]:4}{so[1]:4}{r[1]:3}", end = '')
         print(F"{bi[1]:3} " if bi[1] >= 0 else "    ")
-        print("")
+        print('')
 
         self.print_linescore(p_game, p_box, p_vis, p_home)
-        print("")
+        print('')
 
         for t in range(2):
             pitcher = MyCwlib.box_get_starting_pitcher(p_box, t)
@@ -175,13 +175,13 @@ class PrintGameSummary:
                 self.cwtools.print_pitcher( p_game, pitcher, (p_vis if (t == 0) else p_home) )
                 pitcher = pitcher.contents.next
             if t == 0:
-                print("")
+                print('')
 
         self.cwtools.print_pitcher_apparatus(p_box)
-        print("")
+        print('')
 
         self.cwtools.print_apparatus(p_game, p_box, p_vis, p_home)
-        print("")
+        print('')
 
 # END class PrintGameSummary
 
@@ -277,10 +277,6 @@ def main_game_summary(args:list):
                 if not osp.exists(pfile):
                     raise FileNotFoundError(F"CANNOT find {season} event file {pfile}!")
                 pgs.event_files[basename] = pfile
-
-        if lgr.level <= lg.DEBUG:
-            for item in pgs.rosters.values(): lgr.debug(item)
-            for item in pgs.event_files.values(): lgr.debug(item)
 
         start_date = year + start
         end_date = year + end
