@@ -11,7 +11,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-05-23"
+__updated__ = "2021-05-25"
 
 import sys
 from ctypes import c_char_p, pointer
@@ -31,7 +31,6 @@ REGULAR_SEASON_FOLDER = RETROSHEET_FOLDER + "event/regular/"
 POST_SEASON_FOLDER    = RETROSHEET_FOLDER + "event/post/"
 BOXSCORE_FOLDER       = "/newdata/dev/Retrosheet/data/boxscores/"
 
-
 def c_char_p_to_str(lpcc:c_char_p, maxlen:int=20) -> str:
     """Convert a C-type char array to a python string:
        convert and concatenate the values until hit the null terminator or the char limit"""
@@ -50,6 +49,24 @@ def c_char_p_to_str(lpcc:c_char_p, maxlen:int=20) -> str:
         ct += 1
         if ct == limit:
             return result.strip()
+
+def sum_and_clear(stats:dict, totals:dict):
+    for item in stats.keys():
+        totals[item] += stats[item]
+        stats[item] = 0
+
+def print_hdr_uls(space:int, hdr:list):
+    print(''.rjust(space), end = '')
+    for spx in range( len(hdr) ):
+        print("---".rjust(space), end = '')
+    print(" ")
+
+def print_header(space:int, hdr:list):
+    print(''.rjust(space), end = '')
+    for item in hdr:
+        print(item.rjust(space), end = '')
+    print(" ")
+    print_hdr_uls(space, hdr)
 
 
 class MyChadwickTools:
