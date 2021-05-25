@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-05-23"
+__updated__ = "2021-05-25"
 
 import copy
 import csv
@@ -52,24 +52,6 @@ STATS_DICT = { "G ":0, "PA":0, "AB":0, "R ":0, "H ":0, "2B":0, "3B":0, "HR":0, "
                "TB":0, "BA":0, "OBP":0, "SLG":0, "OPS":0 }
 BATTING_HDRS = list( STATS_DICT.keys() )
 
-def clear(stats:dict, totals:dict):
-    for item in stats.keys():
-        totals[item] += stats[item]
-        stats[item] = 0
-
-def print_ul():
-    print(F"{''}".rjust(STD_BAT_SPACE), end = '')
-    for sp in range( len(BATTING_HDRS) ):
-        print(F"{'---'}".rjust(STD_BAT_SPACE), end = '')
-    print(" ")
-
-def print_hdr():
-    print(F"{''}".rjust(STD_BAT_SPACE), end = '')
-    for key in BATTING_HDRS:
-        print(F"{key}".rjust(STD_BAT_SPACE), end = '')
-    print(" ")
-    print_ul()
-
 
 class PrintBattingStats:
     """print batting stats for a player using Retrosheet data"""
@@ -86,7 +68,7 @@ class PrintBattingStats:
         totals = copy.copy(STATS_DICT)
 
         print(F"\n\t{name.upper()} {season} Stats:")
-        print_hdr()
+        print_header(STD_BAT_SPACE, BATTING_HDRS)
 
         # get all the games in the supplied date range
         for year in range(yrstart, yrend+1):
@@ -111,11 +93,11 @@ class PrintBattingStats:
                 self.check_boxscores(playid, str(year), stats)
 
             self.print_stat_line(str(year), stats)
-            clear(stats, totals)
+            sum_and_clear(stats, totals)
 
         if yrstart != yrend:
-            print_ul()
-            print_hdr()
+            print_hdr_uls(STD_BAT_SPACE, BATTING_HDRS)
+            print_header(STD_BAT_SPACE, BATTING_HDRS)
             self.print_stat_line("Total", totals)
             self.print_ave_line(totals)
         print("")
@@ -217,14 +199,14 @@ class PrintBattingStats:
 
     def print_stat_line(self, year:str, bat:dict):
         self.lgr.info(F"print stat line for year = {year}")
-        print(F"{year.ljust(STD_BAT_SPACE)}", end = '')
+        print(year.ljust(STD_BAT_SPACE), end = '')
         hdrs = BATTING_HDRS
 
         # print all the counting stats from the retrosheet data
         for key in hdrs:
             if key == BATTING_HDRS[LAST]:
                 break
-            print(F"{bat[key]}".rjust(STD_BAT_SPACE) if bat[key] >= 0 else F"{''}".rjust(STD_BAT_SPACE), end = '')
+            print(F"{bat[key]}".rjust(STD_BAT_SPACE) if bat[key] >= 0 else ''.rjust(STD_BAT_SPACE), end = '')
         # add Total Bases
         tb = bat[ hdrs[HIT] ] + bat[ hdrs[B2] ] + bat[ hdrs[B3] ]*2 + bat[ hdrs[HR] ]*3
         print(F"{tb}".rjust(STD_BAT_SPACE) if tb >= 0 else F"{''}".rjust(STD_BAT_SPACE), end = '')
@@ -237,25 +219,25 @@ class PrintBattingStats:
         ba = bat[ hdrs[HIT] ] / bat[ hdrs[AB] ] * 10000 if bat[ hdrs[AB] ] > 0 else 0.0
         pba = str(int(ba))[:STD_HDR_SIZE] if ba > 0.0 else 'x' if games == 0 else "00"
         if pba != 'x' and len(pba) < STD_HDR_SIZE: pba = '0' + pba
-        print(F"{pba}".rjust(STD_BAT_SPACE), end = '')
+        print(pba.rjust(STD_BAT_SPACE), end = '')
 
         obp_num = bat[ hdrs[HIT] ] + bat[ hdrs[BB] ] + bat[ hdrs[HBP] ]
         obp_denom = bat[ hdrs[AB] ] + bat[ hdrs[BB] ] + bat[ hdrs[HBP] ] + bat[ hdrs[SF] ]
         obp = obp_num / obp_denom * 10000 if obp_denom > 0 else 0.0
         pobp = str(int(obp))[:STD_HDR_SIZE] if obp > 0.0 else 'x' if games == 0 else "00"
         if pobp != 'x' and len(pobp) < STD_HDR_SIZE: pobp = '0' + pobp
-        print(F"{pobp}".rjust(STD_BAT_SPACE), end = '')
+        print(pobp.rjust(STD_BAT_SPACE), end = '')
 
         slg = tb / bat[ hdrs[AB] ] * 10000 if bat[ hdrs[AB] ] > 0 else 0.0
         pslg = str(int(slg))[:STD_HDR_SIZE] if slg > 0.0 else 'x' if games == 0 else "00"
         if pslg != 'x' and len(pslg) < STD_HDR_SIZE: pslg = '0' + pslg
-        print(F"{pslg}".rjust(STD_BAT_SPACE), end = '')
+        print(pslg.rjust(STD_BAT_SPACE), end = '')
 
         ops = int( obp + slg )
         pops = str(ops)[:(STD_HDR_SIZE+1)] if ops > 10000 else str(ops)[:STD_HDR_SIZE] \
                 if ops > 0 else 'x' if games == 0 else "00"
         if pops != 'x' and len(pops) < STD_HDR_SIZE: pops = '0' + pops
-        print( F"{pops}".rjust(STD_BAT_SPACE) )
+        print( pops.rjust(STD_BAT_SPACE) )
 
     def print_ave_line(self, totals: dict):
         # NOTE: ave for each 150 games ?
@@ -266,7 +248,7 @@ class PrintBattingStats:
         for key in BATTING_HDRS:
             if key == BATTING_HDRS[LAST]:
                 break
-            print(F"{averages[key]}".rjust(STD_BAT_SPACE), end = '')
+            print(str(averages[key]).rjust(STD_BAT_SPACE), end = '')
         # add Total Bases average
         tb = totals[BATTING_HDRS[HIT]] + totals[BATTING_HDRS[B2]] + totals[BATTING_HDRS[B3]] * 2 + totals[BATTING_HDRS[HR]] * 3
         tbave = round(tb / self.num_years)

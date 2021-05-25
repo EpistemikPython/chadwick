@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-25"
-__updated__ = "2021-05-23"
+__updated__ = "2021-05-25"
 
 import copy
 import csv
@@ -58,24 +58,6 @@ STATS_DICT = { "G ":0, "GS":0, "GF":0, "CG":0, "SHO":0, "IP":0, "H ":0, "R ":0, 
                "TP":0, "TS":0, "ERA":0, "WHIP":0, "H9":0, "HR9":0, "SO9":0, "BB9":0, "SO/BB":0, "WL%":0 }
 PITCHING_HDRS = list( STATS_DICT.keys() )
 
-def clear(stats:dict, totals:dict):
-    for item in stats.keys():
-        totals[item] += stats[item]
-        stats[item] = 0
-
-def print_ul():
-    print(F"{''}".rjust(STD_PITCH_SPACE), end = '')
-    for sp in range( len(PITCHING_HDRS) ):
-        print(F"{'---'}".rjust(STD_PITCH_SPACE), end = '')
-    print(" ")
-
-def print_hdr():
-    print(F"{''}".rjust(STD_PITCH_SPACE), end = '')
-    for key in PITCHING_HDRS:
-        print(F"{key}".rjust(STD_PITCH_SPACE), end = '')
-    print(" ")
-    print_ul()
-
 
 class PrintPitchingStats:
     """print pitching stats for a player using Retrosheet data"""
@@ -92,7 +74,7 @@ class PrintPitchingStats:
         totals = copy.copy(STATS_DICT)
 
         print(F"\t{name.upper()} {season} Stats:")
-        print_hdr()
+        print_header(STD_PITCH_SPACE, PITCHING_HDRS)
 
         # get all the games in the supplied date range
         for year in range(yrstart, yrend+1):
@@ -118,11 +100,11 @@ class PrintPitchingStats:
                 self.check_boxscores(pit_id, str_year, stats)
 
             self.print_stat_line(str_year, stats)
-            clear(stats, totals)
+            sum_and_clear(stats, totals)
 
         if yrstart != yrend:
-            print_ul()
-            print_hdr()
+            print_hdr_uls(STD_PITCH_SPACE, PITCHING_HDRS)
+            print_header(STD_PITCH_SPACE, PITCHING_HDRS)
             self.print_stat_line(TOTAL, totals)
             self.print_ave_line(totals)
         print("")
@@ -224,7 +206,7 @@ class PrintPitchingStats:
         self.lgr.info(F"print stat line for year = {year}")
         hdrs = PITCHING_HDRS
         diff = 0
-        print(F"{year.ljust(STD_PITCH_SPACE)}", end = '')
+        print(year.ljust(STD_PITCH_SPACE), end = '')
 
         # print all the counting stats from the retrosheet data
         for key in hdrs:
