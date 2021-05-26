@@ -212,11 +212,19 @@ def process_input_parameters(argl:list):
         print(F"Problem with log level: {repr(ae)}")
         loglevel = DEFAULT_CONSOLE_LEVEL
 
-    team = argp.team.strip().upper() if argp.team.isalpha() and len(argp.team.strip()) >= 3 else "TOR"
+    if argp.team.isalnum() and len(argp.team.strip()) >= 3:
+        team = argp.team.strip().upper()
+    else:
+        print(F">>> IMPROPER team name '{argp.team}'! Using default value = TOR.\n")
+        team = "TOR"
     if len(team) > 3:
         team = team[:3]
 
-    year = str(argp.year) if 1871 <= argp.year <= 2020 else "1993"
+    if 1871 <= argp.year <= 2020:
+        year = str(argp.year)
+    else:
+        print(F">>> INVALID year '{argp.year}'! Using default year = 1993.\n")
+        year = "1993"
 
     if argp.start:
         start = argp.start.strip() if argp.start.isdecimal() and len(argp.start) == 4 else "0701"
@@ -232,7 +240,8 @@ def process_input_parameters(argl:list):
 def main_game_summary(args:list):
     team, year, start, end, post, loglevel = process_input_parameters(args)
 
-    lgr = get_simple_logger(__file__, level = loglevel)
+    lg_ctrl = MhsLogger(__file__, con_level = loglevel, folder = "logs/games")
+    lgr = lg_ctrl.get_logger()
     lgr.debug(F"loglevel = {repr(loglevel)}")
     lgr.warning(F" team = {team}; year = {year}; start = {start}; end = {end}")
 
