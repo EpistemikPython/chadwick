@@ -18,7 +18,7 @@ from ctypes import c_char_p, pointer
 from cwLibWrappers import MyCwlib
 sys.path.append("/newdata/dev/git/Python/utils")
 from mhsUtils import dt, run_ts, now_dt, lg, get_base_filename, osp
-from mhsLogging import get_simple_logger, DEFAULT_CONSOLE_LEVEL, QUIET_LOG_LEVEL
+from mhsLogging import get_simple_logger, MhsLogger, DEFAULT_CONSOLE_LEVEL, QUIET_LOG_LEVEL
 
 POSITIONS = ["", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"]
 MARKERS = ['*', '+', '#']
@@ -31,24 +31,22 @@ REGULAR_SEASON_FOLDER = RETROSHEET_FOLDER + "event/regular/"
 POST_SEASON_FOLDER    = RETROSHEET_FOLDER + "event/post/"
 BOXSCORE_FOLDER       = "/newdata/dev/Retrosheet/data/boxscores/"
 
-def c_char_p_to_str(lpcc:c_char_p, maxlen:int=20) -> str:
+def c_char_p_to_str(lpcc:c_char_p, maxlen:int=32) -> str:
     """Convert a C-type char array to a python string:
        convert and concatenate the values until hit the null terminator or the char limit"""
     limit = 1 if maxlen <= 1 else min(maxlen, 256)
     bytez = lpcc[:limit]
-    result = ""
+    result = ''
     if len(bytez) == 0:
         return result
     if len(bytez) == 1:
         return chr(bytez[0])
     ct = 0
     for b in bytez:
-        if b == 0:
+        if b == 0 or ct == limit:
             return result.strip()
         result += chr(b)
         ct += 1
-        if ct == limit:
-            return result.strip()
 
 def sum_and_clear(stats:dict, totals:dict):
     for item in stats.keys():
@@ -94,7 +92,7 @@ class MyChadwickTools:
         self._lgr.info("\n----------------------------------")
 
         bio = None
-        posstr = ""
+        posstr = ''
 
         player = p_player.contents
         if p_roster:
@@ -113,7 +111,7 @@ class MyChadwickTools:
 
         for pos in range( player.num_positions ):
             if len(posstr) > 0:
-                posstr += "-"
+                posstr += '-'
             posstr += POSITIONS[player.positions[pos]]
 
         if len(posstr) <= 10:
@@ -145,7 +143,7 @@ class MyChadwickTools:
         while event:
             search_event = event
             bio = None
-            name = ""
+            name = ''
             count = 0
             if event.mark > 0:
                 event = event.next.contents if event.next else None
@@ -182,7 +180,7 @@ class MyChadwickTools:
                 else:
                     print(F"{event.players[index].decode('UTF8')} {count}", end = '')
             comma = 1
-        print("")
+        print('')
         # NOTE: reset events.mark >> NEEDED in Python?
         event = p_events.contents
         while event:
@@ -309,7 +307,7 @@ class MyChadwickTools:
         while event:
             search_event = event
             batter = pitcher = None
-            batter_name = pitcher_name = ""
+            batter_name = pitcher_name = ''
             count = 0
             if event.contents.mark > 0:
                 event = event.contents.next
@@ -347,9 +345,9 @@ class MyChadwickTools:
             else:
                 print(F"({batter_name if batter_name else c_char_p_to_str(event.contents.players[0])})", end = '')
             if count != 1:
-                print(" %d", count)
+                print(F" {count}")
             comma = 1
-        print("")
+        print('')
         # NOTE: reset events.mark >> NEEDED in Python?
         event = p_event
         while event:
