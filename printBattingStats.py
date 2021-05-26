@@ -14,12 +14,11 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-05-25"
+__updated__ = "2021-05-26"
 
 import copy
 import csv
 import glob
-from argparse import ArgumentParser
 from cwLibWrappers import chadwick, cwlib
 from cwTools import *
 
@@ -300,7 +299,9 @@ def process_input_parameters(argl:list):
 def main_batting_stats(args:list):
     playid, start, end, post, loglevel = process_input_parameters(args)
 
-    lgr = get_simple_logger(__file__, level = loglevel)
+    # lgr = get_simple_logger(__file__, level = loglevel)
+    lg_ctrl = MhsLogger(__file__, con_level = loglevel, folder = "logs/batting")
+    lgr = lg_ctrl.get_logger()
     lgr.debug(F"loglevel = {repr(loglevel)}")
     lgr.warning(F" id = {playid}; years = {start}->{end}")
 

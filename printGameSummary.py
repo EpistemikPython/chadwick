@@ -18,7 +18,6 @@ __updated__ = "2021-05-26"
 
 import csv
 import glob
-from argparse import ArgumentParser
 from cwLibWrappers import chadwick, cwlib
 from cwTools import *
 
