@@ -17,9 +17,7 @@ __created__ = "2021-01-21"
 __updated__ = "2021-05-26"
 
 import copy
-import csv
-import glob
-from cwLibWrappers import chadwick, cwlib
+from cwLibWrappers import cwlib
 from cwTools import *
 
 STD_BAT_SPACE = 6
@@ -52,14 +50,10 @@ STATS_DICT = { "G ":0, "PA":0, "AB":0, "R ":0, "H ":0, "2B":0, "3B":0, "HR":0, "
 BATTING_HDRS = list( STATS_DICT.keys() )
 
 
-class PrintBattingStats:
+class PrintBattingStats(PrintStats):
     """print batting stats for a player using Retrosheet data"""
     def __init__(self, logger:lg.Logger):
-        self.lgr = logger
-        self.lgr.warning(F" Start {self.__class__.__name__}")
-        self.event_files = dict()
-        self.game_ids = list()
-        self.num_years = 0
+        super().__init__(logger)
 
     def print_stats(self, playid:str, name:str, season:str, yrstart:int, yrend:int):
         self.lgr.info(F"print {season} stats for years {yrstart}->{yrend}")
