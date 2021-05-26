@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-05-25"
+__updated__ = "2021-05-26"
 
 import csv
 import glob
@@ -25,8 +25,8 @@ from cwTools import *
 
 class PrintGameSummary:
     """print MLB game summaries using Retrosheet data"""
-    def __init__(self, cwt:MyChadwickTools, logger:lg.Logger):
-        self.cwtools = cwt
+    def __init__(self, gst:GameSummaryTools, logger:lg.Logger):
+        self.cwtools = gst
         self.lgr = logger
         self.lgr.warning(F" Start {self.__class__.__name__}")
         self.rosters = {}
@@ -245,8 +245,8 @@ def main_game_summary(args:list):
     lgr.debug(F"loglevel = {repr(loglevel)}")
     lgr.warning(F" team = {team}; year = {year}; start = {start}; end = {end}")
 
-    cwtools = MyChadwickTools(lgr)
-    pgs = PrintGameSummary(cwtools, lgr)
+    gsum_tools = GameSummaryTools(lgr)
+    pgs = PrintGameSummary(gsum_tools, lgr)
     season = "post-season" if post else "regular season"
     try:
         # get the team files

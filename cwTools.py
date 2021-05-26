@@ -11,7 +11,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-05-25"
+__updated__ = "2021-05-26"
 
 import sys
 from ctypes import c_char_p, pointer
@@ -67,7 +67,7 @@ def print_header(space:int, hdr:list):
     print_hdr_uls(space, hdr)
 
 
-class MyChadwickTools:
+class GameSummaryTools:
     def __init__(self, logger):
         self._lgr = logger
         self._lgr.warning(F" Start {self.__class__.__name__}")
@@ -390,4 +390,4 @@ class MyChadwickTools:
                     count += 1
                 pitcher = pitcher.contents.next
 
-# END class MyChadwickTools
+# END class GameSummaryTools
