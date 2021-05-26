@@ -17,9 +17,6 @@ __created__ = "2021-01-25"
 __updated__ = "2021-05-26"
 
 import copy
-import csv
-import glob
-from cwLibWrappers import chadwick
 from cwTools import *
 
 STD_PITCH_SPACE = 6
@@ -58,59 +55,58 @@ STATS_DICT = { "G ":0, "GS":0, "GF":0, "CG":0, "SHO":0, "IP":0, "H ":0, "R ":0, 
 PITCHING_HDRS = list( STATS_DICT.keys() )
 
 
-class PrintPitchingStats:
+class PrintPitchingStats(PrintStats):
     """print pitching stats for a player using Retrosheet data"""
     def __init__(self, logger:lg.Logger):
-        self.lgr = logger
-        self.lgr.warning(F"Start {self.__class__.__name__}")
-        self.event_files = dict()
-        self.game_ids = list()
-        self.num_years = 0
+        super().__init__(logger)
+        self.stats = copy.copy(STATS_DICT)
+        self.totals = copy.copy(STATS_DICT)
+        self.std_space = STD_PITCH_SPACE
+        self.hdrs = PITCHING_HDRS
 
-    def print_stats(self, pit_id:str, name:str, season:str, yrstart:int, yrend:int):
-        self.lgr.info(F"print {season} stats for years {yrstart}->{yrend}")
-        stats = copy.copy(STATS_DICT)
-        totals = copy.copy(STATS_DICT)
-
-        print(F"\t{name.upper()} {season} Stats:")
-        print_header(STD_PITCH_SPACE, PITCHING_HDRS)
-
-        # get all the games in the supplied date range
-        for year in range(yrstart, yrend+1):
-            str_year = str(year)
-            self.lgr.info(F"collect stats for year: {str_year}")
-            self.game_ids.clear()
-            if str_year not in self.event_files.keys():
-                continue
-            for efile in self.event_files[str_year]:
-                self.lgr.debug(F"found events for team/year = {get_base_filename(efile)}")
-                cwgames = chadwick.games(efile)
-                for game in cwgames:
-                    game_id = game.contents.game_id.decode(encoding = 'UTF-8')
-                    game_date = game_id[3:11]
-                    self.lgr.debug(F"Found game id = {game_id}; date = {game_date}")
-
-                    box = MyCwlib.box_create(game)
-                    self.collect_stats(box, pit_id, stats, str_year, game_id)
-
-            self.lgr.info(F"found {len(self.game_ids)} games with {pit_id} stats.")
-
-            if year < 1974:
-                self.check_boxscores(pit_id, str_year, stats)
-
-            self.print_stat_line(str_year, stats)
-            sum_and_clear(stats, totals)
-
-        if yrstart != yrend:
-            print_hdr_uls(STD_PITCH_SPACE, PITCHING_HDRS)
-            print_header(STD_PITCH_SPACE, PITCHING_HDRS)
-            self.print_stat_line(TOTAL, totals)
-            self.print_ave_line(totals)
-        print("")
+    # def print_stats(self, pit_id:str, name:str, season:str, yrstart:int, yrend:int):
+    #     self.lgr.info(F"print {season} stats for years {yrstart}->{yrend}")
+    #     stats = copy.copy(STATS_DICT)
+    #     totals = copy.copy(STATS_DICT)
+    #
+    #     print(F"\t{name.upper()} {season} Stats:")
+    #     print_header(STD_PITCH_SPACE, PITCHING_HDRS)
+    #
+    #     # get all the games in the supplied date range
+    #     for year in range(yrstart, yrend+1):
+    #         str_year = str(year)
+    #         self.lgr.info(F"collect stats for year: {str_year}")
+    #         self.game_ids.clear()
+    #         if str_year not in self.event_files.keys():
+    #             continue
+    #         for efile in self.event_files[str_year]:
+    #             self.lgr.debug(F"found events for team/year = {get_base_filename(efile)}")
+    #             cwgames = chadwick.games(efile)
+    #             for game in cwgames:
+    #                 game_id = game.contents.game_id.decode(encoding = 'UTF-8')
+    #                 game_date = game_id[3:11]
+    #                 self.lgr.debug(F"Found game id = {game_id}; date = {game_date}")
+    #
+    #                 box = MyCwlib.box_create(game)
+    #                 self.collect_stats(box, pit_id, stats, str_year, game_id)
+    #
+    #         self.lgr.info(F"found {len(self.game_ids)} games with {pit_id} stats.")
+    #
+    #         if year < 1974:
+    #             self.check_boxscores(pit_id, str_year, stats)
+    #
+    #         self.print_stat_line(str_year, stats)
+    #         sum_and_clear(stats, totals)
+    #
+    #     if yrstart != yrend:
+    #         print_hdr_uls(STD_PITCH_SPACE, PITCHING_HDRS)
+    #         print_header(STD_PITCH_SPACE, PITCHING_HDRS)
+    #         self.print_stat_line(TOTAL, totals)
+    #         self.print_ave_line(totals)
+    #     print("")
 
     def collect_stats(self, p_box:pointer, pit_id:str, stats:dict, year:str, game_id:str):
         self.lgr.debug(F"player = {pit_id} for year = {year}")
-        hdrs = PITCHING_HDRS
         for t in range(2):
             p_pitcher = MyCwlib.box_get_starting_pitcher(p_box, t)
             while p_pitcher:
@@ -121,36 +117,35 @@ class PrintPitchingStats:
                     self.lgr.info(F"found pitcher = {pit_id} in game = {game_id}")
                     self.game_ids.append(game_id)
                     pitching = pitcher.pitching.contents
-                    stats[hdrs[GM]]  += pitching.g
-                    stats[hdrs[GS]]  += pitching.gs
-                    stats[hdrs[GF]]  += pitching.gf
-                    stats[hdrs[CG]]  += pitching.cg
-                    stats[hdrs[SHO]] += pitching.sho
-                    stats[hdrs[OUT]] += pitching.outs
-                    stats[hdrs[HIT]] += pitching.h
-                    stats[hdrs[RUN]] += pitching.r
-                    stats[hdrs[ER]]  += pitching.er
-                    stats[hdrs[HR]]  += pitching.hr
-                    stats[hdrs[BB]]  += pitching.bb
-                    stats[hdrs[IBB]] += pitching.ibb
-                    stats[hdrs[SO]]  += pitching.so
-                    stats[hdrs[BF]]  += pitching.bf
-                    stats[hdrs[WIN]] += pitching.w
-                    stats[hdrs[LOS]] += pitching.l
-                    stats[hdrs[SAV]] += pitching.sv
-                    stats[hdrs[GB]]  += pitching.gb
-                    stats[hdrs[FB]]  += pitching.fb
-                    stats[hdrs[WP]]  += pitching.wp
-                    stats[hdrs[HBP]] += pitching.hb
-                    stats[hdrs[BK]]  += pitching.bk
-                    stats[hdrs[PIT]] += pitching.pitches
-                    stats[hdrs[STR]] += pitching.strikes
+                    stats[self.hdrs[GM]]  += pitching.g
+                    stats[self.hdrs[GS]]  += pitching.gs
+                    stats[self.hdrs[GF]]  += pitching.gf
+                    stats[self.hdrs[CG]]  += pitching.cg
+                    stats[self.hdrs[SHO]] += pitching.sho
+                    stats[self.hdrs[OUT]] += pitching.outs
+                    stats[self.hdrs[HIT]] += pitching.h
+                    stats[self.hdrs[RUN]] += pitching.r
+                    stats[self.hdrs[ER]]  += pitching.er
+                    stats[self.hdrs[HR]]  += pitching.hr
+                    stats[self.hdrs[BB]]  += pitching.bb
+                    stats[self.hdrs[IBB]] += pitching.ibb
+                    stats[self.hdrs[SO]]  += pitching.so
+                    stats[self.hdrs[BF]]  += pitching.bf
+                    stats[self.hdrs[WIN]] += pitching.w
+                    stats[self.hdrs[LOS]] += pitching.l
+                    stats[self.hdrs[SAV]] += pitching.sv
+                    stats[self.hdrs[GB]]  += pitching.gb
+                    stats[self.hdrs[FB]]  += pitching.fb
+                    stats[self.hdrs[WP]]  += pitching.wp
+                    stats[self.hdrs[HBP]] += pitching.hb
+                    stats[self.hdrs[BK]]  += pitching.bk
+                    stats[self.hdrs[PIT]] += pitching.pitches
+                    stats[self.hdrs[STR]] += pitching.strikes
                 p_pitcher = p_pitcher.contents.next
 
     def check_boxscores(self, pit_id:str, year:str, stats:dict):
         """check the Retrosheet boxscore files for stats missing from the event files"""
         self.lgr.debug(F"check boxscore files for year = {year}")
-        hdrs = PITCHING_HDRS
         boxscore_files = [BOXSCORE_FOLDER + year + ".EBN", BOXSCORE_FOLDER + year + ".EBA"]
         for bfile in boxscore_files:
             try:
@@ -170,81 +165,80 @@ class PrintPitchingStats:
                         elif find_player:
                             if brow[0] == "info":
                                 if brow[1] == "wp" and brow[2] == pit_id:
-                                    stats[hdrs[WIN]] += 1
+                                    stats[self.hdrs[WIN]] += 1
                                 if brow[1] == "lp" and brow[2] == pit_id:
-                                    stats[hdrs[LOS]] += 1
+                                    stats[self.hdrs[LOS]] += 1
                                 if brow[1] == "save" and brow[2] and brow[2] == pit_id:
-                                    stats[hdrs[SAV]] += 1
+                                    stats[self.hdrs[SAV]] += 1
                             if brow[1] == "pline" and brow[2] == pit_id:
                                 self.lgr.info(F"found player {pit_id} in game {current_id}")
                                 # parse stats
                                 # order: stat, pline, id, side, seq, ip*3, no-out, bfp, h, 2b, 3b, hr, r, er, bb, ibb, k, hbp,
                                 #        wp, balk, sh, sf
-                                stats[hdrs[GM]]  += 1
+                                stats[self.hdrs[GM]]  += 1
                                 if brow[4] == '1':
-                                    stats[hdrs[GS]] += 1
-                                stats[hdrs[OUT]] += int(brow[5])
-                                stats[hdrs[HIT]] += int(brow[8])
-                                stats[hdrs[RUN]] += int(brow[12])
-                                stats[hdrs[ER]]  += int(brow[13])
-                                stats[hdrs[HR]]  += int(brow[11])
-                                stats[hdrs[BB]]  += int(brow[14])
-                                stats[hdrs[IBB]] += int(brow[15])
-                                stats[hdrs[SO]]  += int(brow[16])
-                                stats[hdrs[BF]]  += ( int(brow[5]) + int(brow[6]) ) # approximation
-                                stats[hdrs[WP]]  += int(brow[18])
-                                stats[hdrs[HBP]] += int(brow[17])
-                                stats[hdrs[BK]]  += int(brow[19])
-                                stats[hdrs[PIT]] += int(brow[7])
-                                stats[hdrs[STR]] += int(brow[16])*3 # approximation
+                                    stats[self.hdrs[GS]] += 1
+                                stats[self.hdrs[OUT]] += int(brow[5])
+                                stats[self.hdrs[HIT]] += int(brow[8])
+                                stats[self.hdrs[RUN]] += int(brow[12])
+                                stats[self.hdrs[ER]]  += int(brow[13])
+                                stats[self.hdrs[HR]]  += int(brow[11])
+                                stats[self.hdrs[BB]]  += int(brow[14])
+                                stats[self.hdrs[IBB]] += int(brow[15])
+                                stats[self.hdrs[SO]]  += int(brow[16])
+                                stats[self.hdrs[BF]]  += ( int(brow[5]) + int(brow[6]) ) # approximation
+                                stats[self.hdrs[WP]]  += int(brow[18])
+                                stats[self.hdrs[HBP]] += int(brow[17])
+                                stats[self.hdrs[BK]]  += int(brow[19])
+                                stats[self.hdrs[PIT]] += int(brow[7])
+                                stats[self.hdrs[STR]] += int(brow[16])*3 # approximation
                                 find_player = False
             except FileNotFoundError:
                 continue
 
     def print_stat_line(self, year:str, pitch:dict):
         self.lgr.info(F"print stat line for year = {year}")
-        hdrs = PITCHING_HDRS
         diff = 0
-        print(year.ljust(STD_PITCH_SPACE), end = '')
+        print(year.ljust(self.std_space), end = '')
 
         # print all the counting stats from the retrosheet data
-        for key in hdrs:
-            if key == hdrs[LAST]:
+        for key in self.hdrs:
+            if key == self.hdrs[LAST]:
                 break
             # adjust from outs to innings pitched
-            if key == hdrs[OUT]:
+            if key == self.hdrs[OUT]:
                 diff = 1 # have to adjust for the extra space required to print IP
                 outs = pitch[key]
-                print(F"{outs // 3}.{outs % 3}".rjust(STD_PITCH_SPACE+diff), end = '')
+                print(F"{outs // 3}.{outs % 3}".rjust(self.std_space+diff), end = '')
                 diff = -1
             else:
-                print(F"{pitch[key]}".rjust(STD_PITCH_SPACE+diff) if pitch[key] >= 0 else F"{''}".rjust(STD_PITCH_SPACE+diff),
+                print(F"{pitch[key]}".rjust(self.std_space+diff) if pitch[key] >= 0 else F"{''}".rjust(self.std_space+diff),
                       end = '')
                 diff = 0
 
         # calculate and print the rate stats: ERA, WHIP, H9, HR9, SO9, BB9, SO/BB, WL%
-        games = pitch[ hdrs[GM] ]
+        games = pitch[ self.hdrs[GM] ]
         # keep track of ACTIVE years
         if year != TOTAL and games > 0: self.num_years += 1
 
         # NOTE: add TS% ?
-        era = round( (pitch[hdrs[ER]] * 27 / pitch[hdrs[OUT]]), 2 ) if pitch[hdrs[OUT]] > 0 else 0
-        print(F"{era}".rjust(STD_PITCH_SPACE), end = '')
-        whip = (pitch[hdrs[BB]] + pitch[hdrs[HIT]]) / pitch[hdrs[OUT]] * 3 if pitch[hdrs[OUT]] > 0 else 0
+        era = round( (pitch[self.hdrs[ER]] * 27 / pitch[self.hdrs[OUT]]), 2 ) if pitch[self.hdrs[OUT]] > 0 else 0
+        print(F"{era}".rjust(self.std_space), end = '')
+        whip = (pitch[self.hdrs[BB]] + pitch[self.hdrs[HIT]]) / pitch[self.hdrs[OUT]] * 3 if pitch[self.hdrs[OUT]] > 0 else 0
         pwhip = round(whip,3)
-        print(F"{pwhip}".rjust(STD_PITCH_SPACE), end = '')
-        h9 = round( (pitch[hdrs[HIT]] * 27 / pitch[hdrs[OUT]]), 2 ) if pitch[hdrs[OUT]] > 0 else 0
-        print(F"{h9}".rjust(STD_PITCH_SPACE), end = '')
-        hr9 = round( (pitch[hdrs[HR]] * 27 / pitch[hdrs[OUT]]), 2 ) if pitch[hdrs[OUT]] > 0 else 0
-        print(F"{hr9}".rjust(STD_PITCH_SPACE), end = '')
-        so9 = round( (pitch[hdrs[SO]] * 27 / pitch[hdrs[OUT]]), 2 ) if pitch[hdrs[OUT]] > 0 else 0
-        print(F"{so9}".rjust(STD_PITCH_SPACE), end = '')
-        bb9 = round( (pitch[hdrs[BB]] * 27 / pitch[hdrs[OUT]]), 2 ) if pitch[hdrs[OUT]] > 0 else 0
-        print(F"{bb9}".rjust(STD_PITCH_SPACE), end = '')
-        sobb = round( (pitch[hdrs[SO]] / pitch[hdrs[BB]]), 2 ) if pitch[hdrs[BB]] > 0 else 0
-        print(F"{sobb}".rjust(STD_PITCH_SPACE), end = '')
-        wlp = round( (pitch[hdrs[WIN]] / (pitch[hdrs[WIN]] + pitch[hdrs[LOS]])), 3 ) * 100 if pitch[hdrs[WIN]] > 0 else 0
-        print(F"{wlp}"[:STD_HDR_SIZE].rjust(STD_PITCH_SPACE))
+        print(F"{pwhip}".rjust(self.std_space), end = '')
+        h9 = round( (pitch[self.hdrs[HIT]] * 27 / pitch[self.hdrs[OUT]]), 2 ) if pitch[self.hdrs[OUT]] > 0 else 0
+        print(F"{h9}".rjust(self.std_space), end = '')
+        hr9 = round( (pitch[self.hdrs[HR]] * 27 / pitch[self.hdrs[OUT]]), 2 ) if pitch[self.hdrs[OUT]] > 0 else 0
+        print(F"{hr9}".rjust(self.std_space), end = '')
+        so9 = round( (pitch[self.hdrs[SO]] * 27 / pitch[self.hdrs[OUT]]), 2 ) if pitch[self.hdrs[OUT]] > 0 else 0
+        print(F"{so9}".rjust(self.std_space), end = '')
+        bb9 = round( (pitch[self.hdrs[BB]] * 27 / pitch[self.hdrs[OUT]]), 2 ) if pitch[self.hdrs[OUT]] > 0 else 0
+        print(F"{bb9}".rjust(self.std_space), end = '')
+        sobb = round( (pitch[self.hdrs[SO]] / pitch[self.hdrs[BB]]), 2 ) if pitch[self.hdrs[BB]] > 0 else 0
+        print(F"{sobb}".rjust(self.std_space), end = '')
+        wlp = round( (pitch[self.hdrs[WIN]] / (pitch[self.hdrs[WIN]] + pitch[self.hdrs[LOS]])), 3 ) * 100 if pitch[self.hdrs[WIN]] > 0 else 0
+        print(F"{wlp}"[:STD_HDR_SIZE].rjust(self.std_space))
 
     def print_ave_line(self, totals: dict):
         diff = 0
@@ -256,62 +250,69 @@ class PrintPitchingStats:
                 averages[key] = (outs // 3) + (outs % 3) / 10
             else:
                 averages[key] = round(totals[key] / self.num_years)
-        print("Ave".ljust(STD_PITCH_SPACE), end = '')
+        print("Ave".ljust(self.std_space), end = '')
         for key in PITCHING_HDRS:
             if key == PITCHING_HDRS[LAST]:
                 print(F"\n\nprinted Average of each counting stat for {self.num_years} ACTIVE years")
                 break
             if key == PITCHING_HDRS[OUT]:
                 diff = -1  # have to adjust for the extra space required to print IP
-                print(F"{averages[key]}".rjust(STD_PITCH_SPACE + 1), end = '')
+                print(F"{averages[key]}".rjust(self.std_space + 1), end = '')
             else:
-                print(F"{averages[key]}".rjust(STD_PITCH_SPACE + diff), end = '')
+                print(F"{averages[key]}".rjust(self.std_space + diff), end = '')
                 diff = 0
 
 # END class PrintPitchingStats
 
 
-def process_args():
-    arg_parser = ArgumentParser(
-        description="Print pitching stats, totals & averages from Retrosheet data for the specified years",
-        prog='main_pitching_stats.py' )
-    # required arguments
-    required = arg_parser.add_argument_group('REQUIRED')
-    required.add_argument('-i', '--pitcher_id', required=True, help="Retrosheet id for a pitcher, e.g. spahw101, kersc001")
-    required.add_argument('-s', '--start', required=True, type=int, help="start year to find stats (yyyy)")
-    # optional arguments
-    arg_parser.add_argument('-e', '--end', type=int, help="end year to find stats (yyyy)")
-    arg_parser.add_argument('-p', '--post', action="store_true", help="find postseason games instead of regular season")
-    arg_parser.add_argument('-q', '--quiet', action="store_true", help="NO logging")
-    arg_parser.add_argument('-l', '--level', default=lg.getLevelName(DEFAULT_CONSOLE_LEVEL), help="set LEVEL of logging output")
+# def process_args():
+#     arg_parser = ArgumentParser(
+#         description="Print pitching stats, totals & averages from Retrosheet data for the specified years",
+#         prog='main_pitching_stats.py' )
+#     # required arguments
+#     required = arg_parser.add_argument_group('REQUIRED')
+#     required.add_argument('-i', '--pitcher_id', required=True, help="Retrosheet id for a pitcher, e.g. spahw101, kersc001")
+#     required.add_argument('-s', '--start', required=True, type=int, help="start year to find stats (yyyy)")
+#     # optional arguments
+#     arg_parser.add_argument('-e', '--end', type=int, help="end year to find stats (yyyy)")
+#     arg_parser.add_argument('-p', '--post', action="store_true", help="find postseason games instead of regular season")
+#     arg_parser.add_argument('-q', '--quiet', action="store_true", help="NO logging")
+#     arg_parser.add_argument('-l', '--level', default=lg.getLevelName(DEFAULT_CONSOLE_LEVEL), help="set LEVEL of logging output")
+#
+#     return arg_parser
+#
+#
+# def process_input_parameters(argl:list):
+#     argp = process_args().parse_args(argl)
+#     loglevel = lg.getLevelName(QUIET_LOG_LEVEL) if argp.quiet else argp.level.strip().upper()
+#     try:
+#         getattr( lg, loglevel )
+#     except AttributeError as ae:
+#         print(F"Problem with log level: {repr(ae)}")
+#         loglevel = DEFAULT_CONSOLE_LEVEL
+#
+#     pitch_id = argp.pitcher_id.strip() if len(argp.pitcher_id) >= 8 and \
+#                argp.pitcher_id[:5].isalpha() and argp.pitcher_id[5:8].isdecimal() else "kersc001"
+#     if len(pitch_id) > 8:
+#         pitch_id = pitch_id[:8]
+#
+#     start = argp.start if 1871 <= argp.start <= 2020 else 2014
+#
+#     end = argp.end if argp.end and 1871 <= argp.end <= 2020 else start
+#     if end < start: end = start
+#
+#     return pitch_id, start, end, argp.post, loglevel
 
-    return arg_parser
 
-
-def process_input_parameters(argl:list):
-    argp = process_args().parse_args(argl)
-    loglevel = lg.getLevelName(QUIET_LOG_LEVEL) if argp.quiet else argp.level.strip().upper()
-    try:
-        getattr( lg, loglevel )
-    except AttributeError as ae:
-        print(F"Problem with log level: {repr(ae)}")
-        loglevel = DEFAULT_CONSOLE_LEVEL
-
-    pitch_id = argp.pitcher_id.strip() if len(argp.pitcher_id) >= 8 and \
-               argp.pitcher_id[:5].isalpha() and argp.pitcher_id[5:8].isdecimal() else "kersc001"
-    if len(pitch_id) > 8:
-        pitch_id = pitch_id[:8]
-
-    start = argp.start if 1871 <= argp.start <= 2020 else 2014
-
-    end = argp.end if argp.end and 1871 <= argp.end <= 2020 else start
-    if end < start: end = start
-
-    return pitch_id, start, end, argp.post, loglevel
-
+DEFAULT_PITCH_ID = "kersc001"
+DEFAULT_PITCH_YR = 2014
+PROGRAM_DESC = "Print pitching stats, totals & averages from Retrosheet data for the specified years."
+PROGRAM_NAME = "printPitchingStats.py"
+ID_HELP_DESC = "Retrosheet id for a pitcher, e.g. spahw101, kersc001"
 
 def main_pitching_stats(args:list):
-    pers_id, start, end, post, loglevel = process_input_parameters(args)
+    pers_id, start, end, post, loglevel = process_bp_input(args, DEFAULT_PITCH_ID, DEFAULT_PITCH_YR,
+                                                           PROGRAM_DESC, PROGRAM_NAME, ID_HELP_DESC)
 
     # lgr = get_simple_logger(__file__, level = loglevel)
     lg_ctrl = MhsLogger(__file__, con_level = loglevel, folder = "logs/pitching")
@@ -321,68 +322,66 @@ def main_pitching_stats(args:list):
 
     pitch_stats = PrintPitchingStats(lgr)
     season = "post-season" if post else "regular season"
-    need_name = True
-    fam_name = pers_id
-    giv_name = ""
-    num_files = 0
-    try:
-        for year in range(start, end+1):
-            year_events = list()
-            # get the team files
-            team_file_name = REGULAR_SEASON_FOLDER + "TEAM" + str(year)
-            lgr.debug(F"team file name = {team_file_name}")
-            if not osp.exists(team_file_name):
-                lgr.exception(F"CANNOT find team file {team_file_name}!")
-                continue
-            with open(team_file_name, newline = '') as team_csvfile:
-                team_reader = csv.reader(team_csvfile)
-                for trow in team_reader:
-                    rteam = trow[0]
-                    lgr.debug(F"Found team {rteam}")
-                    # search rosters for the player's full name
-                    if need_name:
-                        roster_file = ROSTERS_FOLDER + rteam + str(year) + ".ROS"
-                        lgr.debug(F"roster file name = {roster_file}")
-                        if not osp.exists(roster_file):
-                            raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
-                        with open(roster_file, newline = '') as roster_csvfile:
-                            ros_reader = csv.reader(roster_csvfile)
-                            for rrow in ros_reader:
-                                if pers_id == rrow[0]:
-                                    fam_name = rrow[1]
-                                    giv_name = rrow[2]
-                                    need_name = False
-                                    break
-                    if not post:
-                        # find and store the event file paths for the requested years
-                        rfile = REGULAR_SEASON_FOLDER + str(year) + rteam + ".EV" + trow[1]
-                        if not osp.exists(rfile):
-                            raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
-                        year_events.append(rfile)
-                        num_files += 1
+    giv_name, fam_name, num_files = get_events(pitch_stats, post, pers_id, start, end, lgr)
+    # need_name = True
+    # fam_name = pers_id
+    # giv_name = ""
+    # num_files = 0
+    # try:
+    #     for year in range(start, end+1):
+    #         year_events = list()
+    #         # get the team files
+    #         team_file_name = REGULAR_SEASON_FOLDER + "TEAM" + str(year)
+    #         lgr.debug(F"team file name = {team_file_name}")
+    #         if not osp.exists(team_file_name):
+    #             lgr.exception(F"CANNOT find team file {team_file_name}!")
+    #             continue
+    #         with open(team_file_name, newline = '') as team_csvfile:
+    #             team_reader = csv.reader(team_csvfile)
+    #             for trow in team_reader:
+    #                 rteam = trow[0]
+    #                 lgr.debug(F"Found team {rteam}")
+    #                 # search rosters for the player's full name
+    #                 if need_name:
+    #                     roster_file = ROSTERS_FOLDER + rteam + str(year) + ".ROS"
+    #                     lgr.debug(F"roster file name = {roster_file}")
+    #                     if not osp.exists(roster_file):
+    #                         raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
+    #                     with open(roster_file, newline = '') as roster_csvfile:
+    #                         ros_reader = csv.reader(roster_csvfile)
+    #                         for rrow in ros_reader:
+    #                             if pers_id == rrow[0]:
+    #                                 fam_name = rrow[1]
+    #                                 giv_name = rrow[2]
+    #                                 need_name = False
+    #                                 break
+    #                 if not post:
+    #                     # find and store the event file paths for the requested years
+    #                     rfile = REGULAR_SEASON_FOLDER + str(year) + rteam + ".EV" + trow[1]
+    #                     if not osp.exists(rfile):
+    #                         raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
+    #                     year_events.append(rfile)
+    #                     num_files += 1
+    #
+    #         if post:
+    #             # find and store the event file paths for the requested years
+    #             post_files = POST_SEASON_FOLDER + str(year) + "*"
+    #             for pfile in glob.glob(post_files):
+    #                 lgr.debug(F"{season} file name = {pfile}")
+    #                 if not osp.exists(pfile):
+    #                     raise FileNotFoundError(F"CANNOT find {season} event file {pfile}!")
+    #                 year_events.append(pfile)
+    #                 num_files += 1
+    #
+    #         pitch_stats.event_files[str(year)] = year_events
 
-            if post:
-                # find and store the event file paths for the requested years
-                post_files = POST_SEASON_FOLDER + str(year) + "*"
-                for pfile in glob.glob(post_files):
-                    lgr.debug(F"{season} file name = {pfile}")
-                    if not osp.exists(pfile):
-                        raise FileNotFoundError(F"CANNOT find {season} event file {pfile}!")
-                    year_events.append(pfile)
-                    num_files += 1
+    name = F"{giv_name} {fam_name}"
+    lgr.warning(F"name = {name}")
+    lgr.warning(F"found {num_files} {season} event files over {len(pitch_stats.event_files)} years.")
+    for item in pitch_stats.event_files:
+        lgr.debug(item)
 
-            pitch_stats.event_files[str(year)] = year_events
-
-        name = F"{giv_name} {fam_name}"
-        lgr.warning(F"name = {name}")
-        lgr.warning(F"found {num_files} {season} event files over {len(pitch_stats.event_files)} years.")
-        for item in pitch_stats.event_files:
-            lgr.debug(item)
-
-        pitch_stats.print_stats(pers_id, name, season, start, end)
-
-    except Exception as ex:
-        lgr.exception(F"Exception: {repr(ex)}")
+    pitch_stats.print_stats(pers_id, name, season, start, end)
 
 
 if __name__ == "__main__":
