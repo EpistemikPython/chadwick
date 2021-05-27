@@ -22,7 +22,7 @@ from cwTools import *
 
 class PrintGameSummary:
     """print MLB game summaries using Retrosheet data"""
-    def __init__(self, gst:GameSummaryTools, logger:lg.Logger):
+    def __init__(self, gst:GameSummary, logger:lg.Logger):
         self.cwtools = gst
         self.lgr = logger
         self.lgr.warning(F" Start {self.__class__.__name__}")
@@ -242,7 +242,7 @@ def main_game_summary(args:list):
     lgr.debug(F"loglevel = {repr(loglevel)}")
     lgr.warning(F" team = {team}; year = {year}; start = {start}; end = {end}")
 
-    gsum_tools = GameSummaryTools(lgr)
+    gsum_tools = GameSummary(lgr)
     pgs = PrintGameSummary(gsum_tools, lgr)
     season = "post-season" if post else "regular season"
     try:

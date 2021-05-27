@@ -11,7 +11,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-05-26"
+__updated__ = "2021-05-27"
 
 import csv
 import glob
@@ -72,7 +72,7 @@ def print_header(space:int, hdr:list):
 
 
 class PrintStats(ABC):
-    """print stats for a player using Retrosheet data"""
+    """print batting or pitching stats for a specified player using Retrosheet data"""
     def __init__(self, logger:lg.Logger):
         self.lgr = logger
         self.lgr.warning(F"Start {self.__class__.__name__}")
@@ -139,6 +139,7 @@ class PrintStats(ABC):
 
 
 def get_events(stats:PrintStats, post:bool, pers_id:str, start:int, end:int, lgr:lg.Logger) -> (str,str):
+    """get the required event files for batching and pitching stats"""
     season = "post-season" if post else "regular season"
     need_name = True
     fam_name = pers_id
@@ -199,6 +200,7 @@ def get_events(stats:PrintStats, post:bool, pers_id:str, start:int, end:int, lgr
 
 
 def process_bp_args(desc:str, exe:str, id_help:str):
+    """use ArgumentParser to specify command line arguments for batching and pitching stats"""
     arg_parser = ArgumentParser(description = desc, prog = exe)
     # required arguments
     required = arg_parser.add_argument_group('REQUIRED')
@@ -214,6 +216,7 @@ def process_bp_args(desc:str, exe:str, id_help:str):
 
 
 def process_bp_input(argl:list, default_id:str, default_yr:int, desc:str, prog:str, id_help:str):
+    """process command line input for batching and pitching stats"""
     argp = process_bp_args(desc, prog, id_help).parse_args(argl)
     loglevel = lg.getLevelName(QUIET_LOG_LEVEL) if argp.quiet else argp.level.strip().upper()
     try:
@@ -247,7 +250,8 @@ def process_bp_input(argl:list, default_id:str, default_yr:int, desc:str, prog:s
     return playid, start, end, argp.post, loglevel
 
 
-class GameSummaryTools:
+class GameSummary:
+    """common functions for printing game summaries"""
     def __init__(self, logger):
         self._lgr = logger
         self._lgr.warning(F" Start {self.__class__.__name__}")
@@ -570,4 +574,4 @@ class GameSummaryTools:
                     count += 1
                 pitcher = pitcher.contents.next
 
-# END class GameSummaryTools
+# END class GameSummary
