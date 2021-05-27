@@ -1,7 +1,10 @@
 ##############################################################################################################################
 # coding=utf-8
 #
-# cwTools.py -- Chadwick baseball tools coded in Python3
+# cwTools.py -- my Chadwick baseball tools coded in Python3
+#
+# The data processed by this software was obtained free of charge from and is copyrighted by Retrosheet.
+# Interested parties may contact Retrosheet at 20 Sunset Rd., Newark, DE 19711.
 #
 # Original C code Copyright (c) 2002-2021
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
@@ -21,8 +24,8 @@ from argparse import ArgumentParser
 from ctypes import c_char_p, pointer
 from cwLibWrappers import MyCwlib, chadwick
 sys.path.append("/newdata/dev/git/Python/utils")
-from mhsUtils import dt, run_ts, now_dt, lg, get_base_filename, osp
-from mhsLogging import MhsLogger, DEFAULT_CONSOLE_LEVEL, QUIET_LOG_LEVEL
+from mhsUtils import lg, get_base_filename, osp
+from mhsLogging import DEFAULT_CONSOLE_LEVEL, QUIET_LOG_LEVEL
 
 POSITIONS = ["", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"]
 MARKERS = ['*', '+', '#']

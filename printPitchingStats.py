@@ -14,9 +14,11 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-25"
-__updated__ = "2021-05-26"
+__updated__ = "2021-05-27"
 
 import copy
+from mhsUtils import dt, run_ts, now_dt
+from mhsLogging import MhsLogger
 from cwTools import *
 
 DEFAULT_PITCH_ID = "kersc001"
@@ -162,7 +164,7 @@ class PrintPitchingStats(PrintStats):
 
     def print_stat_line(self, year:str):
         self.lgr.info(F"print stat line for year = {year}")
-        print_stats = self.totals if year == LABEL_TOTAL else self.stats
+        pitch_stats = self.totals if year == LABEL_TOTAL else self.stats
         diff = 0
         print(year.ljust(self.std_space), end = '')
 
@@ -173,44 +175,44 @@ class PrintPitchingStats(PrintStats):
             # adjust from outs to innings pitched
             if key == self.hdrs[OUT]:
                 diff = 1 # have to adjust for the extra space required to print IP
-                outs = print_stats[key]
+                outs = pitch_stats[key]
                 print(F"{outs // 3}.{outs % 3}".rjust(self.std_space+diff), end = '')
                 diff = -1
             else:
-                print(F"{print_stats[key]}".rjust(self.std_space+diff) if print_stats[key] >= 0
+                print(F"{pitch_stats[key]}".rjust(self.std_space+diff) if pitch_stats[key] >= 0
                       else F"{''}".rjust(self.std_space+diff), end = '')
                 diff = 0
 
         # calculate and print the rate stats: ERA, WHIP, H9, HR9, SO9, BB9, SO/BB, WL%
-        games = print_stats[ self.hdrs[GM] ]
+        games = pitch_stats[ self.hdrs[GM] ]
         # keep track of ACTIVE years
         if year != LABEL_TOTAL and games > 0: self.num_years += 1
 
         # NOTE: add TS% ?
-        era = round( (print_stats[self.hdrs[ER]] * 27 / print_stats[self.hdrs[OUT]]), 2 ) \
-                     if print_stats[self.hdrs[OUT]] > 0 else 0
+        era = round( (pitch_stats[self.hdrs[ER]] * 27 / pitch_stats[self.hdrs[OUT]]), 2 ) \
+                     if pitch_stats[self.hdrs[OUT]] > 0 else 0
         print(F"{era}".rjust(self.std_space), end = '')
-        whip = (print_stats[self.hdrs[BB]] + print_stats[self.hdrs[HIT]]) / print_stats[self.hdrs[OUT]] * 3 \
-                if print_stats[self.hdrs[OUT]] > 0 else 0
+        whip = (pitch_stats[self.hdrs[BB]] + pitch_stats[self.hdrs[HIT]]) / pitch_stats[self.hdrs[OUT]] * 3 \
+                if pitch_stats[self.hdrs[OUT]] > 0 else 0
         pwhip = round(whip,3)
         print(F"{pwhip}".rjust(self.std_space), end = '')
-        h9 = round( (print_stats[self.hdrs[HIT]] * 27 / print_stats[self.hdrs[OUT]]), 2 ) \
-                    if print_stats[self.hdrs[OUT]] > 0 else 0
+        h9 = round( (pitch_stats[self.hdrs[HIT]] * 27 / pitch_stats[self.hdrs[OUT]]), 2 ) \
+                    if pitch_stats[self.hdrs[OUT]] > 0 else 0
         print(F"{h9}".rjust(self.std_space), end = '')
-        hr9 = round( (print_stats[self.hdrs[HR]] * 27 / print_stats[self.hdrs[OUT]]), 2 ) \
-                     if print_stats[self.hdrs[OUT]] > 0 else 0
+        hr9 = round( (pitch_stats[self.hdrs[HR]] * 27 / pitch_stats[self.hdrs[OUT]]), 2 ) \
+                     if pitch_stats[self.hdrs[OUT]] > 0 else 0
         print(F"{hr9}".rjust(self.std_space), end = '')
-        so9 = round( (print_stats[self.hdrs[SO]] * 27 / print_stats[self.hdrs[OUT]]), 2 ) \
-                     if print_stats[self.hdrs[OUT]] > 0 else 0
+        so9 = round( (pitch_stats[self.hdrs[SO]] * 27 / pitch_stats[self.hdrs[OUT]]), 2 ) \
+                     if pitch_stats[self.hdrs[OUT]] > 0 else 0
         print(F"{so9}".rjust(self.std_space), end = '')
-        bb9 = round( (print_stats[self.hdrs[BB]] * 27 / print_stats[self.hdrs[OUT]]), 2 ) \
-                     if print_stats[self.hdrs[OUT]] > 0 else 0
+        bb9 = round( (pitch_stats[self.hdrs[BB]] * 27 / pitch_stats[self.hdrs[OUT]]), 2 ) \
+                     if pitch_stats[self.hdrs[OUT]] > 0 else 0
         print(F"{bb9}".rjust(self.std_space), end = '')
-        sobb = round( (print_stats[self.hdrs[SO]] / print_stats[self.hdrs[BB]]), 2 ) \
-                      if print_stats[self.hdrs[BB]] > 0 else 0
+        sobb = round( (pitch_stats[self.hdrs[SO]] / pitch_stats[self.hdrs[BB]]), 2 ) \
+                      if pitch_stats[self.hdrs[BB]] > 0 else 0
         print(F"{sobb}".rjust(self.std_space), end = '')
-        wlp = round( (print_stats[self.hdrs[WIN]] / (print_stats[self.hdrs[WIN]] + print_stats[self.hdrs[LOS]])), 3 ) * 100 \
-                     if print_stats[self.hdrs[WIN]] > 0 else 0
+        wlp = round( (pitch_stats[self.hdrs[WIN]] / (pitch_stats[self.hdrs[WIN]] + pitch_stats[self.hdrs[LOS]])), 3 ) * 100 \
+                     if pitch_stats[self.hdrs[WIN]] > 0 else 0
         print(F"{wlp}"[:STD_HDR_SIZE].rjust(self.std_space))
 
     def print_ave_line(self):
