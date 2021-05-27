@@ -26,7 +26,7 @@ from mhsLogging import MhsLogger, DEFAULT_CONSOLE_LEVEL, QUIET_LOG_LEVEL
 
 POSITIONS = ["", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"]
 MARKERS = ['*', '+', '#']
-TOTAL = "Total"
+LABEL_TOTAL  = "Total"
 STD_HDR_SIZE = 4
 
 RETROSHEET_FOLDER     = "/newdata/dev/git/fork/ChadwickBureau/retrosheet/"
@@ -52,24 +52,6 @@ def c_char_p_to_str(lpcc:c_char_p, maxlen:int=32) -> str:
         result += chr(b)
         ct += 1
 
-def sum_and_clear(stats:dict, totals:dict):
-    for item in stats.keys():
-        totals[item] += stats[item]
-        stats[item] = 0
-
-def print_hdr_uls(space:int, hdr:list):
-    print(''.rjust(space), end = '')
-    for spx in range( len(hdr) ):
-        print("---".rjust(space), end = '')
-    print(" ")
-
-def print_header(space:int, hdr:list):
-    print(''.rjust(space), end = '')
-    for item in hdr:
-        print(item.rjust(space), end = '')
-    print(" ")
-    print_hdr_uls(space, hdr)
-
 
 class PrintStats(ABC):
     """print batting or pitching stats for a specified player using Retrosheet data"""
@@ -83,19 +65,49 @@ class PrintStats(ABC):
         self.totals = None
         self.std_space = 0
         self.hdrs = None
+        self.num_files = 0
+        self.fam_name = self.giv_name = ""
+
+    def get_num_files(self):
+        return self.num_files
+
+    def get_giv_name(self):
+        return self.giv_name
+
+    def get_fam_name(self):
+        return self.fam_name
+
+    def sum_and_clear(self):
+        for item in self.stats.keys():
+            self.totals[item] += self.stats[item]
+            self.stats[item] = 0
+
+    def print_hdr_uls(self):
+        print(''.rjust(self.std_space), end = '')
+        for spx in range(len(self.hdrs)):
+            print("---".rjust(self.std_space), end = '')
+        print(" ")
+
+    def print_header(self):
+        print(''.rjust(self.std_space), end = '')
+        for item in self.hdrs:
+            print(item.rjust(self.std_space), end = '')
+        print(" ")
+        self.print_hdr_uls()
 
     def print_stats(self, player_id:str, name:str, season:str, yrstart:int, yrend:int):
         self.lgr.info(F"print {season} stats for years {yrstart}->{yrend}")
         print(F"\n\t{name} {season} Stats:")
-        print_header(self.std_space, self.hdrs)
+        self.print_header()
 
         # get all the games in the supplied date range
         for year in range(yrstart, yrend + 1):
             self.lgr.info(F"collect stats for year: {year}")
             self.game_ids.clear()
-            if str(year) not in self.event_files.keys():
+            str_year = str(year)
+            if str_year not in self.event_files.keys():
                 continue
-            for efile in self.event_files[str(year)]:
+            for efile in self.event_files[str_year]:
                 self.lgr.debug(F"found events for team/year = {get_base_filename(efile)}")
                 cwgames = chadwick.games(efile)
                 for game in cwgames:
@@ -104,100 +116,96 @@ class PrintStats(ABC):
                     self.lgr.debug(F" Found game id = {game_id}; date = {game_date}")
 
                     box = MyCwlib.box_create(game)
-                    self.collect_stats(box, player_id, self.stats, str(year), game_id)
+                    self.collect_stats(box, player_id, str_year, game_id)
 
             self.lgr.info(F"found {len(self.game_ids)} games with {player_id} stats.")
 
             if year < 1974:
-                self.check_boxscores(player_id, str(year), self.stats)
+                self.check_boxscores(player_id, str_year)
 
-            self.print_stat_line(str(year), self.stats)
-            sum_and_clear(self.stats, self.totals)
+            self.print_stat_line(str_year)
+            self.sum_and_clear()
 
         if yrstart != yrend:
-            print_hdr_uls(self.std_space, self.hdrs)
-            print_header(self.std_space, self.hdrs)
-            self.print_stat_line("Total", self.totals)
-            self.print_ave_line(self.totals)
-        print("")
+            self.print_hdr_uls()
+            self.print_header()
+            self.print_stat_line(LABEL_TOTAL)
+            self.print_ave_line()
+        print('')
+
+    def get_events(self, post:bool, pers_id:str, start:int, end:int):
+        """get the required event files for batching and pitching stats"""
+        season = "post-season" if post else "regular season"
+        need_name = True
+        self.fam_name = pers_id
+        try:
+            for year in range(start, end+1):
+                year_events = list()
+                # get the team files
+                team_file_name = REGULAR_SEASON_FOLDER + "TEAM" + str(year)
+                self.lgr.debug(F"team file name = {team_file_name}")
+                if not osp.exists(team_file_name):
+                    self.lgr.exception(F"CANNOT find team file {team_file_name}!")
+                    continue
+                with open(team_file_name, newline = '') as team_csvfile:
+                    team_reader = csv.reader(team_csvfile)
+                    for trow in team_reader:
+                        rteam = trow[0]
+                        self.lgr.debug(F"Found team {rteam}")
+                        # search rosters for the player's full name
+                        if need_name:
+                            roster_file = ROSTERS_FOLDER + rteam + str(year) + ".ROS"
+                            self.lgr.debug(F"roster file name = {roster_file}")
+                            if not osp.exists(roster_file):
+                                raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
+                            with open(roster_file, newline = '') as roster_csvfile:
+                                ros_reader = csv.reader(roster_csvfile)
+                                for rrow in ros_reader:
+                                    if pers_id == rrow[0]:
+                                        self.fam_name = rrow[1]
+                                        self.giv_name = rrow[2]
+                                        need_name = False
+                                        break
+                        if not post:
+                            # find and store the event file paths for the requested years
+                            rfile = REGULAR_SEASON_FOLDER + str(year) + rteam + ".EV" + trow[1]
+                            if not osp.exists(rfile):
+                                raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
+                            year_events.append(rfile)
+                            self.num_files += 1
+
+                if post:
+                    # find and store the event file paths for the requested years
+                    post_files = POST_SEASON_FOLDER + str(year) + "*"
+                    for pfile in glob.glob(post_files):
+                        self.lgr.debug(F"{season} file name = {pfile}")
+                        if not osp.exists(pfile):
+                            raise FileNotFoundError(F"CANNOT find {season} event file {pfile}!")
+                        year_events.append(pfile)
+                        self.num_files += 1
+
+                self.event_files[str(year)] = year_events
+
+        except Exception as ex:
+            self.lgr.exception(F"Exception: {repr(ex)}")
 
     @abstractmethod
-    def collect_stats(self, p_box:pointer, pit_id:str, stats:dict, year:str, game_id:str):
+    def collect_stats(self, p_box:pointer, player_id:str, year:str, game_id:str):
         pass
 
     @abstractmethod
-    def check_boxscores(self, pit_id:str, year:str, stats:dict):
+    def check_boxscores(self, player_id:str, year:str):
         pass
 
     @abstractmethod
-    def print_stat_line(self, year:str, pitch:dict):
+    def print_stat_line(self, year:str):
         pass
 
     @abstractmethod
-    def print_ave_line(self, totals: dict):
+    def print_ave_line(self):
         pass
 
-
-def get_events(stats:PrintStats, post:bool, pers_id:str, start:int, end:int, lgr:lg.Logger) -> (str,str):
-    """get the required event files for batching and pitching stats"""
-    season = "post-season" if post else "regular season"
-    need_name = True
-    fam_name = pers_id
-    giv_name = ""
-    num_files = 0
-    try:
-        for year in range(start, end+1):
-            year_events = list()
-            # get the team files
-            team_file_name = REGULAR_SEASON_FOLDER + "TEAM" + str(year)
-            lgr.debug(F"team file name = {team_file_name}")
-            if not osp.exists(team_file_name):
-                lgr.exception(F"CANNOT find team file {team_file_name}!")
-                continue
-            with open(team_file_name, newline = '') as team_csvfile:
-                team_reader = csv.reader(team_csvfile)
-                for trow in team_reader:
-                    rteam = trow[0]
-                    lgr.debug(F"Found team {rteam}")
-                    # search rosters for the player's full name
-                    if need_name:
-                        roster_file = ROSTERS_FOLDER + rteam + str(year) + ".ROS"
-                        lgr.debug(F"roster file name = {roster_file}")
-                        if not osp.exists(roster_file):
-                            raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
-                        with open(roster_file, newline = '') as roster_csvfile:
-                            ros_reader = csv.reader(roster_csvfile)
-                            for rrow in ros_reader:
-                                if pers_id == rrow[0]:
-                                    fam_name = rrow[1]
-                                    giv_name = rrow[2]
-                                    need_name = False
-                                    break
-                    if not post:
-                        # find and store the event file paths for the requested years
-                        rfile = REGULAR_SEASON_FOLDER + str(year) + rteam + ".EV" + trow[1]
-                        if not osp.exists(rfile):
-                            raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
-                        year_events.append(rfile)
-                        num_files += 1
-
-            if post:
-                # find and store the event file paths for the requested years
-                post_files = POST_SEASON_FOLDER + str(year) + "*"
-                for pfile in glob.glob(post_files):
-                    lgr.debug(F"{season} file name = {pfile}")
-                    if not osp.exists(pfile):
-                        raise FileNotFoundError(F"CANNOT find {season} event file {pfile}!")
-                    year_events.append(pfile)
-                    num_files += 1
-
-            stats.event_files[str(year)] = year_events
-
-    except Exception as ex:
-        lgr.exception(F"Exception: {repr(ex)}")
-
-    return giv_name, fam_name, num_files
-
+# END class PrintStats
 
 def process_bp_args(desc:str, exe:str, id_help:str):
     """use ArgumentParser to specify command line arguments for batching and pitching stats"""
@@ -226,12 +234,12 @@ def process_bp_input(argl:list, default_id:str, default_yr:int, desc:str, prog:s
         loglevel = DEFAULT_CONSOLE_LEVEL
 
     if len(argp.player_id) >= 8 and argp.player_id[:5].isalpha() and argp.player_id[5:8].isdecimal():
-        playid = argp.player_id.strip()
+        player_id = argp.player_id.strip()
     else:
         print(F">>> IMPROPER player id '{argp.player_id}'! Using default value = {default_id}.\n")
-        playid = default_id
-    if len(playid) > 8:
-        playid = playid[:8]
+        player_id = default_id
+    if len(player_id) > 8:
+        player_id = player_id[:8]
 
     if 1871 <= argp.start <= 2020:
         start = argp.start
@@ -239,15 +247,14 @@ def process_bp_input(argl:list, default_id:str, default_yr:int, desc:str, prog:s
         print(F">>> INVALID start year '{argp.start}'! Using default year = {default_yr}.\n")
         start = default_yr
 
-    if argp.end and 1871 <= argp.end <= 2020:
+    if argp.end and 1871 <= argp.end <= 2020 and argp.end >= start:
         end = argp.end
     else:
-        print(F">>> INVALID end year '{argp.end}'! Using end year = {start}.\n")
-        end = start
-    if end < start:
+        if argp.end:
+            print(F">>> INVALID end year '{argp.end}'! Using end year = {start}.\n")
         end = start
 
-    return playid, start, end, argp.post, loglevel
+    return player_id, start, end, argp.post, loglevel
 
 
 class GameSummary:
