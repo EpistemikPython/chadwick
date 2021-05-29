@@ -72,7 +72,7 @@ class PrintPitchingStats(PrintStats):
         self.hdrs = PITCHING_HDRS
 
     def collect_stats(self, p_box:pointer, pit_id:str, year:str, game_id:str):
-        self.lgr.debug(F"player = {pit_id} for year = {year}")
+        self.lgr.debug(F"search for '{pit_id}' in year = {year}")
         for t in range(2):
             p_pitcher = MyCwlib.box_get_starting_pitcher(p_box, t)
             while p_pitcher:
@@ -80,7 +80,7 @@ class PrintPitchingStats(PrintStats):
                 pitcher_id = pitcher.player_id.decode("UTF8")
                 self.lgr.debug(F"pitcher = {pitcher_id}")
                 if pitcher_id == pit_id:
-                    self.lgr.info(F"found pitcher = {pit_id} in game = {game_id}")
+                    self.lgr.info(F"found pitcher '{pit_id}' in game {game_id}")
                     self.game_ids.append(game_id)
                     pitching = pitcher.pitching.contents
                     self.stats[self.hdrs[GM]]  += pitching.g
@@ -116,17 +116,18 @@ class PrintPitchingStats(PrintStats):
         for bfile in boxscore_files:
             try:
                 with open(bfile, newline = '') as box_csvfile:
-                    self.lgr.info(F"search boxscore file {bfile}")
+                    self.lgr.debug(F"search boxscore file {bfile}")
                     box_reader = csv.reader(box_csvfile)
                     find_player = False
                     for brow in box_reader:
                         if brow[0] == "id":
                             current_id = brow[1]
                             if current_id in self.game_ids:
-                                self.lgr.info(F"found duplicate game = {current_id} in Boxscore file.")
+                                self.lgr.debug(F"found duplicate game '{current_id}' in Boxscore file.")
                                 find_player = False
                                 continue
                             else:
+                                self.lgr.debug(F"found NEW game '{current_id}' in Boxscore file.")
                                 find_player = True
                         elif find_player:
                             if brow[0] == "info":
@@ -137,26 +138,29 @@ class PrintPitchingStats(PrintStats):
                                 if brow[1] == "save" and brow[2] and brow[2] == pit_id:
                                     self.stats[self.hdrs[SAV]] += 1
                             if brow[1] == "pline" and brow[2] == pit_id:
-                                self.lgr.info(F"found player {pit_id} in game {current_id}")
+                                self.lgr.info(F"found pitcher '{pit_id}' in boxscore game {current_id}")
                                 # parse stats
-                                # order: stat, pline, id, side, seq, ip*3, no-out, bfp, h, 2b, 3b, hr, r, er, bb, ibb, k, hbp,
-                                #        wp, balk, sh, sf
+                                # order: 'stat','pline',id,side,seq,ip*3,no-out,bfp,h,2b,3b,hr,r,er,bb,ibb,k,hbp,wp,balk,sh,sf
                                 self.stats[self.hdrs[GM]]  += 1
                                 if brow[4] == '1':
                                     self.stats[self.hdrs[GS]] += 1
                                 self.stats[self.hdrs[OUT]] += int(brow[5])
-                                self.stats[self.hdrs[HIT]] += int(brow[8])
+                                self.stats[self.hdrs[BF]]  += int(brow[7])
+                                hits = 0
+                                if int(brow[8]) > 0:
+                                    hits = int(brow[8])
+                                    self.stats[self.hdrs[HIT]] += hits
                                 self.stats[self.hdrs[RUN]] += int(brow[12])
                                 self.stats[self.hdrs[ER]]  += int(brow[13])
                                 self.stats[self.hdrs[HR]]  += int(brow[11])
                                 self.stats[self.hdrs[BB]]  += int(brow[14])
-                                self.stats[self.hdrs[IBB]] += int(brow[15])
+                                if int(brow[15]) > 0:
+                                    self.stats[self.hdrs[IBB]] += int(brow[15])
                                 self.stats[self.hdrs[SO]]  += int(brow[16])
-                                self.stats[self.hdrs[BF]]  += ( int(brow[5]) + int(brow[6]) ) # approximation
                                 self.stats[self.hdrs[WP]]  += int(brow[18])
                                 self.stats[self.hdrs[HBP]] += int(brow[17])
                                 self.stats[self.hdrs[BK]]  += int(brow[19])
-                                self.stats[self.hdrs[PIT]] += int(brow[7])
+                                self.stats[self.hdrs[PIT]] += int(brow[16])*3 + int(brow[14])*4 + hits # approximation
                                 self.stats[self.hdrs[STR]] += int(brow[16])*3 # approximation
                                 find_player = False
             except FileNotFoundError:
@@ -179,8 +183,8 @@ class PrintPitchingStats(PrintStats):
                 print(F"{outs // 3}.{outs % 3}".rjust(self.std_space+diff), end = '')
                 diff = -1
             else:
-                print(F"{pitch_stats[key]}".rjust(self.std_space+diff) if pitch_stats[key] >= 0
-                      else F"{''}".rjust(self.std_space+diff), end = '')
+                print(F"{pitch_stats[key]}".rjust(self.std_space+diff) if pitch_stats[key] > 0
+                      else '0'.rjust(self.std_space+diff), end = '')
                 diff = 0
 
         # calculate and print the rate stats: ERA, WHIP, H9, HR9, SO9, BB9, SO/BB, WL%
@@ -228,7 +232,7 @@ class PrintPitchingStats(PrintStats):
         print("Ave".ljust(self.std_space), end = '')
         for key in PITCHING_HDRS:
             if key == PITCHING_HDRS[LAST]:
-                print(F"\n\nprinted Average of each counting stat for {self.num_years} ACTIVE years")
+                print(F"\nprinted Average of each counting stat for {self.num_years} ACTIVE years")
                 break
             if key == PITCHING_HDRS[OUT]:
                 diff = -1  # have to adjust for the extra space required to print IP
@@ -256,17 +260,15 @@ def main_pitching_stats(args:list):
     lgr.warning(F"name = {name}")
     season = "post-season" if post else "regular season"
     lgr.warning(F"found {pitch_stats.get_num_files()} {season} event files over {len(pitch_stats.event_files)} years.")
-    for item in pitch_stats.event_files:
-        lgr.debug(item)
 
     pitch_stats.print_stats(pers_id, name, season, start, end)
 
 
 if __name__ == "__main__":
     if '-q' not in sys.argv:
-        print(F"Start time = {run_ts}")
+        print(F"\n\tStart time = {run_ts}\n")
     main_pitching_stats(sys.argv[1:])
     if '-q' not in sys.argv:
         run_time = (dt.now() - now_dt).total_seconds()
-        print(F" Running time = {(run_time // 60)} minutes, {(run_time % 60):2.3} seconds")
+        print(F"\tRunning time = {(run_time // 60)} minutes, {(run_time % 60):2.3} seconds")
     exit()
