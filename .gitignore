@@ -15,6 +15,7 @@
 **/export*/
 dev
 /dev-cw
+/info
 *.py[cdo]
 *.out
 *.o
