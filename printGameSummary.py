@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-05-27"
+__updated__ = "2021-05-29"
 
 from mhsUtils import dt, run_ts, now_dt
 from mhsLogging import MhsLogger
@@ -324,7 +324,7 @@ def main_game_summary(args:list):
 
 if __name__ == "__main__":
     if '-q' not in sys.argv:
-        print(F"\tStart time = {run_ts}")
+        print(F"\n\tStart time = {run_ts}\n")
     main_game_summary(sys.argv[1:])
     if '-q' not in sys.argv:
         run_time = (dt.now() - now_dt).total_seconds()

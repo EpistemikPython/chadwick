@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-05-26"
+__updated__ = "2021-05-29"
 
 import copy
 from mhsUtils import dt, run_ts, now_dt
@@ -67,7 +67,7 @@ class PrintBattingStats(PrintStats):
         self.hdrs = BATTING_HDRS
 
     def collect_stats(self, p_box:pointer, bat_id:str, year:str, game_id:str):
-        self.lgr.debug(F"player = {bat_id} for year = {year}")
+        self.lgr.debug(F"search for '{bat_id}' in year = {year}")
         slots = [1,1]
         players = list()
         players.insert( 0, MyCwlib.box_get_starter(p_box,0,1) )
@@ -78,7 +78,7 @@ class PrintBattingStats(PrintStats):
                 if slots[t] <= 9:
                     player = players[t].contents.player_id.decode("UTF-8")
                     if player == bat_id:
-                        self.lgr.info(F"found batter = {bat_id} in game = {game_id}")
+                        self.lgr.info(F"found player '{bat_id}' in game {game_id}")
                         self.game_ids.append(game_id)
                         batting = players[t].contents.batting.contents
                         self.stats[ self.hdrs[GM] ]  += batting.g
@@ -122,14 +122,15 @@ class PrintBattingStats(PrintStats):
                         if brow[0] == "id":
                             current_id = brow[1]
                             if current_id in self.game_ids:
-                                self.lgr.info(F"found duplicate game = {current_id} in Boxscore file.")
+                                self.lgr.info(F"found duplicate game '{current_id}' in Boxscore file.")
                                 find_player = False
                                 continue
                             else:
+                                self.lgr.info(F"found NEW game '{current_id}' in Boxscore file.")
                                 find_player = True
                         elif find_player:
                             if brow[1] == "bline" and brow[2] == bat_id:
-                                self.lgr.info(F"found player {bat_id} in game {current_id}")
+                                self.lgr.info(F"found player '{bat_id}' in boxscore game {current_id}")
                                 # parse self.stats
                                 # Syntax: stat, bline, id,  side, pos, seq, ab, r,   h, 2b,
                                 #         3b,   hr,    rbi, sh,   sf,  hbp, bb, ibb, k, sb,
@@ -147,7 +148,8 @@ class PrintBattingStats(PrintStats):
                                 if int(brow[12]) > 0:
                                     self.stats[self.hdrs[RBI]] += int(brow[12])
                                 self.stats[self.hdrs[BB]]  += int(brow[16])
-                                self.stats[self.hdrs[IBB]] += int(brow[17])
+                                if int(brow[17]) > 0:
+                                    self.stats[self.hdrs[IBB]] += int(brow[17])
                                 self.stats[self.hdrs[SO]]  += int(brow[18])
                                 self.stats[self.hdrs[SB]]  += int(brow[19])
                                 self.stats[self.hdrs[CS]]  += int(brow[20])
@@ -168,11 +170,11 @@ class PrintBattingStats(PrintStats):
         for key in self.hdrs:
             if key == BATTING_HDRS[LAST]:
                 break
-            print(F"{bat_stats[key]}".rjust(self.std_space) if bat_stats[key] >= 0 else ''.rjust(self.std_space), end = '')
+            print(F"{bat_stats[key]}".rjust(self.std_space) if bat_stats[key] > 0 else '0'.rjust(self.std_space), end = '')
         # add Total Bases
         tb = bat_stats[ self.hdrs[HIT] ] + bat_stats[ self.hdrs[B2] ] \
              + bat_stats[ self.hdrs[B3] ]*2 + bat_stats[ self.hdrs[HR] ]*3
-        print(F"{tb}".rjust(self.std_space) if tb >= 0 else F"{''}".rjust(self.std_space), end = '')
+        print(F"{tb}".rjust(self.std_space) if tb > 0 else '0'.rjust(self.std_space), end = '')
 
         # calculate and print the rate stats
         games = bat_stats[ self.hdrs[GM] ]
@@ -239,17 +241,15 @@ def main_batting_stats(args:list):
     lgr.warning(F"name = {name}")
     season = "post-season" if post else "regular season"
     lgr.warning(F"found {bat_stats.get_num_files()} {season} event files over {len(bat_stats.event_files)} years.")
-    for item in bat_stats.event_files:
-        lgr.debug(item)
 
     bat_stats.print_stats(pers_id, name, season, start, end)
 
 
 if __name__ == "__main__":
     if '-q' not in sys.argv:
-        print(F"Start time = {run_ts}")
+        print(F"\n\tStart time = {run_ts}\n")
     main_batting_stats(sys.argv[1:])
     if '-q' not in sys.argv:
         run_time = (dt.now() - now_dt).total_seconds()
-        print(F" Running time = {(run_time // 60)} minutes, {(run_time % 60):2.3} seconds")
+        print(F"\tRunning time = {(run_time // 60)} minutes, {(run_time % 60):2.3} seconds")
     exit()

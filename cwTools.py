@@ -99,7 +99,8 @@ class PrintStats(ABC):
         self.print_hdr_uls()
 
     def print_stats(self, player_id:str, name:str, season:str, yrstart:int, yrend:int):
-        self.lgr.info(F"print {season} stats for years {yrstart}->{yrend}")
+        """print regular or post-season stats for player {player_id} in years {yrstart} to {yrend}"""
+        self.lgr.debug(F"print {season} stats for years {yrstart} to {yrend}")
         print(F"\n\t{name} {season} Stats:")
         self.print_header()
 
@@ -111,7 +112,7 @@ class PrintStats(ABC):
             if str_year not in self.event_files.keys():
                 continue
             for efile in self.event_files[str_year]:
-                self.lgr.debug(F"found events for team/year = {get_base_filename(efile)}")
+                self.lgr.debug(F"found events for year/team = {get_base_filename(efile)}")
                 cwgames = chadwick.games(efile)
                 for game in cwgames:
                     game_id = game.contents.game_id.decode(encoding = 'UTF-8')
@@ -139,6 +140,7 @@ class PrintStats(ABC):
     def get_events(self, post:bool, pers_id:str, start:int, end:int):
         """get the required event files for batching and pitching stats"""
         season = "post-season" if post else "regular season"
+        self.lgr.info(F"get the {season} events for player {pers_id} in years {start}->{end}")
         need_name = True
         self.fam_name = pers_id
         try:
