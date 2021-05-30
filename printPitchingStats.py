@@ -27,6 +27,7 @@ PROGRAM_DESC = "Print pitching stats, totals & averages from Retrosheet data for
 PROGRAM_NAME = "printPitchingStats.py"
 ID_HELP_DESC = "Retrosheet id for a pitcher, e.g. spahw101, kersc001"
 STD_PITCH_SPACE = 6
+STD_RD_PRECISION = 2
 
 GM  = 0         # 0
 GS  = GM + 1    # 1
@@ -160,7 +161,7 @@ class PrintPitchingStats(PrintStats):
                                 self.stats[self.hdrs[WP]]  += int(brow[18])
                                 self.stats[self.hdrs[HBP]] += int(brow[17])
                                 self.stats[self.hdrs[BK]]  += int(brow[19])
-                                self.stats[self.hdrs[PIT]] += int(brow[16])*3 + int(brow[14])*4 + hits # approximation
+                                self.stats[self.hdrs[PIT]] += (int(brow[16])*3 + int(brow[14])*4 + hits) # approximation
                                 self.stats[self.hdrs[STR]] += int(brow[16])*3 # approximation
                                 find_player = False
             except FileNotFoundError:
@@ -187,36 +188,49 @@ class PrintPitchingStats(PrintStats):
                       else '0'.rjust(self.std_space+diff), end = '')
                 diff = 0
 
-        # calculate and print the rate stats: ERA, WHIP, H9, HR9, SO9, BB9, SO/BB, WL%
-        games = pitch_stats[ self.hdrs[GM] ]
         # keep track of ACTIVE years
+        games = pitch_stats[ self.hdrs[GM] ]
         if year != LABEL_TOTAL and games > 0: self.num_years += 1
 
-        # NOTE: add TS% ?
-        era = round( (pitch_stats[self.hdrs[ER]] * 27 / pitch_stats[self.hdrs[OUT]]), 2 ) \
-                     if pitch_stats[self.hdrs[OUT]] > 0 else 0
-        print(F"{era}".rjust(self.std_space), end = '')
+        # NOTE: add SO%, TS% ?
+        # calculate and print the rate stats: ERA, WHIP, H9, HR9, SO9, BB9, SO/BB, WL%
+        era = round( (pitch_stats[self.hdrs[ER]] * 27 / pitch_stats[self.hdrs[OUT]]), STD_RD_PRECISION ) \
+                     if pitch_stats[self.hdrs[OUT]] > 0 else 0.0
+        str_era = str(era)
+        if len(str_era) == STD_HDR_SIZE - 1: str_era += '0'
+        print(str_era.rjust(self.std_space), end = '')
         whip = (pitch_stats[self.hdrs[BB]] + pitch_stats[self.hdrs[HIT]]) / pitch_stats[self.hdrs[OUT]] * 3 \
-                if pitch_stats[self.hdrs[OUT]] > 0 else 0
-        pwhip = round(whip,3)
-        print(F"{pwhip}".rjust(self.std_space), end = '')
-        h9 = round( (pitch_stats[self.hdrs[HIT]] * 27 / pitch_stats[self.hdrs[OUT]]), 2 ) \
-                    if pitch_stats[self.hdrs[OUT]] > 0 else 0
-        print(F"{h9}".rjust(self.std_space), end = '')
-        hr9 = round( (pitch_stats[self.hdrs[HR]] * 27 / pitch_stats[self.hdrs[OUT]]), 2 ) \
-                     if pitch_stats[self.hdrs[OUT]] > 0 else 0
-        print(F"{hr9}".rjust(self.std_space), end = '')
-        so9 = round( (pitch_stats[self.hdrs[SO]] * 27 / pitch_stats[self.hdrs[OUT]]), 2 ) \
-                     if pitch_stats[self.hdrs[OUT]] > 0 else 0
-        print(F"{so9}".rjust(self.std_space), end = '')
-        bb9 = round( (pitch_stats[self.hdrs[BB]] * 27 / pitch_stats[self.hdrs[OUT]]), 2 ) \
-                     if pitch_stats[self.hdrs[OUT]] > 0 else 0
-        print(F"{bb9}".rjust(self.std_space), end = '')
-        sobb = round( (pitch_stats[self.hdrs[SO]] / pitch_stats[self.hdrs[BB]]), 2 ) \
-                      if pitch_stats[self.hdrs[BB]] > 0 else 0
-        print(F"{sobb}".rjust(self.std_space), end = '')
-        wlp = round( (pitch_stats[self.hdrs[WIN]] / (pitch_stats[self.hdrs[WIN]] + pitch_stats[self.hdrs[LOS]])), 3 ) * 100 \
-                     if pitch_stats[self.hdrs[WIN]] > 0 else 0
+                if pitch_stats[self.hdrs[OUT]] > 0 else 0.0
+        str_whip = str(round(whip, STD_RD_PRECISION + 1))
+        if len(str_whip) == STD_HDR_SIZE: str_whip += '0'
+        print(str_whip.rjust(self.std_space), end = '')
+        h9 = round( (pitch_stats[self.hdrs[HIT]] * 27 / pitch_stats[self.hdrs[OUT]]), STD_RD_PRECISION ) \
+                    if pitch_stats[self.hdrs[OUT]] > 0 else 0.0
+        str_h9 = str(h9)
+        if len(str_h9) == STD_HDR_SIZE - 1: str_h9 += '0'
+        print(str_h9.rjust(self.std_space), end = '')
+        hr9 = round( (pitch_stats[self.hdrs[HR]] * 27 / pitch_stats[self.hdrs[OUT]]), STD_RD_PRECISION ) \
+                     if pitch_stats[self.hdrs[OUT]] > 0 else 0.0
+        str_hr9 = str(hr9)
+        if len(str_hr9) == STD_HDR_SIZE - 1: str_hr9 += '0'
+        print(str_hr9.rjust(self.std_space), end = '')
+        so9 = round( (pitch_stats[self.hdrs[SO]] * 27 / pitch_stats[self.hdrs[OUT]]), STD_RD_PRECISION ) \
+                     if pitch_stats[self.hdrs[OUT]] > 0 else 0.0
+        str_so9 = str(so9)
+        if len(str_so9) == STD_HDR_SIZE - 1: str_so9 += '0'
+        print(str_so9.rjust(self.std_space), end = '')
+        bb9 = round( (pitch_stats[self.hdrs[BB]] * 27 / pitch_stats[self.hdrs[OUT]]), STD_RD_PRECISION ) \
+                     if pitch_stats[self.hdrs[OUT]] > 0 else 0.0
+        str_bb9 = str(bb9)
+        if len(str_bb9) == STD_HDR_SIZE - 1: str_bb9 += '0'
+        print(str_bb9.rjust(self.std_space), end = '')
+        sobb = round( (pitch_stats[self.hdrs[SO]] / pitch_stats[self.hdrs[BB]]), STD_RD_PRECISION ) \
+                      if pitch_stats[self.hdrs[BB]] > 0 else 0.0
+        str_sobb = str(sobb)
+        if len(str_sobb) == STD_HDR_SIZE - 1: str_sobb += '0'
+        print(str_sobb.rjust(self.std_space), end = '')
+        wlp = round( (pitch_stats[self.hdrs[WIN]] / (pitch_stats[self.hdrs[WIN]] + pitch_stats[self.hdrs[LOS]])),
+                     STD_RD_PRECISION + 1 ) * 100.0 if pitch_stats[self.hdrs[WIN]] > 0 else 0.0
         print(F"{wlp}"[:STD_HDR_SIZE].rjust(self.std_space))
 
     def print_ave_line(self):
@@ -232,7 +246,7 @@ class PrintPitchingStats(PrintStats):
         print("Ave".ljust(self.std_space), end = '')
         for key in PITCHING_HDRS:
             if key == PITCHING_HDRS[LAST]:
-                print(F"\nprinted Average of each counting stat for {self.num_years} ACTIVE years")
+                print(F"\n\nprinted Average of each counting stat for {self.num_years} ACTIVE years")
                 break
             if key == PITCHING_HDRS[OUT]:
                 diff = -1  # have to adjust for the extra space required to print IP
