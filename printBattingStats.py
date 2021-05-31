@@ -187,7 +187,7 @@ class PrintBattingStats(PrintStats):
         pba = str(ba)[1:STD_HDR_SIZE+1] if ba > 0.0 else 'x' if games == 0 else ".000"
         len_pba = len(pba)
         if pba != 'x' and len_pba < STD_HDR_SIZE:
-            if len_pba == STD_HDR_SIZE - 2: pba += '00'
+            if len_pba == STD_HDR_SIZE - 2: pba += "00"
             elif len_pba == STD_HDR_SIZE - 1: pba += '0'
         print(pba.rjust(self.std_space), end = '')
 
@@ -199,7 +199,7 @@ class PrintBattingStats(PrintStats):
         pobp = str(robp)[1:STD_HDR_SIZE+1] if robp > 0.0 else 'x' if games == 0 else ".000"
         len_pobp = len(pobp)
         if pobp != 'x' and len_pobp < STD_HDR_SIZE:
-            if len_pobp == STD_HDR_SIZE - 2: pobp += '00'
+            if len_pobp == STD_HDR_SIZE - 2: pobp += "00"
             elif len_pobp == STD_HDR_SIZE - 1: pobp += '0'
         print(pobp.rjust(self.std_space), end = '')
 
@@ -209,18 +209,19 @@ class PrintBattingStats(PrintStats):
         pslg = str(rslg)[1:STD_HDR_SIZE+1] if rslg > 0.0 else 'x' if games == 0 else ".000"
         len_pslg = len(pslg)
         if pslg != 'x' and len_pslg < STD_HDR_SIZE:
-            if len_pslg == STD_HDR_SIZE - 2: pslg += '00'
+            if len_pslg == STD_HDR_SIZE - 2: pslg += "00"
             elif len_pslg == STD_HDR_SIZE - 1: pslg += '0'
         print(pslg.rjust(self.std_space), end = '')
 
         ops = obp + slg
         self.lgr.debug(F"ops = '{ops}'")
         rops = round( ops, STD_RD_PRECISION )
-        pops = str(rops)[:STD_HDR_SIZE+1] if rops > 0.0 else 'x' if games == 0 else "0.000"
+        stat_size = STD_HDR_SIZE + 1 if rops > 1.0 else STD_HDR_SIZE
+        pops = str(rops)[:stat_size] if rops > 1.0 else str(rops)[1:stat_size+1] if rops > 0.0 else 'x' if games == 0 else ".000"
         len_pops = len(pops)
-        if pops != 'x' and len_pops < STD_HDR_SIZE + 1:
-            if len_pops == STD_HDR_SIZE - 1: pops += '00'
-            elif len_pops == STD_HDR_SIZE: pops += '0'
+        if pops != 'x' and len_pops < stat_size:
+            if len_pops == stat_size - 2: pops += "00"
+            elif len_pops == stat_size - 1: pops += '0'
         print( pops.rjust(self.std_space) )
 
     def print_ave_line(self):
