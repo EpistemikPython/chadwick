@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-05-27"
+__updated__ = "2021-06-01"
 
 import csv
 import glob
@@ -38,7 +38,7 @@ REGULAR_SEASON_FOLDER = RETROSHEET_FOLDER + "event/regular/"
 POST_SEASON_FOLDER    = RETROSHEET_FOLDER + "event/post/"
 BOXSCORE_FOLDER       = "/newdata/dev/Retrosheet/data/boxscores/"
 
-def c_char_p_to_str(lpcc:c_char_p, maxlen:int=32) -> str:
+def c_char_p_to_str(lpcc:c_char_p, maxlen:int = 32) -> str:
     """Convert a C-type char array to a python string:
        convert and concatenate the values until hit the null terminator or the char limit"""
     limit = 1 if maxlen <= 1 else min(maxlen, 256)
@@ -54,6 +54,25 @@ def c_char_p_to_str(lpcc:c_char_p, maxlen:int=32) -> str:
             return result.strip()
         result += chr(b)
         ct += 1
+
+def get_print_str(num:float, games:int, prec:int, lim:int = STD_HDR_SIZE) -> str:
+    if games == 0: return 'x'
+    if num == 0.0: return ".000"
+    rnum = round(num, prec)
+    if rnum <= 0.0: return ".000"
+    high = prec + 2
+    low = high - lim
+    if low < 0: low = 0
+    if rnum >= 10.0: high += 1
+    return float_to_sized_str(rnum, low, high, lim)
+
+def float_to_sized_str(num:float, low:int, high:int, lim:int) -> str:
+    snum = str(num)[low:high]
+    len_str = len(snum)
+    if len_str < lim:
+        for r in range(lim - len_str):
+            snum += '0'
+    return snum
 
 
 class PrintStats(ABC):
@@ -124,13 +143,13 @@ class PrintStats(ABC):
 
             self.lgr.info(F"found {len(self.game_ids)} games with {player_id} stats.")
 
-            if year < 1974:
+            if year < 1974 and "regular" in season:
                 self.check_boxscores(player_id, str_year)
 
             self.print_stat_line(str_year)
             self.sum_and_clear()
 
-        if yrstart != yrend:
+        if self.num_years > 1:
             self.print_hdr_uls()
             self.print_header()
             self.print_stat_line(LABEL_TOTAL)
