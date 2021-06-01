@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-25"
-__updated__ = "2021-05-27"
+__updated__ = "2021-06-01"
 
 import copy
 from mhsUtils import dt, run_ts, now_dt
@@ -26,8 +26,8 @@ DEFAULT_PITCH_YR = 2014
 PROGRAM_DESC = "Print pitching stats, totals & averages from Retrosheet data for the specified years."
 PROGRAM_NAME = "printPitchingStats.py"
 ID_HELP_DESC = "Retrosheet id for a pitcher, e.g. spahw101, kersc001"
-STD_PITCH_SPACE = 6
-STD_RD_PRECISION = 2
+PITCH_STD_SPACE = 6
+PITCH_RD_PRECISION = 2
 
 GM  = 0         # 0
 GS  = GM + 1    # 1
@@ -69,7 +69,7 @@ class PrintPitchingStats(PrintStats):
         super().__init__(logger)
         self.stats = copy.copy(STATS_DICT)
         self.totals = copy.copy(STATS_DICT)
-        self.std_space = STD_PITCH_SPACE
+        self.std_space = PITCH_STD_SPACE
         self.hdrs = PITCHING_HDRS
 
     def collect_stats(self, p_box:pointer, pit_id:str, year:str, game_id:str):
@@ -194,44 +194,53 @@ class PrintPitchingStats(PrintStats):
 
         # NOTE: add SO%, TS% ?
         # calculate and print the rate stats: ERA, WHIP, H9, HR9, SO9, BB9, SO/BB, WL%
-        era = round( (pitch_stats[self.hdrs[ER]] * 27 / pitch_stats[self.hdrs[OUT]]), STD_RD_PRECISION ) \
-                     if pitch_stats[self.hdrs[OUT]] > 0 else 0.0
-        str_era = str(era)
-        if len(str_era) == STD_HDR_SIZE - 1: str_era += '0'
+        hits  = pitch_stats[self.hdrs[HIT]]
+        walks = pitch_stats[self.hdrs[BB]]
+        sos   = pitch_stats[self.hdrs[SO]]
+        outs  = pitch_stats[self.hdrs[OUT]]
+
+        era = pitch_stats[self.hdrs[ER]] * 27 / outs if outs > 0 else 0.0
+        # pba = str(ba)[1:STD_HDR_SIZE+1] if ba > 0.0 else 'x' if games == 0 else ".000"
+        # pba = set_str_size(pba)
+        str_era = get_print_str(era, games, PITCH_RD_PRECISION)
+        # if len(str_era) == STD_HDR_SIZE - 1: str_era += '0'
         print(str_era.rjust(self.std_space), end = '')
-        whip = (pitch_stats[self.hdrs[BB]] + pitch_stats[self.hdrs[HIT]]) / pitch_stats[self.hdrs[OUT]] * 3 \
-                if pitch_stats[self.hdrs[OUT]] > 0 else 0.0
-        str_whip = str(round(whip, STD_RD_PRECISION + 1))
-        if len(str_whip) == STD_HDR_SIZE: str_whip += '0'
+
+        whip = (walks + hits) / outs * 3 if outs > 0 else 0.0
+        # str_whip = str(round(whip, PITCH_RD_PRECISION + 1))
+        # if len(str_whip) == STD_HDR_SIZE: str_whip += '0'
+        str_whip = get_print_str(whip, games, PITCH_RD_PRECISION + 1, STD_HDR_SIZE + 1)
         print(str_whip.rjust(self.std_space), end = '')
-        h9 = round( (pitch_stats[self.hdrs[HIT]] * 27 / pitch_stats[self.hdrs[OUT]]), STD_RD_PRECISION ) \
-                    if pitch_stats[self.hdrs[OUT]] > 0 else 0.0
-        str_h9 = str(h9)
-        if len(str_h9) == STD_HDR_SIZE - 1: str_h9 += '0'
+
+        h9 = hits * 27 / outs if outs > 0 else 0.0
+        str_h9 = get_print_str(h9, games, PITCH_RD_PRECISION)
+        # if len(str_h9) == STD_HDR_SIZE - 1: str_h9 += '0'
         print(str_h9.rjust(self.std_space), end = '')
-        hr9 = round( (pitch_stats[self.hdrs[HR]] * 27 / pitch_stats[self.hdrs[OUT]]), STD_RD_PRECISION ) \
-                     if pitch_stats[self.hdrs[OUT]] > 0 else 0.0
-        str_hr9 = str(hr9)
-        if len(str_hr9) == STD_HDR_SIZE - 1: str_hr9 += '0'
+
+        hr9 = pitch_stats[self.hdrs[HR]] * 27 / outs if outs > 0 else 0.0
+        str_hr9 = get_print_str(hr9, games, PITCH_RD_PRECISION)
+        # if len(str_hr9) == STD_HDR_SIZE - 1: str_hr9 += '0'
         print(str_hr9.rjust(self.std_space), end = '')
-        so9 = round( (pitch_stats[self.hdrs[SO]] * 27 / pitch_stats[self.hdrs[OUT]]), STD_RD_PRECISION ) \
-                     if pitch_stats[self.hdrs[OUT]] > 0 else 0.0
-        str_so9 = str(so9)
-        if len(str_so9) == STD_HDR_SIZE - 1: str_so9 += '0'
+
+        so9 = sos * 27 / outs if outs > 0 else 0.0
+        str_so9 = get_print_str(so9, games, PITCH_RD_PRECISION)
+        # if len(str_so9) == STD_HDR_SIZE - 1: str_so9 += '0'
         print(str_so9.rjust(self.std_space), end = '')
-        bb9 = round( (pitch_stats[self.hdrs[BB]] * 27 / pitch_stats[self.hdrs[OUT]]), STD_RD_PRECISION ) \
-                     if pitch_stats[self.hdrs[OUT]] > 0 else 0.0
-        str_bb9 = str(bb9)
-        if len(str_bb9) == STD_HDR_SIZE - 1: str_bb9 += '0'
+
+        bb9 = walks * 27 / outs if outs > 0 else 0.0
+        str_bb9 = get_print_str(bb9, games, PITCH_RD_PRECISION)
+        # if len(str_bb9) == STD_HDR_SIZE - 1: str_bb9 += '0'
         print(str_bb9.rjust(self.std_space), end = '')
-        sobb = round( (pitch_stats[self.hdrs[SO]] / pitch_stats[self.hdrs[BB]]), STD_RD_PRECISION ) \
-                      if pitch_stats[self.hdrs[BB]] > 0 else 0.0
-        str_sobb = str(sobb)
-        if len(str_sobb) == STD_HDR_SIZE - 1: str_sobb += '0'
+
+        sobb = sos / walks if walks > 0 else 0.0
+        str_sobb = get_print_str(sobb, games, PITCH_RD_PRECISION)
+        # if len(str_sobb) == STD_HDR_SIZE - 1: str_sobb += '0'
         print(str_sobb.rjust(self.std_space), end = '')
-        wlp = round( (pitch_stats[self.hdrs[WIN]] / (pitch_stats[self.hdrs[WIN]] + pitch_stats[self.hdrs[LOS]])),
-                     STD_RD_PRECISION + 1 ) * 100.0 if pitch_stats[self.hdrs[WIN]] > 0 else 0.0
-        print(F"{wlp}"[:STD_HDR_SIZE].rjust(self.std_space))
+
+        wlp = pitch_stats[self.hdrs[WIN]] / (pitch_stats[self.hdrs[WIN]] + pitch_stats[self.hdrs[LOS]]) * 100.0 \
+                if pitch_stats[self.hdrs[WIN]] > 0 else 0.0
+        pwlp = get_print_str(wlp, games, PITCH_RD_PRECISION - 1)
+        print(pwlp.rjust(self.std_space))
 
     def print_ave_line(self):
         diff = 0

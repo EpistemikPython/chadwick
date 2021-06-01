@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-05-31"
+__updated__ = "2021-06-01"
 
 import copy
 from mhsUtils import dt, run_ts, now_dt
@@ -27,8 +27,8 @@ DEFAULT_BAT_YR = 1954
 PROGRAM_DESC   = "Print batting stats, totals & averages from Retrosheet data for the specified years."
 PROGRAM_NAME   = "printBattingStats.py"
 ID_HELP_DESC   = "Retrosheet id for a player, e.g. aaroh101, bondb101"
-STD_BAT_SPACE  = 6
-STD_RD_PRECISION = 3
+BAT_STD_SPACE  = 6
+BAT_RD_PRECISION = 3
 
 GM  = 0       # 0
 PA  = GM+1    # 1
@@ -64,7 +64,7 @@ class PrintBattingStats(PrintStats):
         super().__init__(logger)
         self.stats = copy.copy(STATS_DICT)
         self.totals = copy.copy(STATS_DICT)
-        self.std_space = STD_BAT_SPACE
+        self.std_space = BAT_STD_SPACE
         self.hdrs = BATTING_HDRS
 
     def collect_stats(self, p_box:pointer, bat_id:str, year:str, game_id:str):
@@ -183,45 +183,62 @@ class PrintBattingStats(PrintStats):
 
         # calculate and print the rate stats
         ab = bat_stats[ self.hdrs[AB] ]
-        ba = round(bat_stats[self.hdrs[HIT]] / ab, STD_RD_PRECISION) if ab > 0 else 0.0
-        pba = str(ba)[1:STD_HDR_SIZE+1] if ba > 0.0 else 'x' if games == 0 else ".000"
-        len_pba = len(pba)
-        if pba != 'x' and len_pba < STD_HDR_SIZE:
-            if len_pba == STD_HDR_SIZE - 2: pba += "00"
-            elif len_pba == STD_HDR_SIZE - 1: pba += '0'
-        print(pba.rjust(self.std_space), end = '')
+        hits = bat_stats[self.hdrs[HIT]]
+        # ba = round(bat_stats[self.hdrs[HIT]] / ab, BAT_RD_PRECISION) if ab > 0 else 0.0
+        # pba = str(ba)[1:STD_HDR_SIZE+1] if ba > 0.0 else 'x' if games == 0 else ".000"
+        # pba = set_str_size(pba)
+        ba = hits / ab if ab > 0 else 0.0
+        pba = get_print_str(ba, games, BAT_RD_PRECISION)
+        # len_pba = len(pba)
+        # if pba != 'x' and len_pba < STD_HDR_SIZE:
+        #     addn = "00" if len_pba <= (STD_HDR_SIZE - 2) else '0'
+        #     pba += addn
+        print( pba.rjust(self.std_space), end = '' )
 
-        obp_num = bat_stats[ self.hdrs[HIT] ] + bat_stats[ self.hdrs[BB] ] + bat_stats[ self.hdrs[HBP] ]
-        obp_denom = ab + bat_stats[ self.hdrs[BB] ] + bat_stats[ self.hdrs[HBP] ] + bat_stats[ self.hdrs[SF] ]
+        obp_num = hits + bat_stats[self.hdrs[BB]] + bat_stats[self.hdrs[HBP]]
+        obp_denom = ab + bat_stats[self.hdrs[BB]] + bat_stats[self.hdrs[HBP]] + bat_stats[self.hdrs[SF]]
         obp = obp_num / obp_denom if obp_denom > 0 else 0.0
         self.lgr.debug(F"obp = '{obp}'")
-        robp = round(obp, STD_RD_PRECISION)
-        pobp = str(robp)[1:STD_HDR_SIZE+1] if robp > 0.0 else 'x' if games == 0 else ".000"
-        len_pobp = len(pobp)
-        if pobp != 'x' and len_pobp < STD_HDR_SIZE:
-            if len_pobp == STD_HDR_SIZE - 2: pobp += "00"
-            elif len_pobp == STD_HDR_SIZE - 1: pobp += '0'
-        print(pobp.rjust(self.std_space), end = '')
+        pobp = get_print_str(obp, games, BAT_RD_PRECISION)
+        # robp = round(obp, BAT_RD_PRECISION)
+        # pobp = str(robp)[1:STD_HDR_SIZE+1] if robp > 0.0 else 'x' if games == 0 else ".000"
+        # pobp = set_str_size(pobp)
+        # len_pobp = len(pobp)
+        # if pobp != 'x' and len_pobp < STD_HDR_SIZE:
+        #     addn = "00" if len_pobp <= (STD_HDR_SIZE - 2) else '0'
+        #     pobp += addn
+            # if len_pobp == STD_HDR_SIZE - 2: pobp += "00"
+            # elif len_pobp == STD_HDR_SIZE - 1: pobp += '0'
+        print( pobp.rjust(self.std_space), end = '' )
 
         slg = tb / ab if ab > 0 else 0.0
         self.lgr.debug(F"slg = '{slg}'")
-        rslg = round(slg, STD_RD_PRECISION)
-        pslg = str(rslg)[1:STD_HDR_SIZE+1] if rslg > 0.0 else 'x' if games == 0 else ".000"
-        len_pslg = len(pslg)
-        if pslg != 'x' and len_pslg < STD_HDR_SIZE:
-            if len_pslg == STD_HDR_SIZE - 2: pslg += "00"
-            elif len_pslg == STD_HDR_SIZE - 1: pslg += '0'
-        print(pslg.rjust(self.std_space), end = '')
+        pslg = get_print_str(slg, games, BAT_RD_PRECISION)
+        # rslg = round(slg, BAT_RD_PRECISION)
+        # pslg = str(rslg)[1:STD_HDR_SIZE+1] if rslg > 0.0 else 'x' if games == 0 else ".000"
+        # pslg = set_str_size(pslg)
+        # len_pslg = len(pslg)
+        # if pslg != 'x' and len_pslg < STD_HDR_SIZE:
+        #     addn = "00" if len_pslg <= (STD_HDR_SIZE - 2) else '0'
+        #     pslg += addn
+            # if len_pslg == STD_HDR_SIZE - 2: pslg += "00"
+            # elif len_pslg == STD_HDR_SIZE - 1: pslg += '0'
+        print( pslg.rjust(self.std_space), end = '' )
 
         ops = obp + slg
         self.lgr.debug(F"ops = '{ops}'")
-        rops = round( ops, STD_RD_PRECISION )
-        stat_size = STD_HDR_SIZE + 1 if rops > 1.0 else STD_HDR_SIZE
-        pops = str(rops)[:stat_size] if rops > 1.0 else str(rops)[1:stat_size+1] if rops > 0.0 else 'x' if games == 0 else ".000"
-        len_pops = len(pops)
-        if pops != 'x' and len_pops < stat_size:
-            if len_pops == stat_size - 2: pops += "00"
-            elif len_pops == stat_size - 1: pops += '0'
+        pops = get_print_str(ops, games, BAT_RD_PRECISION, STD_HDR_SIZE + 1)
+        # rops = round(ops, BAT_RD_PRECISION)
+        # stat_size = STD_HDR_SIZE + 1 if rops > 1.0 else STD_HDR_SIZE
+        # pops = str(rops)[:stat_size] if rops > 1.0 else str(rops)[1:stat_size+1] if rops > 0.0 \
+        #         else 'x' if games == 0 else ".000"
+        # pops = set_str_size(pops, stat_size)
+        # len_pops = len(pops)
+        # if pops != 'x' and len_pops < stat_size:
+        #     addn = "00" if len_pops <= (stat_size - 2) else '0'
+        #     pops += addn
+            # if len_pops == stat_size - 2: pops += "00"
+            # elif len_pops == stat_size - 1: pops += '0'
         print( pops.rjust(self.std_space) )
 
     def print_ave_line(self):
@@ -238,7 +255,7 @@ class PrintBattingStats(PrintStats):
         tb = self.totals[BATTING_HDRS[HIT]] + self.totals[BATTING_HDRS[B2]] + self.totals[BATTING_HDRS[B3]] * 2 \
              + self.totals[BATTING_HDRS[HR]] * 3
         tbave = round(tb / self.num_years)
-        print(F"{tbave}".rjust(STD_BAT_SPACE))
+        print(F"{tbave}".rjust(BAT_STD_SPACE))
         print(F"\nprinted Average of each counting stat for {self.num_years} ACTIVE years")
 
 # END class PrintBattingStats
