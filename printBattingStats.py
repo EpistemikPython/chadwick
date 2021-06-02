@@ -52,14 +52,13 @@ GDP = HBP+1   # 18
 LAST = GDP+1  # end of available counting stats
 # CWBoxBatting: int g, pa, ab, r, h, b2, b3, hr, hrslam, bi, bi2out, gw, bb, ibb, so, gdp, hp, sh, sf, sb, cs, xi;
 # baseball-ref.com: G  PA  AB  R  H  2B  3B  HR  RBI  SB  CS  BB  SO  BA  OBP  SLG  OPS  OPS+  TB  GDP  HBP  SH  SF IBB
-STATS_DICT = { "G ":0, "PA":0, "AB":0, "R ":0, "H ":0, "2B":0, "3B":0, "HR":0, "XBH":0, "RBI":0,
-               "SO":0, "BB":0, "IBB":0, "SB":0, "CS":0, "SH":0, "SF":0, "HBP":0, "GDP":0,
-               "TB":0, "BA":0, "OBP":0, "SLG":0, "OPS":0 }
+STATS_DICT = { "G ":0, "PA":0, "AB":0, "R ":0, "H ":0, "2B":0, "3B":0, "HR":0, "XBH":0, "RBI":0, "SO":0, "BB":0, "IBB":0,
+               "SB":0, "CS":0, "SH":0, "SF":0, "HBP":0, "GDP":0,"TB":0, "BA":0, "OBP":0, "SLG":0, "OPS":0 }
 BATTING_HDRS = list( STATS_DICT.keys() )
 
 
 class PrintBattingStats(PrintStats):
-    """print batting stats for a player using Retrosheet data"""
+    """Print batting stats for a player using Retrosheet data."""
     def __init__(self, logger:lg.Logger):
         super().__init__(logger)
         self.stats = copy.copy(STATS_DICT)
@@ -110,7 +109,7 @@ class PrintBattingStats(PrintStats):
                                 players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
 
     def check_boxscores(self, bat_id:str, year:str):
-        """check the Retrosheet boxscore files for self.stats missing from the event files"""
+        """Check the Retrosheet boxscore files for batting stats missing from the event files."""
         self.lgr.debug(F"check boxscore files for year = {year}")
         boxscore_files = [BOXSCORE_FOLDER + year + ".EBN", BOXSCORE_FOLDER + year + ".EBA"]
         for bfile in boxscore_files:
@@ -132,13 +131,12 @@ class PrintBattingStats(PrintStats):
                         elif find_player:
                             if brow[1] == "bline" and brow[2] == bat_id:
                                 self.lgr.info(F"found player '{bat_id}' in boxscore game {current_id}")
-                                # parse self.stats
-                                # Syntax: stat, bline, id,  side, pos, seq, ab, r,   h, 2b,
-                                #         3b,   hr,    rbi, sh,   sf,  hbp, bb, ibb, k, sb,
-                                #         cs,   gidp,  int
+                                # parse boxscore batting stat line
+                                # key: 'stat','bline',id,side,pos,seq,ab,r,h,2b,3b,hr,rbi,sh,sf,hbp,bb,ibb,k, sb,cs,gidp,int
+                                #       0      1      2  3    4   5   6  7 8 9  10 11 12  13 14 15  16 17  18 19 20  21  22
                                 self.stats[self.hdrs[GM]]  += 1
                                 self.stats[self.hdrs[PA]]  += ( int(brow[6]) + int(brow[13]) + int(brow[14]) + int(brow[15])
-                                                      + int(brow[16]) + int(brow[22]) )
+                                                                + int(brow[16]) + int(brow[22]) )
                                 self.stats[self.hdrs[AB]]  += int(brow[6])
                                 self.stats[self.hdrs[RUN]] += int(brow[7])
                                 self.stats[self.hdrs[HIT]] += int(brow[8])
@@ -184,15 +182,9 @@ class PrintBattingStats(PrintStats):
         # calculate and print the rate stats
         ab = bat_stats[ self.hdrs[AB] ]
         hits = bat_stats[self.hdrs[HIT]]
-        # ba = round(bat_stats[self.hdrs[HIT]] / ab, BAT_RD_PRECISION) if ab > 0 else 0.0
-        # pba = str(ba)[1:STD_HDR_SIZE+1] if ba > 0.0 else 'x' if games == 0 else ".000"
-        # pba = set_str_size(pba)
+
         ba = hits / ab if ab > 0 else 0.0
         pba = get_print_str(ba, games, BAT_RD_PRECISION)
-        # len_pba = len(pba)
-        # if pba != 'x' and len_pba < STD_HDR_SIZE:
-        #     addn = "00" if len_pba <= (STD_HDR_SIZE - 2) else '0'
-        #     pba += addn
         print( pba.rjust(self.std_space), end = '' )
 
         obp_num = hits + bat_stats[self.hdrs[BB]] + bat_stats[self.hdrs[HBP]]
@@ -200,45 +192,16 @@ class PrintBattingStats(PrintStats):
         obp = obp_num / obp_denom if obp_denom > 0 else 0.0
         self.lgr.debug(F"obp = '{obp}'")
         pobp = get_print_str(obp, games, BAT_RD_PRECISION)
-        # robp = round(obp, BAT_RD_PRECISION)
-        # pobp = str(robp)[1:STD_HDR_SIZE+1] if robp > 0.0 else 'x' if games == 0 else ".000"
-        # pobp = set_str_size(pobp)
-        # len_pobp = len(pobp)
-        # if pobp != 'x' and len_pobp < STD_HDR_SIZE:
-        #     addn = "00" if len_pobp <= (STD_HDR_SIZE - 2) else '0'
-        #     pobp += addn
-            # if len_pobp == STD_HDR_SIZE - 2: pobp += "00"
-            # elif len_pobp == STD_HDR_SIZE - 1: pobp += '0'
         print( pobp.rjust(self.std_space), end = '' )
 
         slg = tb / ab if ab > 0 else 0.0
         self.lgr.debug(F"slg = '{slg}'")
         pslg = get_print_str(slg, games, BAT_RD_PRECISION)
-        # rslg = round(slg, BAT_RD_PRECISION)
-        # pslg = str(rslg)[1:STD_HDR_SIZE+1] if rslg > 0.0 else 'x' if games == 0 else ".000"
-        # pslg = set_str_size(pslg)
-        # len_pslg = len(pslg)
-        # if pslg != 'x' and len_pslg < STD_HDR_SIZE:
-        #     addn = "00" if len_pslg <= (STD_HDR_SIZE - 2) else '0'
-        #     pslg += addn
-            # if len_pslg == STD_HDR_SIZE - 2: pslg += "00"
-            # elif len_pslg == STD_HDR_SIZE - 1: pslg += '0'
         print( pslg.rjust(self.std_space), end = '' )
 
         ops = obp + slg
         self.lgr.debug(F"ops = '{ops}'")
         pops = get_print_str(ops, games, BAT_RD_PRECISION, STD_HDR_SIZE + 1)
-        # rops = round(ops, BAT_RD_PRECISION)
-        # stat_size = STD_HDR_SIZE + 1 if rops > 1.0 else STD_HDR_SIZE
-        # pops = str(rops)[:stat_size] if rops > 1.0 else str(rops)[1:stat_size+1] if rops > 0.0 \
-        #         else 'x' if games == 0 else ".000"
-        # pops = set_str_size(pops, stat_size)
-        # len_pops = len(pops)
-        # if pops != 'x' and len_pops < stat_size:
-        #     addn = "00" if len_pops <= (stat_size - 2) else '0'
-        #     pops += addn
-            # if len_pops == stat_size - 2: pops += "00"
-            # elif len_pops == stat_size - 1: pops += '0'
         print( pops.rjust(self.std_space) )
 
     def print_ave_line(self):
@@ -275,7 +238,7 @@ def main_batting_stats(args:list):
 
     name = F"{bat_stats.get_giv_name()} {bat_stats.get_fam_name()}"
     lgr.warning(F"name = {name}")
-    season = "post-season" if post else "regular season"
+    season = POST_SEASON if post else REG_SEASON
     lgr.warning(F"found {bat_stats.get_num_files()} {season} event files over {len(bat_stats.event_files)} years.")
 
     bat_stats.print_stats(pers_id, name, season, start, end)

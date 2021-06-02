@@ -64,7 +64,7 @@ PITCHING_HDRS = list( STATS_DICT.keys() )
 
 
 class PrintPitchingStats(PrintStats):
-    """print pitching stats for a player using Retrosheet data"""
+    """Print pitching stats for a player using Retrosheet data."""
     def __init__(self, logger:lg.Logger):
         super().__init__(logger)
         self.stats = copy.copy(STATS_DICT)
@@ -111,7 +111,7 @@ class PrintPitchingStats(PrintStats):
                 p_pitcher = p_pitcher.contents.next
 
     def check_boxscores(self, pit_id:str, year:str):
-        """check the Retrosheet boxscore files for stats missing from the event files"""
+        """Check the Retrosheet boxscore files for pitching stats missing from the event files."""
         self.lgr.debug(F"check boxscore files for year = {year}")
         boxscore_files = [BOXSCORE_FOLDER + year + ".EBN", BOXSCORE_FOLDER + year + ".EBA"]
         for bfile in boxscore_files:
@@ -140,8 +140,9 @@ class PrintPitchingStats(PrintStats):
                                     self.stats[self.hdrs[SAV]] += 1
                             if brow[1] == "pline" and brow[2] == pit_id:
                                 self.lgr.info(F"found pitcher '{pit_id}' in boxscore game {current_id}")
-                                # parse stats
-                                # order: 'stat','pline',id,side,seq,ip*3,no-out,bfp,h,2b,3b,hr,r,er,bb,ibb,k,hbp,wp,balk,sh,sf
+                                # parse boxscore pitching stat line
+                                # key: 'stat','pline',id,side,seq,ip*3,no-out,bfp,h,2b,3b,hr,r, er,bb,ibb,k,hbp,wp,balk,sh,sf
+                                #       0      1      2  3    4   5    6      7   8 9  10 11 12 13 14 15  16 17 18 19   20 21
                                 self.stats[self.hdrs[GM]]  += 1
                                 if brow[4] == '1':
                                     self.stats[self.hdrs[GS]] += 1
@@ -200,41 +201,31 @@ class PrintPitchingStats(PrintStats):
         outs  = pitch_stats[self.hdrs[OUT]]
 
         era = pitch_stats[self.hdrs[ER]] * 27 / outs if outs > 0 else 0.0
-        # pba = str(ba)[1:STD_HDR_SIZE+1] if ba > 0.0 else 'x' if games == 0 else ".000"
-        # pba = set_str_size(pba)
         str_era = get_print_str(era, games, PITCH_RD_PRECISION)
-        # if len(str_era) == STD_HDR_SIZE - 1: str_era += '0'
         print(str_era.rjust(self.std_space), end = '')
 
         whip = (walks + hits) / outs * 3 if outs > 0 else 0.0
-        # str_whip = str(round(whip, PITCH_RD_PRECISION + 1))
-        # if len(str_whip) == STD_HDR_SIZE: str_whip += '0'
         str_whip = get_print_str(whip, games, PITCH_RD_PRECISION + 1, STD_HDR_SIZE + 1)
         print(str_whip.rjust(self.std_space), end = '')
 
         h9 = hits * 27 / outs if outs > 0 else 0.0
         str_h9 = get_print_str(h9, games, PITCH_RD_PRECISION)
-        # if len(str_h9) == STD_HDR_SIZE - 1: str_h9 += '0'
         print(str_h9.rjust(self.std_space), end = '')
 
         hr9 = pitch_stats[self.hdrs[HR]] * 27 / outs if outs > 0 else 0.0
         str_hr9 = get_print_str(hr9, games, PITCH_RD_PRECISION)
-        # if len(str_hr9) == STD_HDR_SIZE - 1: str_hr9 += '0'
         print(str_hr9.rjust(self.std_space), end = '')
 
         so9 = sos * 27 / outs if outs > 0 else 0.0
         str_so9 = get_print_str(so9, games, PITCH_RD_PRECISION)
-        # if len(str_so9) == STD_HDR_SIZE - 1: str_so9 += '0'
         print(str_so9.rjust(self.std_space), end = '')
 
         bb9 = walks * 27 / outs if outs > 0 else 0.0
         str_bb9 = get_print_str(bb9, games, PITCH_RD_PRECISION)
-        # if len(str_bb9) == STD_HDR_SIZE - 1: str_bb9 += '0'
         print(str_bb9.rjust(self.std_space), end = '')
 
         sobb = sos / walks if walks > 0 else 0.0
         str_sobb = get_print_str(sobb, games, PITCH_RD_PRECISION)
-        # if len(str_sobb) == STD_HDR_SIZE - 1: str_sobb += '0'
         print(str_sobb.rjust(self.std_space), end = '')
 
         wlp = pitch_stats[self.hdrs[WIN]] / (pitch_stats[self.hdrs[WIN]] + pitch_stats[self.hdrs[LOS]]) * 100.0 \
@@ -281,7 +272,7 @@ def main_pitching_stats(args:list):
 
     name = F"{pitch_stats.get_giv_name()} {pitch_stats.get_fam_name()}"
     lgr.warning(F"name = {name}")
-    season = "post-season" if post else "regular season"
+    season = POST_SEASON if post else REG_SEASON
     lgr.warning(F"found {pitch_stats.get_num_files()} {season} event files over {len(pitch_stats.event_files)} years.")
 
     pitch_stats.print_stats(pers_id, name, season, start, end)
