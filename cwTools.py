@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-06-01"
+__updated__ = "2021-06-02"
 
 import csv
 import glob
@@ -27,6 +27,8 @@ sys.path.append("/newdata/dev/git/Python/utils")
 from mhsUtils import lg, get_base_filename, osp
 from mhsLogging import DEFAULT_CONSOLE_LEVEL, QUIET_LOG_LEVEL
 
+POST_SEASON = "post-season"
+REG_SEASON  = "regular season"
 POSITIONS = ["", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"]
 MARKERS = ['*', '+', '#']
 LABEL_TOTAL  = "Total"
@@ -39,8 +41,8 @@ POST_SEASON_FOLDER    = RETROSHEET_FOLDER + "event/post/"
 BOXSCORE_FOLDER       = "/newdata/dev/Retrosheet/data/boxscores/"
 
 def c_char_p_to_str(lpcc:c_char_p, maxlen:int = 32) -> str:
-    """Convert a C-type char array to a python string:
-       convert and concatenate the values until hit the null terminator or the char limit"""
+    """Obtain a python string from a C-type char array:
+         - convert and concatenate the values until hit the null terminator or the char limit"""
     limit = 1 if maxlen <= 1 else min(maxlen, 256)
     bytez = lpcc[:limit]
     result = ''
@@ -76,7 +78,7 @@ def float_to_sized_str(num:float, low:int, high:int, lim:int) -> str:
 
 
 class PrintStats(ABC):
-    """print batting or pitching stats for a specified player using Retrosheet data"""
+    """Print batting or pitching stats for a specified player using Retrosheet data."""
     def __init__(self, logger:lg.Logger):
         self.lgr = logger
         self.lgr.warning(F"Start {self.__class__.__name__}")
@@ -118,7 +120,7 @@ class PrintStats(ABC):
         self.print_hdr_uls()
 
     def print_stats(self, player_id:str, name:str, season:str, yrstart:int, yrend:int):
-        """print regular or post-season stats for player {player_id} in years {yrstart} to {yrend}"""
+        """Print regular or post-season stats for player 'player_id' in years [yrstart] to [yrend]."""
         self.lgr.debug(F"print {season} stats for years {yrstart} to {yrend}")
         print(F"\n\t{name} {season} Stats:")
         self.print_header()
@@ -143,7 +145,7 @@ class PrintStats(ABC):
 
             self.lgr.info(F"found {len(self.game_ids)} games with {player_id} stats.")
 
-            if year < 1974 and "regular" in season:
+            if year < 1974 and season == REG_SEASON:
                 self.check_boxscores(player_id, str_year)
 
             self.print_stat_line(str_year)
@@ -157,8 +159,8 @@ class PrintStats(ABC):
         print('')
 
     def get_events(self, post:bool, pers_id:str, start:int, end:int):
-        """get the required event files for batching and pitching stats"""
-        season = "post-season" if post else "regular season"
+        """Get the required event files for batting and pitching stats."""
+        season = POST_SEASON if post else REG_SEASON
         self.lgr.info(F"get the {season} events for player {pers_id} in years {start}->{end}")
         need_name = True
         self.fam_name = pers_id
@@ -240,7 +242,7 @@ def process_bp_args(desc:str, exe:str, id_help:str):
     required.add_argument('-s', '--start', required=True, type=int, help="start year to find stats (yyyy)")
     # optional arguments
     arg_parser.add_argument('-e', '--end', type=int, help="end year to find stats (yyyy)")
-    arg_parser.add_argument('-p', '--post', action="store_true", help="find postseason games instead of regular season")
+    arg_parser.add_argument('-p', '--post', action="store_true", help=F"find {POST_SEASON} games instead of {REG_SEASON}")
     arg_parser.add_argument('-q', '--quiet', action="store_true", help="NO logging")
     arg_parser.add_argument('-l', '--level', default=lg.getLevelName(DEFAULT_CONSOLE_LEVEL), help="set LEVEL of logging output")
 

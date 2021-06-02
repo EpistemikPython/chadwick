@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-05-29"
+__updated__ = "2021-06-02"
 
 from mhsUtils import dt, run_ts, now_dt
 from mhsLogging import MhsLogger
@@ -23,7 +23,7 @@ from cwTools import *
 
 
 class PrintGameSummary:
-    """print MLB game summaries using Retrosheet data"""
+    """Print MLB game summaries using Retrosheet data."""
     def __init__(self, gst:GameSummary, logger:lg.Logger):
         self.cwtools = gst
         self.lgr = logger
@@ -195,7 +195,7 @@ def process_args():
     # optional arguments
     arg_parser.add_argument('-s', '--start', help="start date to print out games (mmdd)")
     arg_parser.add_argument('-e', '--end', help="end date to print out games (mmdd)")
-    arg_parser.add_argument('-p', '--post', action="store_true", help="find postseason games instead of regular season")
+    arg_parser.add_argument('-p', '--post', action="store_true", help=F"find {POST_SEASON} games instead of {REG_SEASON}")
     arg_parser.add_argument('-q', '--quiet', action="store_true", help="NO logging")
     arg_parser.add_argument('-l', '--level', default=lg.getLevelName(DEFAULT_CONSOLE_LEVEL), help="set LEVEL of logging output")
 
@@ -246,7 +246,7 @@ def main_game_summary(args:list):
 
     gsum_tools = GameSummary(lgr)
     pgs = PrintGameSummary(gsum_tools, lgr)
-    season = "post-season" if post else "regular season"
+    season = POST_SEASON if post else REG_SEASON
     try:
         # get the team files
         team_file_name = REGULAR_SEASON_FOLDER + "TEAM" + year
@@ -302,7 +302,7 @@ def main_game_summary(args:list):
                 if end_date >= game_date >= start_date:
                     proc_game = chadwick.process_game(game)
                     g_results = tuple(proc_game)
-                    if team == g_results[0]['HOME_TEAM_ID'] or team == g_results[0]['AWAY_TEAM_ID']:
+                    if team == g_results[0]["HOME_TEAM_ID"] or team == g_results[0]["AWAY_TEAM_ID"]:
                         lgr.info(F" Found game id = {game_id}")
                         pgs.games[game_id[3:]] = game
 
@@ -313,8 +313,8 @@ def main_game_summary(args:list):
             box = MyCwlib.box_create(kgame)
             events = chadwick.process_game(kgame)
             e_results = tuple(events)
-            visitor = pgs.rosters[ e_results[0]['AWAY_TEAM_ID'] ]
-            home = pgs.rosters[ e_results[0]['HOME_TEAM_ID'] ]
+            visitor = pgs.rosters[ e_results[0]["AWAY_TEAM_ID"] ]
+            home = pgs.rosters[ e_results[0]["HOME_TEAM_ID"] ]
 
             pgs.print_summary(kgame, box, visitor, home)
 
