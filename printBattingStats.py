@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-06-01"
+__updated__ = "2021-06-04"
 
 import copy
 from mhsUtils import dt, run_ts, now_dt
@@ -27,7 +27,7 @@ DEFAULT_BAT_YR = 1954
 PROGRAM_DESC   = "Print batting stats, totals & averages from Retrosheet data for the specified years."
 PROGRAM_NAME   = "printBattingStats.py"
 ID_HELP_DESC   = "Retrosheet id for a player, e.g. aaroh101, bondb101"
-BAT_STD_SPACE  = 6
+BAT_STD_SPACE  = STD_SPACE_SIZE
 BAT_RD_PRECISION = 3
 
 GM  = 0       # 0
@@ -182,22 +182,23 @@ class PrintBattingStats(PrintStats):
         # calculate and print the rate stats
         ab = bat_stats[ self.hdrs[AB] ]
         hits = bat_stats[self.hdrs[HIT]]
+        bb_hbp = bat_stats[self.hdrs[BB]] + bat_stats[self.hdrs[HBP]]
 
         ba = hits / ab if ab > 0 else 0.0
-        pba = get_print_strx(ba, games, prec = BAT_RD_PRECISION, lead_zero = False)
+        pba = get_print_strx(ba, games, prec = BAT_RD_PRECISION)
         self.lgr.debug(F"pba = {pba}")
         print( pba.rjust(self.std_space), end = '' )
 
-        obp_num = hits + bat_stats[self.hdrs[BB]] + bat_stats[self.hdrs[HBP]]
-        obp_denom = ab + bat_stats[self.hdrs[BB]] + bat_stats[self.hdrs[HBP]] + bat_stats[self.hdrs[SF]]
+        obp_num = hits + bb_hbp
+        obp_denom = ab + bb_hbp + bat_stats[self.hdrs[SF]]
         obp = obp_num / obp_denom if obp_denom > 0 else 0.0
         self.lgr.debug(F"obp = '{obp}'")
-        pobp = get_print_strx(obp, games, prec = BAT_RD_PRECISION, lead_zero = False)
+        pobp = get_print_strx(obp, games, prec = BAT_RD_PRECISION)
         print( pobp.rjust(self.std_space), end = '' )
 
         slg = tb / ab if ab > 0 else 0.0
         self.lgr.debug(F"slg = '{slg}'")
-        pslg = get_print_strx(slg, games, prec = BAT_RD_PRECISION, lead_zero = False)
+        pslg = get_print_strx(slg, games, prec = BAT_RD_PRECISION)
         print( pslg.rjust(self.std_space), end = '' )
 
         ops = obp + slg
