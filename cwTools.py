@@ -35,6 +35,12 @@ MARKERS   = ['*', '+', '#']
 STD_SPACE_SIZE = 6
 STD_HDR_SIZE   = 4
 
+RETROSHEET_START_YEAR = 1871
+RETROSHEET_AVAIL_YEAR = 1974
+RETROSHEET_END_YEAR   = 2020
+RETROSHEET_ID_SIZE    = 8
+RETROSHEET_ID_ALPHA   = 5
+
 RETROSHEET_FOLDER     = "/newdata/dev/git/fork/ChadwickBureau/retrosheet/"
 ROSTERS_FOLDER        = RETROSHEET_FOLDER + "rosters/"
 REGULAR_SEASON_FOLDER = RETROSHEET_FOLDER + "event/regular/"
@@ -43,7 +49,7 @@ BOXSCORE_FOLDER       = "/newdata/dev/Retrosheet/data/boxscores/"
 
 def c_char_p_to_str(lpcc:c_char_p, maxlen:int = 32) -> str:
     """Obtain a python string from a C-type char array:
-         - convert and concatenate the values until hit the null terminator or the char limit"""
+           convert and concatenate the values until hit the null terminator or the char limit"""
     limit = 1 if maxlen <= 1 else min(maxlen, 256)
     bytez = lpcc[:limit]
     result = ''
@@ -59,7 +65,7 @@ def c_char_p_to_str(lpcc:c_char_p, maxlen:int = 32) -> str:
         ct += 1
 
 def get_print_strx(num:float, games:int, prec:int, lim:int = STD_SPACE_SIZE, lead_zero:bool = False) -> str:
-    """Get a stat number properly rounded and sized."""
+    """Round a stat number to the requested precision and convert to a formatted string."""
     if games == 0: return 'x'
     rnum = round(num, prec)
     pnum = F"{rnum:-{lim}.{prec}f}"
@@ -134,7 +140,7 @@ class PrintStats(ABC):
 
             self.lgr.info(F"found {len(self.game_ids)} games with {player_id} stats.")
 
-            if year < 1974 and season == REG_SEASON:
+            if year < RETROSHEET_AVAIL_YEAR and season == REG_SEASON:
                 self.check_boxscores(player_id, str_year)
 
             self.print_stat_line(str_year)
@@ -249,21 +255,22 @@ def process_bp_input(argl:list, default_id:str, default_yr:int, desc:str, prog:s
         print(F"Problem with log level: {repr(ae)}")
         loglevel = DEFAULT_CONSOLE_LEVEL
 
-    if len(argp.player_id) >= 8 and argp.player_id[:5].isalpha() and argp.player_id[5:8].isdecimal():
+    if len(argp.player_id) >= RETROSHEET_ID_SIZE and argp.player_id[:RETROSHEET_ID_ALPHA].isalpha() \
+            and argp.player_id[RETROSHEET_ID_ALPHA:RETROSHEET_ID_SIZE].isdecimal():
         player_id = argp.player_id.strip()
     else:
         print(F">>> IMPROPER player id '{argp.player_id}'! Using default value = {default_id}.\n")
         player_id = default_id
-    if len(player_id) > 8:
-        player_id = player_id[:8]
+    if len(player_id) > RETROSHEET_ID_SIZE:
+        player_id = player_id[:RETROSHEET_ID_SIZE]
 
-    if 1871 <= argp.start <= 2020:
+    if RETROSHEET_START_YEAR <= argp.start <= RETROSHEET_END_YEAR:
         start = argp.start
     else:
         print(F">>> INVALID start year '{argp.start}'! Using default year = {default_yr}.\n")
         start = default_yr
 
-    if argp.end and 1871 <= argp.end <= 2020 and argp.end >= start:
+    if argp.end and RETROSHEET_START_YEAR <= argp.end <= RETROSHEET_END_YEAR and argp.end >= start:
         end = argp.end
     else:
         if argp.end:

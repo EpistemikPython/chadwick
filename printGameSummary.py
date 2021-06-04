@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-06-02"
+__updated__ = "2021-06-04"
 
 from mhsUtils import dt, run_ts, now_dt
 from mhsLogging import MhsLogger
@@ -219,7 +219,7 @@ def process_input_parameters(argl:list):
     if len(team) > 3:
         team = team[:3]
 
-    if 1871 <= argp.year <= 2020:
+    if RETROSHEET_START_YEAR <= argp.year <= RETROSHEET_END_YEAR:
         year = str(argp.year)
     else:
         print(F">>> INVALID year '{argp.year}'! Using default year = 1993.\n")
