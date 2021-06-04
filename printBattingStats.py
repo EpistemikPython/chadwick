@@ -184,24 +184,25 @@ class PrintBattingStats(PrintStats):
         hits = bat_stats[self.hdrs[HIT]]
 
         ba = hits / ab if ab > 0 else 0.0
-        pba = get_print_str(ba, games, BAT_RD_PRECISION)
+        pba = get_print_strx(ba, games, prec = BAT_RD_PRECISION, lead_zero = False)
+        self.lgr.debug(F"pba = {pba}")
         print( pba.rjust(self.std_space), end = '' )
 
         obp_num = hits + bat_stats[self.hdrs[BB]] + bat_stats[self.hdrs[HBP]]
         obp_denom = ab + bat_stats[self.hdrs[BB]] + bat_stats[self.hdrs[HBP]] + bat_stats[self.hdrs[SF]]
         obp = obp_num / obp_denom if obp_denom > 0 else 0.0
         self.lgr.debug(F"obp = '{obp}'")
-        pobp = get_print_str(obp, games, BAT_RD_PRECISION)
+        pobp = get_print_strx(obp, games, prec = BAT_RD_PRECISION, lead_zero = False)
         print( pobp.rjust(self.std_space), end = '' )
 
         slg = tb / ab if ab > 0 else 0.0
         self.lgr.debug(F"slg = '{slg}'")
-        pslg = get_print_str(slg, games, BAT_RD_PRECISION)
+        pslg = get_print_strx(slg, games, prec = BAT_RD_PRECISION, lead_zero = False)
         print( pslg.rjust(self.std_space), end = '' )
 
         ops = obp + slg
         self.lgr.debug(F"ops = '{ops}'")
-        pops = get_print_str(ops, games, BAT_RD_PRECISION, STD_HDR_SIZE + 1)
+        pops = get_print_strx(ops, games, prec = BAT_RD_PRECISION)
         print( pops.rjust(self.std_space) )
 
     def print_ave_line(self):

@@ -201,36 +201,54 @@ class PrintPitchingStats(PrintStats):
         outs  = pitch_stats[self.hdrs[OUT]]
 
         era = pitch_stats[self.hdrs[ER]] * 27 / outs if outs > 0 else 0.0
-        str_era = get_print_str(era, games, PITCH_RD_PRECISION)
-        print(str_era.rjust(self.std_space), end = '')
+        pera = get_print_strx(era, games, PITCH_RD_PRECISION)
+        # rera = round(era, PITCH_RD_PRECISION)
+        # print(F"{rera:-{PITCH_STD_SPACE}.{PITCH_RD_PRECISION}f}".rjust(self.std_space), end = '')
+        print(pera.rjust(self.std_space), end = '')
 
         whip = (walks + hits) / outs * 3 if outs > 0 else 0.0
-        str_whip = get_print_str(whip, games, PITCH_RD_PRECISION + 1, STD_HDR_SIZE + 1)
-        print(str_whip.rjust(self.std_space), end = '')
+        pwhip = get_print_strx(whip, games, PITCH_RD_PRECISION + 1, STD_HDR_SIZE + 1)
+        # rwhip = round(whip, PITCH_RD_PRECISION + 1)
+        # print(F"{rwhip:-{PITCH_STD_SPACE}.{PITCH_RD_PRECISION + 1}f}".rjust(self.std_space), end = '')
+        print(pwhip.rjust(self.std_space), end = '')
 
         h9 = hits * 27 / outs if outs > 0 else 0.0
-        str_h9 = get_print_str(h9, games, PITCH_RD_PRECISION)
-        print(str_h9.rjust(self.std_space), end = '')
+        ph9 = get_print_strx(h9, games, PITCH_RD_PRECISION)
+        # rh9 = round(h9, PITCH_RD_PRECISION)
+        # print(F"{rh9:-{PITCH_STD_SPACE}.{PITCH_RD_PRECISION}f}".rjust(self.std_space), end = '')
+        print(ph9.rjust(self.std_space), end = '')
 
         hr9 = pitch_stats[self.hdrs[HR]] * 27 / outs if outs > 0 else 0.0
-        str_hr9 = get_print_str(hr9, games, PITCH_RD_PRECISION)
-        print(str_hr9.rjust(self.std_space), end = '')
+        phr9 = get_print_strx(hr9, games, PITCH_RD_PRECISION)
+        # rhr9 = round(hr9, PITCH_RD_PRECISION)
+        # print(F"{rhr9:-{PITCH_STD_SPACE}.{PITCH_RD_PRECISION}f}".rjust(self.std_space), end = '')
+        print(phr9.rjust(self.std_space), end = '')
 
         so9 = sos * 27 / outs if outs > 0 else 0.0
-        str_so9 = get_print_str(so9, games, PITCH_RD_PRECISION)
-        print(str_so9.rjust(self.std_space), end = '')
+        # self.lgr.warning(F"so9 = '{so9}'")
+        pso9 = get_print_strx(so9, games, PITCH_RD_PRECISION)
+        # rso9 = round(so9, PITCH_RD_PRECISION)
+        # pso9 = F"{rso9:-{PITCH_STD_SPACE}.{PITCH_RD_PRECISION}f}" if games > 0 else 'x'
+        # print(pso9.rjust(self.std_space), end = '')
+        print(pso9.rjust(self.std_space), end = '')
 
         bb9 = walks * 27 / outs if outs > 0 else 0.0
-        str_bb9 = get_print_str(bb9, games, PITCH_RD_PRECISION)
-        print(str_bb9.rjust(self.std_space), end = '')
+        pbb9 = get_print_strx(bb9, games, PITCH_RD_PRECISION)
+        # rbb9 = round(bb9, PITCH_RD_PRECISION)
+        # print(F"{rbb9:-{PITCH_STD_SPACE}.{PITCH_RD_PRECISION}f}".rjust(self.std_space), end = '')
+        print(pbb9.rjust(self.std_space), end = '')
 
         sobb = sos / walks if walks > 0 else 0.0
-        str_sobb = get_print_str(sobb, games, PITCH_RD_PRECISION)
-        print(str_sobb.rjust(self.std_space), end = '')
+        psobb = get_print_strx(sobb, games, PITCH_RD_PRECISION)
+        # rsobb = round(sobb, PITCH_RD_PRECISION)
+        # print(F"{rsobb:-{PITCH_STD_SPACE}.{PITCH_RD_PRECISION}f}".rjust(self.std_space), end = '')
+        print(psobb.rjust(self.std_space), end = '')
 
         wlp = pitch_stats[self.hdrs[WIN]] / (pitch_stats[self.hdrs[WIN]] + pitch_stats[self.hdrs[LOS]]) * 100.0 \
                 if pitch_stats[self.hdrs[WIN]] > 0 else 0.0
-        pwlp = get_print_str(wlp, games, PITCH_RD_PRECISION - 1)
+        pwlp = get_print_strx(wlp, games, PITCH_RD_PRECISION - 1)
+        # rwlp = round(wlp, PITCH_RD_PRECISION - 1)
+        # print(F"{rwlp:-{PITCH_STD_SPACE}.{PITCH_RD_PRECISION - 1}f}".rjust(self.std_space))
         print(pwlp.rjust(self.std_space))
 
     def print_ave_line(self):
