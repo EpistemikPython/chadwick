@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-06-02"
+__updated__ = "2021-06-04"
 
 import csv
 import glob
@@ -27,11 +27,11 @@ sys.path.append("/newdata/dev/git/Python/utils")
 from mhsUtils import lg, get_base_filename, osp
 from mhsLogging import DEFAULT_CONSOLE_LEVEL, QUIET_LOG_LEVEL
 
+LABEL_TOTAL = "Total"
 POST_SEASON = "post-season"
 REG_SEASON  = "regular season"
 POSITIONS = ["", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"]
-MARKERS = ['*', '+', '#']
-LABEL_TOTAL  = "Total"
+MARKERS   = ['*', '+', '#']
 STD_SPACE_SIZE = 6
 STD_HDR_SIZE   = 4
 
@@ -58,41 +58,12 @@ def c_char_p_to_str(lpcc:c_char_p, maxlen:int = 32) -> str:
         result += chr(b)
         ct += 1
 
-def get_print_strx(num:float, games:int, prec:int, lim:int = STD_SPACE_SIZE, lead_zero:bool = True) -> str:
+def get_print_strx(num:float, games:int, prec:int, lim:int = STD_SPACE_SIZE, lead_zero:bool = False) -> str:
+    """Get a stat number properly rounded and sized."""
     if games == 0: return 'x'
     rnum = round(num, prec)
-    # print(F"rnum = {rnum}")
     pnum = F"{rnum:-{lim}.{prec}f}"
-    # print(F"pnum = {pnum}")
     return pnum if lead_zero else pnum.lstrip(" 0")
-
-
-def get_print_str(num:float, games:int, prec:int, lim:int = STD_HDR_SIZE) -> str:
-    if games == 0: return 'x'
-    if num == 0.0: return ".000"
-    rnum = round(num, prec)
-    if rnum <= 0.0: return ".000"
-    high = prec + 2
-    low = high - lim
-    if low < 0: low = 0
-    if rnum >= 10.0:
-        # print(F"rnum = {rnum}; low = {low}; high = {high}")
-        high += 1
-        lim += 1
-    return float_to_sized_str(rnum, low, high, lim)
-    # return F"{rnum}:{lim}.{prec}f"
-
-def float_to_sized_str(num:float, low:int, high:int, lim:int) -> str:
-    snum = str(num)[low:high]
-    len_str = len(snum)
-    # len_prec = snum.split('.')[1]
-    # print(list_prec)
-    # len_prec = len(list_prec[1])
-    len_val = len_str # min(len_str, len_prec)
-    if len_val < lim:
-        for r in range(lim - len_val):
-            snum += '0'
-    return snum
 
 
 class PrintStats(ABC):
@@ -326,14 +297,11 @@ class GameSummary:
     # void cwbox_print_player(CWBoxPlayer *player, CWRoster *roster)
     def print_player( self, p_player:pointer, p_roster:pointer ):
         self._lgr.info("\n----------------------------------")
-
         bio = None
         posstr = ''
-
         player = p_player.contents
         if p_roster:
             bio = MyCwlib.roster_player_find(p_roster, player.player_id)
-
         if bio:
             name = c_char_p_to_str(bio.contents.last_name) + " " + c_char_p_to_str(bio.contents.first_name, 1)
         else:
