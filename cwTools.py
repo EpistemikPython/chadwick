@@ -32,7 +32,8 @@ REG_SEASON  = "regular season"
 POSITIONS = ["", "p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh", "ph", "pr"]
 MARKERS = ['*', '+', '#']
 LABEL_TOTAL  = "Total"
-STD_HDR_SIZE = 4
+STD_SPACE_SIZE = 6
+STD_HDR_SIZE   = 4
 
 RETROSHEET_FOLDER     = "/newdata/dev/git/fork/ChadwickBureau/retrosheet/"
 ROSTERS_FOLDER        = RETROSHEET_FOLDER + "rosters/"
@@ -57,6 +58,15 @@ def c_char_p_to_str(lpcc:c_char_p, maxlen:int = 32) -> str:
         result += chr(b)
         ct += 1
 
+def get_print_strx(num:float, games:int, prec:int, lim:int = STD_SPACE_SIZE, lead_zero:bool = True) -> str:
+    if games == 0: return 'x'
+    rnum = round(num, prec)
+    # print(F"rnum = {rnum}")
+    pnum = F"{rnum:-{lim}.{prec}f}"
+    # print(F"pnum = {pnum}")
+    return pnum if lead_zero else pnum.lstrip(" 0")
+
+
 def get_print_str(num:float, games:int, prec:int, lim:int = STD_HDR_SIZE) -> str:
     if games == 0: return 'x'
     if num == 0.0: return ".000"
@@ -65,14 +75,22 @@ def get_print_str(num:float, games:int, prec:int, lim:int = STD_HDR_SIZE) -> str
     high = prec + 2
     low = high - lim
     if low < 0: low = 0
-    if rnum >= 10.0: high += 1
+    if rnum >= 10.0:
+        # print(F"rnum = {rnum}; low = {low}; high = {high}")
+        high += 1
+        lim += 1
     return float_to_sized_str(rnum, low, high, lim)
+    # return F"{rnum}:{lim}.{prec}f"
 
 def float_to_sized_str(num:float, low:int, high:int, lim:int) -> str:
     snum = str(num)[low:high]
     len_str = len(snum)
-    if len_str < lim:
-        for r in range(lim - len_str):
+    # len_prec = snum.split('.')[1]
+    # print(list_prec)
+    # len_prec = len(list_prec[1])
+    len_val = len_str # min(len_str, len_prec)
+    if len_val < lim:
+        for r in range(lim - len_val):
             snum += '0'
     return snum
 
@@ -153,7 +171,8 @@ class PrintStats(ABC):
 
         if self.num_years > 1:
             self.print_hdr_uls()
-            self.print_header()
+            if self.num_years > 5:
+                self.print_header()
             self.print_stat_line(LABEL_TOTAL)
             self.print_ave_line()
         print('')
