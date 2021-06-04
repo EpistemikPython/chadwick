@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-25"
-__updated__ = "2021-06-01"
+__updated__ = "2021-06-04"
 
 import copy
 from mhsUtils import dt, run_ts, now_dt
@@ -26,7 +26,7 @@ DEFAULT_PITCH_YR = 2014
 PROGRAM_DESC = "Print pitching stats, totals & averages from Retrosheet data for the specified years."
 PROGRAM_NAME = "printPitchingStats.py"
 ID_HELP_DESC = "Retrosheet id for a pitcher, e.g. spahw101, kersc001"
-PITCH_STD_SPACE = 6
+PITCH_STD_SPACE = STD_SPACE_SIZE
 PITCH_RD_PRECISION = 2
 
 GM  = 0         # 0
@@ -202,53 +202,36 @@ class PrintPitchingStats(PrintStats):
 
         era = pitch_stats[self.hdrs[ER]] * 27 / outs if outs > 0 else 0.0
         pera = get_print_strx(era, games, PITCH_RD_PRECISION)
-        # rera = round(era, PITCH_RD_PRECISION)
-        # print(F"{rera:-{PITCH_STD_SPACE}.{PITCH_RD_PRECISION}f}".rjust(self.std_space), end = '')
         print(pera.rjust(self.std_space), end = '')
 
         whip = (walks + hits) / outs * 3 if outs > 0 else 0.0
         pwhip = get_print_strx(whip, games, PITCH_RD_PRECISION + 1, STD_HDR_SIZE + 1)
-        # rwhip = round(whip, PITCH_RD_PRECISION + 1)
-        # print(F"{rwhip:-{PITCH_STD_SPACE}.{PITCH_RD_PRECISION + 1}f}".rjust(self.std_space), end = '')
         print(pwhip.rjust(self.std_space), end = '')
 
         h9 = hits * 27 / outs if outs > 0 else 0.0
         ph9 = get_print_strx(h9, games, PITCH_RD_PRECISION)
-        # rh9 = round(h9, PITCH_RD_PRECISION)
-        # print(F"{rh9:-{PITCH_STD_SPACE}.{PITCH_RD_PRECISION}f}".rjust(self.std_space), end = '')
         print(ph9.rjust(self.std_space), end = '')
 
         hr9 = pitch_stats[self.hdrs[HR]] * 27 / outs if outs > 0 else 0.0
         phr9 = get_print_strx(hr9, games, PITCH_RD_PRECISION)
-        # rhr9 = round(hr9, PITCH_RD_PRECISION)
-        # print(F"{rhr9:-{PITCH_STD_SPACE}.{PITCH_RD_PRECISION}f}".rjust(self.std_space), end = '')
         print(phr9.rjust(self.std_space), end = '')
 
         so9 = sos * 27 / outs if outs > 0 else 0.0
-        # self.lgr.warning(F"so9 = '{so9}'")
+        self.lgr.debug(F"so9 = '{so9}'")
         pso9 = get_print_strx(so9, games, PITCH_RD_PRECISION)
-        # rso9 = round(so9, PITCH_RD_PRECISION)
-        # pso9 = F"{rso9:-{PITCH_STD_SPACE}.{PITCH_RD_PRECISION}f}" if games > 0 else 'x'
-        # print(pso9.rjust(self.std_space), end = '')
         print(pso9.rjust(self.std_space), end = '')
 
         bb9 = walks * 27 / outs if outs > 0 else 0.0
         pbb9 = get_print_strx(bb9, games, PITCH_RD_PRECISION)
-        # rbb9 = round(bb9, PITCH_RD_PRECISION)
-        # print(F"{rbb9:-{PITCH_STD_SPACE}.{PITCH_RD_PRECISION}f}".rjust(self.std_space), end = '')
         print(pbb9.rjust(self.std_space), end = '')
 
         sobb = sos / walks if walks > 0 else 0.0
         psobb = get_print_strx(sobb, games, PITCH_RD_PRECISION)
-        # rsobb = round(sobb, PITCH_RD_PRECISION)
-        # print(F"{rsobb:-{PITCH_STD_SPACE}.{PITCH_RD_PRECISION}f}".rjust(self.std_space), end = '')
         print(psobb.rjust(self.std_space), end = '')
 
         wlp = pitch_stats[self.hdrs[WIN]] / (pitch_stats[self.hdrs[WIN]] + pitch_stats[self.hdrs[LOS]]) * 100.0 \
                 if pitch_stats[self.hdrs[WIN]] > 0 else 0.0
         pwlp = get_print_strx(wlp, games, PITCH_RD_PRECISION - 1)
-        # rwlp = round(wlp, PITCH_RD_PRECISION - 1)
-        # print(F"{rwlp:-{PITCH_STD_SPACE}.{PITCH_RD_PRECISION - 1}f}".rjust(self.std_space))
         print(pwlp.rjust(self.std_space))
 
     def print_ave_line(self):
