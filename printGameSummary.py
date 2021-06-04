@@ -295,7 +295,7 @@ def main_game_summary(args:list):
             lgr.debug(F"found event file for {('file' if post else 'team')} = {evteam}")
             cwgames = chadwick.games( pgs.event_files[evteam] )
             for game in cwgames:
-                game_id = game.contents.game_id.decode(encoding='UTF-8')
+                game_id = game.contents.game_id.decode(encoding = UTF8_ENCODING)
                 game_date = game_id[3:11]
                 lgr.debug(F" Found game id = {game_id}; date = {game_date}")
 

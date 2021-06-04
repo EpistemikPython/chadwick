@@ -24,7 +24,7 @@ from argparse import ArgumentParser
 from ctypes import c_char_p, pointer
 from cwLibWrappers import MyCwlib, chadwick
 sys.path.append("/newdata/dev/git/Python/utils")
-from mhsUtils import lg, get_base_filename, osp
+from mhsUtils import lg, get_base_filename, osp, UTF8_ENCODING
 from mhsLogging import DEFAULT_CONSOLE_LEVEL, QUIET_LOG_LEVEL
 
 LABEL_TOTAL = "Total"
@@ -125,7 +125,7 @@ class PrintStats(ABC):
                 self.lgr.debug(F"found events for year/team = {get_base_filename(efile)}")
                 cwgames = chadwick.games(efile)
                 for game in cwgames:
-                    game_id = game.contents.game_id.decode(encoding = 'UTF-8')
+                    game_id = game.contents.game_id.decode(encoding = UTF8_ENCODING)
                     game_date = game_id[3:11]
                     self.lgr.debug(F" Found game id = {game_id}; date = {game_date}")
 
@@ -363,7 +363,7 @@ class GameSummary:
             if not bio and p_home:
                 bio = MyCwlib.roster_player_find(p_home, event.players[index])
             if not bio:
-                name = event.players[index].decode("UTF8")
+                name = event.players[index].decode(UTF8_ENCODING)
                 self._lgr.warning("bio NOT available!")
             if comma:
                 print(", ", end = '')
@@ -374,7 +374,7 @@ class GameSummary:
                 elif name:
                     print(name, end = '')
                 else:
-                    print(event.players[index].decode("UTF8"), end = '')
+                    print(event.players[index].decode(UTF8_ENCODING), end = '')
             else:
                 if bio:
                     print(F"{c_char_p_to_str(bio.contents.last_name)} "
@@ -382,7 +382,7 @@ class GameSummary:
                 elif name:
                     print(F"{name} {count}", end = '')
                 else:
-                    print(F"{event.players[index].decode('UTF8')} {count}", end = '')
+                    print(F"{event.players[index].decode(UTF8_ENCODING)} {count}", end = '')
             comma = 1
         print('')
         # NOTE: reset events.mark >> NEEDED in Python?
@@ -423,7 +423,7 @@ class GameSummary:
         bio = None
         roster = p_roster.contents
         pitcher = p_pitcher.contents
-        player_id = pitcher.player_id.decode("UTF8")
+        player_id = pitcher.player_id.decode(UTF8_ENCODING)
         self._lgr.info(F"player id = {player_id}")
         self._lgr.debug(F"type(player id) = {type(player_id)}")
         if roster:
@@ -531,21 +531,21 @@ class GameSummary:
                 if not batter: batter = MyCwlib.roster_player_find(p_home, event.contents.players[0])
                 if not pitcher: pitcher = MyCwlib.roster_player_find(p_home, event.contents.players[1])
             if not batter:
-                batter_name = event.contents.players[0].decode("UTF8")
+                batter_name = event.contents.players[0].decode(UTF8_ENCODING)
                 self._lgr.warning("roster NOT available for batter!")
             if not pitcher:
-                pitcher_name = event.contents.players[1].decode("UTF8")
+                pitcher_name = event.contents.players[1].decode(UTF8_ENCODING)
                 self._lgr.warning("roster NOT available for pitcher!")
             if comma: print(", ", end = '')
 
             if pitcher:
                 print(F"by {c_char_p_to_str(pitcher.contents.last_name)} "
-                      F"{pitcher.contents.first_name[0].decode('UTF8')} ", end = '')
+                      F"{pitcher.contents.first_name[0].decode(UTF8_ENCODING)} ", end = '')
             else:
                 print(F"by {pitcher_name if pitcher_name else c_char_p_to_str(event.contents.players[1])} ", end = '')
             if batter:
                 print(F"({c_char_p_to_str(batter.contents.last_name)} "
-                      F"{batter.contents.first_name[0].decode('UTF8')})", end = '')
+                      F"{batter.contents.first_name[0].decode(UTF8_ENCODING)})", end = '')
             else:
                 print(F"({batter_name if batter_name else c_char_p_to_str(event.contents.players[0])})", end = '')
             if count != 1:

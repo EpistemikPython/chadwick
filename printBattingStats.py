@@ -76,7 +76,7 @@ class PrintBattingStats(PrintStats):
         while slots[0] <= 9 or slots[1] <= 9 :
             for t in range(2):
                 if slots[t] <= 9:
-                    player = players[t].contents.player_id.decode("UTF-8")
+                    player = players[t].contents.player_id.decode(UTF8_ENCODING)
                     if player == bat_id:
                         self.lgr.info(F"found player '{bat_id}' in game {game_id}")
                         self.game_ids.append(game_id)
