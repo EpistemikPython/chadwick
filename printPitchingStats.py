@@ -78,7 +78,7 @@ class PrintPitchingStats(PrintStats):
             p_pitcher = MyCwlib.box_get_starting_pitcher(p_box, t)
             while p_pitcher:
                 pitcher = p_pitcher.contents
-                pitcher_id = pitcher.player_id.decode("UTF8")
+                pitcher_id = pitcher.player_id.decode(UTF8_ENCODING)
                 self.lgr.debug(F"pitcher = {pitcher_id}")
                 if pitcher_id == pit_id:
                     self.lgr.info(F"found pitcher '{pit_id}' in game {game_id}")
@@ -106,8 +106,12 @@ class PrintPitchingStats(PrintStats):
                     self.stats[self.hdrs[WP]]  += pitching.wp
                     self.stats[self.hdrs[HBP]] += pitching.hb
                     self.stats[self.hdrs[BK]]  += pitching.bk
-                    self.stats[self.hdrs[PIT]] += pitching.pitches
-                    self.stats[self.hdrs[STR]] += pitching.strikes
+                    # TODO: add marker to indicate incomplete data?
+                    # estimates for missing data
+                    strk_min = pitching.so * 3
+                    ball_min = pitching.bb * 4
+                    self.stats[self.hdrs[PIT]] += max(pitching.pitches, (pitching.bf + strk_min + ball_min + pitching.h))
+                    self.stats[self.hdrs[STR]] += max(pitching.strikes, (strk_min + pitching.h))
                 p_pitcher = p_pitcher.contents.next
 
     def check_boxscores(self, pit_id:str, year:str):
@@ -147,7 +151,10 @@ class PrintPitchingStats(PrintStats):
                                 if brow[4] == '1':
                                     self.stats[self.hdrs[GS]] += 1
                                 self.stats[self.hdrs[OUT]] += int(brow[5])
-                                self.stats[self.hdrs[BF]]  += int(brow[7])
+                                bfp = 0
+                                if int(brow[7]) > 0:
+                                    bfp = int(brow[7])
+                                    self.stats[self.hdrs[BF]] += bfp
                                 hits = 0
                                 if int(brow[8]) > 0:
                                     hits = int(brow[8])
@@ -162,8 +169,10 @@ class PrintPitchingStats(PrintStats):
                                 self.stats[self.hdrs[WP]]  += int(brow[18])
                                 self.stats[self.hdrs[HBP]] += int(brow[17])
                                 self.stats[self.hdrs[BK]]  += int(brow[19])
-                                self.stats[self.hdrs[PIT]] += (int(brow[16])*3 + int(brow[14])*4 + hits) # approximation
-                                self.stats[self.hdrs[STR]] += int(brow[16])*3 # approximation
+                                # estimates for missing data
+                                strk_min = int(brow[16]) * 3
+                                self.stats[self.hdrs[PIT]] += (bfp + strk_min + (int(brow[14]) * 4) + hits)
+                                self.stats[self.hdrs[STR]] += (strk_min + hits)
                                 find_player = False
             except FileNotFoundError:
                 continue
@@ -193,6 +202,7 @@ class PrintPitchingStats(PrintStats):
         games = pitch_stats[ self.hdrs[GM] ]
         if year != LABEL_TOTAL and games > 0: self.num_years += 1
 
+        # TODO: add FIP
         # NOTE: add SO%, TS% ?
         # calculate and print the rate stats: ERA, WHIP, H9, HR9, SO9, BB9, SO/BB, WL%
         hits  = pitch_stats[self.hdrs[HIT]]
