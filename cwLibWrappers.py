@@ -66,6 +66,7 @@ class MyCwlib:
         """
         Read in a roster (in Retrosheet format) from file 'file'.
         Returns nonzero on success, zero on failure.
+        [NB: roster files that end with newline return zero even though all the players loaded without problem.]
         """
         func = cwlib.cw_roster_read
         func.restype = c_int

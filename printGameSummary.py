@@ -578,18 +578,16 @@ def main_game_summary(args:list):
                     raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
                 roster_fptr = chadwick.fopen( bytes(roster_file, UTF8_ENCODING) )
                 # fill the rosters
-                roster_read_result = MyCwlib.roster_read(rosters[rteam], roster_fptr)
-                lgr.debug("roster read result = " + ("Failure!" if roster_read_result == 0 else "Success."))
+                MyCwlib.roster_read(rosters[rteam], roster_fptr)
                 chadwick.fclose(roster_fptr)
+                # find and store the event file paths
                 if not post:
-                    # find and store the event file paths
                     rfile = REGULAR_SEASON_FOLDER + year + rteam + ".EV" + row[1]
                     if not osp.exists(rfile):
                         raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
                     event_files[rteam] = rfile
-
+        # find and store the event file paths for the requested post-season years
         if post:
-            # find and store the event file paths for the requested years
             post_files = POST_SEASON_FOLDER + str(year) + "*"
             for pfile in glob.glob(post_files):
                 basename = get_base_filename(pfile)
