@@ -14,18 +14,16 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-06-10"
+__updated__ = "2021-06-11"
 
 from mhsUtils import dt, run_ts, now_dt
 from mhsLogging import MhsLogger
-from cwLibWrappers import cwlib
 from cwTools import *
 
 
 class PrintGameSummary:
     """Print MLB game summaries using Retrosheet data."""
     def __init__(self, logger:lg.Logger):
-        # self.cwtools = gst
         self.note_count = 0
         self.lgr = logger
         self.lgr.warning(F" Start {self.__class__.__name__}")
@@ -41,11 +39,11 @@ class PrintGameSummary:
         self.home_rost = p_home
 
         self.vis_city = c_char_p_to_str(p_vis.contents.city, 16) \
-                          if p_vis else MyCwlib.game_info_lookup(self.game, b"visteam")
+                          if p_vis else MyCwlib.game_info_lookup(self.game, b'visteam')
         self.lgr.info(F"visitor = {self.vis_city}")
 
         self.home_city = c_char_p_to_str(p_home.contents.city, 16) \
-                           if p_home else MyCwlib.game_info_lookup(self.game, b"hometeam")
+                           if p_home else MyCwlib.game_info_lookup(self.game, b'hometeam')
         self.lgr.info(F"home = {self.home_city}")
 
         self.print_header()
@@ -60,17 +58,17 @@ class PrintGameSummary:
     # void cwbox_print_header(CWGame *game, CWRoster *visitors, CWRoster *home)
     def print_header( self):
         self.lgr.info("\n----------------------------------")
-        dn_code = "?"
-        day_night = MyCwlib.game_info_lookup(self.game, b"daynight")
+        dn_code = '?'
+        day_night = MyCwlib.game_info_lookup(self.game, b'daynight')
         if day_night:
-            dn_code = "D" if day_night == "day" else "N" if day_night == "night" else day_night
+            dn_code = 'D' if day_night == "day" else 'N' if day_night == "night" else day_night
 
-        game_date = MyCwlib.game_info_lookup(self.game, b"date")
+        game_date = MyCwlib.game_info_lookup(self.game, b'date')
         self.lgr.info(F"game date = {game_date}")
         year, month, day = game_date.split('/')
-        game_number = MyCwlib.game_info_lookup(self.game, b"number")
-        self.lgr.info(F"game_number = {game_number}")
-        game_number_str = "" if game_number == "0" else F", game #{game_number}"
+        game_number = MyCwlib.game_info_lookup(self.game, b'number')
+        self.lgr.info(F"game number = {game_number}")
+        game_number_str = '' if game_number == '0' else F", game #{game_number}"
 
         print(F"\n\t\tGame of {month}/{day}/{year}{game_number_str} -- {self.vis_city} @ {self.home_city} ({dn_code})\n")
 
@@ -80,10 +78,8 @@ class PrintGameSummary:
         linescore = self.box.contents.linescore
         for t in range(2):
             runs = 0
-            if t == 0:
-                print(F"{self.vis_city:16}", end = '')
-            else:
-                print(F"{self.home_city:16}", end = '')
+            city = self.home_city if t == 1 else self.vis_city
+            print(F"{city:16}", end = '')
 
             for ix in range(1,32):
                 if linescore[ix][t] >= 10:
@@ -105,15 +101,13 @@ class PrintGameSummary:
 
             print(F" -- {runs:2}")
 
-        outs_at_end = self.box.contents.outs_at_end
-        if outs_at_end != 3:
-            if self.box.contents.walk_off:
-                print(F"  {outs_at_end} out{'' if outs_at_end == 1 else 's'} when winning run scored.")
-            else:
-                print(F"  {outs_at_end} out{'' if outs_at_end == 1 else 's'} when game ended.")
+        if self.box.contents.outs_at_end != 3:
+            result = "winning run scored" if self.box.contents.walk_off else "game ended"
+            print(F"  {self.box.contents.outs_at_end} out when {result}.")
         print('')
 
     def print_batting(self):
+        self.lgr.info("\n----------------------------------")
         slots = [1, 1]
         players = list()
         ab = [0, 0]
@@ -124,7 +118,7 @@ class PrintGameSummary:
         bb = [0, 0]
         so = [0, 0]
 
-        # ?? trying to use cwlib.cw_box_get_starter FAILS here as print_player() gets players[t] as an int... see below
+        # ?? using cwlib.cw_box_get_starter() FAILS here as print_batter() gets players[t] as an int... see below
         player0 = MyCwlib.box_get_starter(self.box, 0, 1)
         self.lgr.debug(F"\ntype(player0) = {type(player0)}")
         players.insert(0, player0)
@@ -136,7 +130,7 @@ class PrintGameSummary:
         while slots[0] <= 9 or slots[1] <= 9:
             for t in range(2):
                 if slots[t] <= 9:
-                    self.print_player(players[t], t)  # see note just above
+                    self.print_batter(players[t], t)  # see note just above
                     batting = players[t].contents.batting.contents
                     ab[t] += batting.ab
                     r[t] += batting.r
@@ -155,15 +149,15 @@ class PrintGameSummary:
                         while slots[t] <= 9 and not players[t]:
                             slots[t] += 1
                             if slots[t] <= 9:
-                                # ?? using this function WITHOUT the python wrapper works fine here
-                                players[t] = cwlib.cw_box_get_starter(self.box, t, slots[t])
+                                # ?? using cwlib.cw_box_get_starter() works fine here
+                                players[t] = MyCwlib.box_get_starter(self.box, t, slots[t])
                                 self.lgr.debug(F"slots[{t}] = {slots[t]}:{players[t].contents.name}")
                 else:
                     print(''.ljust(45), end = '')
                 print("     ", end = ''),
             print('')
 
-        # print the totals for each team
+        # print the totals for both teams
         print(F"{''.ljust(20)} --  --  --  --  -- -- -- {''.ljust(24)} --  --  --  --  -- -- --")
         print(F"{''.ljust(20)}{pa[0]:3}{ab[0]:4}{h[0]:4}{bb[0]:4}{so[0]:4}{r[0]:3}", end = '')
         print(F"{bi[0]:3} " if bi[0] >= 0 else "    ", end = '')
@@ -174,21 +168,21 @@ class PrintGameSummary:
         print('')
 
     def print_pitching(self):
+        self.lgr.info("\n----------------------------------")
         self.note_count = 0
         for t in range(2):
             pitcher = MyCwlib.box_get_starting_pitcher(self.box, t)
-            if t == 0:
-                print(F"  {self.vis_city:20} IP  H  R ER BB SO  TP TS GB FB")
-            else:
-                print(F"  {self.home_city:20} IP  H  R ER BB SO  TP TS GB FB")
+            city = self.home_city if t == 1 else self.vis_city
+            print(F"  {city:20} IP  H  R ER BB SO  TP TS GB FB")
+
             while pitcher:
                 self.print_pitcher(pitcher, t)
                 pitcher = pitcher.contents.next
             if t == 0:
                 print('')
         print('')
-        self.print_pitcher_apparatus()
-        print('')
+        if self.print_pitching_apparatus():
+            print('')
 
     # void cwbox_print_timeofgame(CWGame * game)
     def print_time_of_game(self):
@@ -196,7 +190,7 @@ class PrintGameSummary:
         tog = int(MyCwlib.game_info_lookup(self.game, b'timeofgame'))
         if tog and tog > 0:
             minutes = str(tog % 60)
-            if len(minutes) == 1: minutes = "0" + minutes
+            if len(minutes) == 1: minutes = '0' + minutes
             print(F"T -- {tog // 60}:{minutes}")
 
     # void cwbox_print_attendance(CWGame * game)
@@ -205,18 +199,16 @@ class PrintGameSummary:
         print(F"A -- {MyCwlib.game_info_lookup(self.game, b'attendance')}")
 
     # void cwbox_print_player(CWBoxPlayer *player, CWRoster *roster)
-    def print_player( self, p_player:pointer, side:int ):
+    def print_batter( self, p_player:pointer, side:int ):
         self.lgr.info("\n----------------------------------")
         bio = None
         posstr = ''
-        p_roster = self.home_rost
-        if side == 0:
-            p_roster = self.vis_rost
+        p_roster = self.home_rost if side == 1 else self.vis_rost
         player = p_player.contents
         if p_roster:
             bio = MyCwlib.roster_player_find(p_roster, player.player_id)
         if bio:
-            name = c_char_p_to_str(bio.contents.last_name) + " " + c_char_p_to_str(bio.contents.first_name, 1)
+            name = c_char_p_to_str(bio.contents.last_name) + ' ' + c_char_p_to_str(bio.contents.first_name, 1)
         else:
             name = player.name
         self.lgr.info(F"player name = {name}")
@@ -247,70 +239,13 @@ class PrintGameSummary:
         print(F"{outstr:20}{batting.pa:3}{batting.ab:4}{batting.h:4}{batting.bb:4}{batting.so:4}{batting.r:3}", end = '')
         print(F"{batting.bi:3}" if batting.bi >= 0 else "", end = '')
 
-    # void
-    # cwbox_print_player_apparatus(CWGame *game, CWBoxEvent *list, int index, char *label, CWRoster *visitors, CWRoster *home)
-    def print_player_apparatus(self, p_events:pointer, index:int, label:str):
-        """Output for list of events (2B, 3B, WP, etc)."""
-        self.lgr.info("\n----------------------------------")
-        if not p_events:
-            return
-        event = p_events.contents
-        comma = 0
-        print(F"{label} -- ", end = '')
-        while event:
-            search_event = event
-            bio = None
-            name = ''
-            count = 0
-            if event.mark > 0:
-                event = event.next.contents if event.next else None
-                continue
-            while search_event:
-                if event.players[index] == search_event.players[index]:
-                    count += 1
-                    search_event.mark = 1
-                search_event = search_event.next.contents if search_event.next else None
-
-            if self.vis_rost:
-                bio = MyCwlib.roster_player_find(self.vis_rost, event.players[index])
-            if not bio and self.home_rost:
-                bio = MyCwlib.roster_player_find(self.home_rost, event.players[index])
-            if not bio:
-                name = event.players[index].decode(UTF8_ENCODING)
-                self.lgr.warning("bio NOT available!")
-            if comma:
-                print(", ", end = '')
-            if count == 1:
-                if bio:
-                    print( c_char_p_to_str(bio.contents.last_name) + " "
-                           + c_char_p_to_str(bio.contents.first_name[0],1), end = '' )
-                elif name:
-                    print(name, end = '')
-                else:
-                    print(event.players[index].decode(UTF8_ENCODING), end = '')
-            else:
-                if bio:
-                    print(F"{c_char_p_to_str(bio.contents.last_name)} "
-                          F"{c_char_p_to_str(bio.contents.first_name[0],1)} {count}", end = '')
-                elif name:
-                    print(F"{name} {count}", end = '')
-                else:
-                    print(F"{event.players[index].decode(UTF8_ENCODING)} {count}", end = '')
-            comma = 1
-        print('')
-        # NOTE: reset events.mark >> NEEDED in Python?
-        event = p_events.contents
-        while event:
-            event.mark = 0
-            event = event.next.contents if event.next else None
-
     # void cwbox_print_apparatus(CWGame * game, CWBoxscore * boxscore, CWRoster * visitors, CWRoster * home)
     def print_batting_apparatus(self):
-        """Output the 'batting apparatus' (list of events and other miscellaneous game information)."""
+        """Output the batting apparatus: info on miscellaneous batting events: DP, 2B, SB, CS etc."""
         self.lgr.info("\n----------------------------------")
 
         boxscore = self.box.contents
-        self.print_player_apparatus(boxscore.err_list, 0, "E")
+        self.print_player_apparatus(boxscore.err_list, 0, 'E')
         self.print_double_plays()
         self.print_triple_plays()
         self.print_lob()
@@ -345,12 +280,12 @@ class PrintGameSummary:
         self.lgr.info(F"pitcher name = {name}")
 
         game = self.game.contents
-        wp = MyCwlib.game_info_lookup(game, b"wp")
+        wp = MyCwlib.game_info_lookup(game, b'wp')
         self.lgr.info(F"winning pitcher id = {wp}")
         self.lgr.debug(F"type(wp) = {type(wp)}")
-        lp = MyCwlib.game_info_lookup(game, b"lp")
+        lp = MyCwlib.game_info_lookup(game, b'lp')
         self.lgr.info(F"losing pitcher id = {lp}")
-        save = MyCwlib.game_info_lookup(game, b"save")
+        save = MyCwlib.game_info_lookup(game, b'save')
         self.lgr.info(F"save pitcher id = {save}")
         if wp and wp == player_id:
             name += " (W)"
@@ -375,22 +310,19 @@ class PrintGameSummary:
         print(F"{pitching.fb:3}" if pitching.fb >= 0 else "   ")
 
     # void cwbox_print_pitcher_apparatus(CWBoxscore * boxscore)
-    def print_pitcher_apparatus(self):
-        """Output the pitching apparatus as well as list of pitchers who did not record an out in an inning."""
+    def print_pitching_apparatus(self) -> bool:
+        """Output the pitching apparatus as well as info on pitchers who did not record an out in an inning."""
         self.lgr.info("\n----------------------------------")
-
         boxscore = self.box.contents
-        self.print_hbp(boxscore.hp_list)
-        self.print_player_apparatus(boxscore.wp_list, 0, "WP")
-        self.print_player_apparatus(boxscore.pb_list, 1, "PB")
-        self.print_player_apparatus(boxscore.bk_list, 0, "Balk")
 
+        bxp = False
         count = 0
         for t in range(2):
             pitcher = MyCwlib.box_get_starting_pitcher(self.box, t)
             while pitcher:
                 pitching = pitcher.contents.pitching.contents
                 if pitching.xbinn > 0 and pitching.xb > 0:
+                    bxp = True
                     print("  ", end = '')
                     for i in range( (count // 3)+1 ):
                         print(F"{MARKERS[count % 3]}", end = '')
@@ -405,6 +337,68 @@ class PrintGameSummary:
                         print("th")
                     count += 1
                 pitcher = pitcher.contents.next
+
+        bhbp = self.print_hbp(boxscore.hp_list)
+        bwp = self.print_player_apparatus(boxscore.wp_list, 0, "WP")
+        bpb = self.print_player_apparatus(boxscore.pb_list, 1, "PB")
+        balk = self.print_player_apparatus(boxscore.bk_list, 0, "Balk")
+
+        return bhbp or bwp or bpb or balk or bxp
+
+    # void
+    # cwbox_print_player_apparatus(CWGame *game, CWBoxEvent *list, int index, char *label, CWRoster *visitors, CWRoster *home)
+    def print_player_apparatus(self, p_events:pointer, index:int, label:str) -> bool:
+        """Output for various events: 2B, 3B, WP, Balk etc."""
+        self.lgr.info("\n----------------------------------")
+        if not p_events:
+            return False
+        event = p_events.contents
+        comma = False
+        print(F"{label} -- ", end = '')
+        while event:
+            search_event = event
+            bio = None
+            name = ''
+            count = 0
+            if event.mark > 0:
+                event = event.next.contents if event.next else None
+                continue
+            # find any multiple events by the same player and keep count
+            while search_event:
+                if event.players[index] == search_event.players[index]:
+                    count += 1
+                    search_event.mark = 1
+                search_event = search_event.next.contents if search_event.next else None
+
+            if self.vis_rost:
+                bio = MyCwlib.roster_player_find(self.vis_rost, event.players[index])
+            if not bio and self.home_rost:
+                bio = MyCwlib.roster_player_find(self.home_rost, event.players[index])
+            if not bio:
+                name = event.players[index].decode(UTF8_ENCODING)
+                self.lgr.warning("bio NOT available!")
+            if comma:
+                print(", ", end = '')
+
+            if count == 1:
+                if bio:
+                    print( c_char_p_to_str(bio.contents.last_name) + " "
+                           + c_char_p_to_str(bio.contents.first_name[0],1), end = '' )
+                elif name:
+                    print(name, end = '')
+                else:
+                    print(event.players[index].decode(UTF8_ENCODING), end = '')
+            else:
+                if bio:
+                    print(F"{c_char_p_to_str(bio.contents.last_name)} "
+                          F"{c_char_p_to_str(bio.contents.first_name[0],1)} {count}", end = '')
+                elif name:
+                    print(F"{name} {count}", end = '')
+                else:
+                    print(F"{event.players[index].decode(UTF8_ENCODING)} {count}", end = '')
+            comma = True
+        print('')
+        return True
 
     # void cwbox_print_double_play(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_double_plays(self):
@@ -437,12 +431,12 @@ class PrintGameSummary:
             print(F"{self.vis_city} {tp[0]}, {self.home_city} {tp[1]}")
 
     # void cwbox_print_hbp_apparatus(CWGame *game, CWBoxEvent *list,  CWRoster *visitors, CWRoster *home)
-    def print_hbp(self, p_event:pointer):
+    def print_hbp(self, p_event:pointer) -> bool:
         self.lgr.info("\n----------------------------------")
         if not p_event:
-            return
+            return False
         event = p_event
-        comma = 0
+        comma = False
         print("HBP -- ", end = '')
         while event:
             search_event = event
@@ -472,7 +466,8 @@ class PrintGameSummary:
             if not pitcher:
                 pitcher_name = event.contents.players[1].decode(UTF8_ENCODING)
                 self.lgr.warning("roster NOT available for pitcher!")
-            if comma: print(", ", end = '')
+            if comma:
+                print(", ", end = '')
 
             if pitcher:
                 print(F"by {c_char_p_to_str(pitcher.contents.last_name)} "
@@ -486,13 +481,9 @@ class PrintGameSummary:
                 print(F"({batter_name if batter_name else c_char_p_to_str(event.contents.players[0])})", end = '')
             if count != 1:
                 print(F" {count}")
-            comma = 1
+            comma = True
         print('')
-        # NOTE: reset events.mark >> NEEDED in Python?
-        event = p_event
-        while event:
-            event.contents.mark = 0
-            event = event.contents.next
+        return True
 
     # void cwbox_print_lob(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_lob(self):
@@ -588,7 +579,7 @@ def main_game_summary(args:list):
                 roster_fptr = chadwick.fopen( bytes(roster_file, UTF8_ENCODING) )
                 # fill the rosters
                 roster_read_result = MyCwlib.roster_read(rosters[rteam], roster_fptr)
-                lgr.debug("roster read result = " + ("Success." if roster_read_result > 0 else "Failure!"))
+                lgr.debug("roster read result = " + ("Failure!" if roster_read_result == 0 else "Success."))
                 chadwick.fclose(roster_fptr)
                 if not post:
                     # find and store the event file paths
