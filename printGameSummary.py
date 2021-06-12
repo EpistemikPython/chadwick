@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-06-11"
+__updated__ = "2021-06-12"
 
 from mhsUtils import dt, run_ts, now_dt
 from mhsLogging import MhsLogger
@@ -31,8 +31,6 @@ class PrintGameSummary:
     # void cwbox_print_text(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     # noinspection PyAttributeOutsideInit
     def print_summary( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
-        self.lgr.info("\n----------------------------------")
-
         self.game = p_game
         self.box  = p_box
         self.vis_rost  = p_vis
@@ -57,7 +55,6 @@ class PrintGameSummary:
 
     # void cwbox_print_header(CWGame *game, CWRoster *visitors, CWRoster *home)
     def print_header( self):
-        self.lgr.info("\n----------------------------------")
         dn_code = '?'
         day_night = MyCwlib.game_info_lookup(self.game, b'daynight')
         if day_night:
@@ -74,7 +71,6 @@ class PrintGameSummary:
 
     # void cwbox_print_linescore(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_linescore( self):
-        self.lgr.info("\n----------------------------------")
         linescore = self.box.contents.linescore
         for t in range(2):
             runs = 0
@@ -107,7 +103,6 @@ class PrintGameSummary:
         print('')
 
     def print_batting(self):
-        self.lgr.info("\n----------------------------------")
         slots = [1, 1]
         players = list()
         ab = [0, 0]
@@ -168,7 +163,6 @@ class PrintGameSummary:
         print('')
 
     def print_pitching(self):
-        self.lgr.info("\n----------------------------------")
         self.note_count = 0
         for t in range(2):
             pitcher = MyCwlib.box_get_starting_pitcher(self.box, t)
@@ -186,7 +180,6 @@ class PrintGameSummary:
 
     # void cwbox_print_timeofgame(CWGame * game)
     def print_time_of_game(self):
-        self.lgr.info("\n----------------------------------")
         tog = int(MyCwlib.game_info_lookup(self.game, b'timeofgame'))
         if tog and tog > 0:
             minutes = str(tog % 60)
@@ -195,12 +188,10 @@ class PrintGameSummary:
 
     # void cwbox_print_attendance(CWGame * game)
     def print_attendance(self):
-        self.lgr.info("\n----------------------------------")
         print(F"A -- {MyCwlib.game_info_lookup(self.game, b'attendance')}")
 
     # void cwbox_print_player(CWBoxPlayer *player, CWRoster *roster)
     def print_batter( self, p_player:pointer, side:int ):
-        self.lgr.info("\n----------------------------------")
         bio = None
         posstr = ''
         p_roster = self.home_rost if side == 1 else self.vis_rost
@@ -242,9 +233,9 @@ class PrintGameSummary:
     # void cwbox_print_apparatus(CWGame * game, CWBoxscore * boxscore, CWRoster * visitors, CWRoster * home)
     def print_batting_apparatus(self):
         """Output the batting apparatus: info on miscellaneous batting events: DP, 2B, SB, CS etc."""
-        self.lgr.info("\n----------------------------------")
-
+        self.lgr.info(F"{str(dt.now())}")
         boxscore = self.box.contents
+
         self.print_player_apparatus(boxscore.err_list, 0, 'E')
         self.print_double_plays()
         self.print_triple_plays()
@@ -259,9 +250,10 @@ class PrintGameSummary:
 
     # void cwbox_print_pitcher(CWGame * game, CWBoxPitcher * pitcher, CWRoster * roster, int * note_count)
     def print_pitcher( self, p_pitcher:pointer, side:int ):
-        self.lgr.info("\n----------------------------------")
-        # Output one pitcher's pitching line. The parameter 'note_count' keeps track of how many apparatus notes
-        # have been emitted (for pitchers who do not record an out in an inning)
+        """
+        Output one pitcher's pitching line. The parameter 'note_count' keeps track of how many apparatus notes
+        have been emitted (for pitchers who do not record an out in an inning)
+        """
         bio = None
         p_roster = self.home_rost
         if side == 0:
@@ -312,9 +304,8 @@ class PrintGameSummary:
     # void cwbox_print_pitcher_apparatus(CWBoxscore * boxscore)
     def print_pitching_apparatus(self) -> bool:
         """Output the pitching apparatus as well as info on pitchers who did not record an out in an inning."""
-        self.lgr.info("\n----------------------------------")
+        self.lgr.info(F"{str(dt.now())}")
         boxscore = self.box.contents
-
         bxp = False
         count = 0
         for t in range(2):
@@ -349,7 +340,7 @@ class PrintGameSummary:
     # cwbox_print_player_apparatus(CWGame *game, CWBoxEvent *list, int index, char *label, CWRoster *visitors, CWRoster *home)
     def print_player_apparatus(self, p_events:pointer, index:int, label:str) -> bool:
         """Output for various events: 2B, 3B, WP, Balk etc."""
-        self.lgr.info("\n----------------------------------")
+        self.lgr.info(F"index = {index}; label = {label}")
         if not p_events:
             return False
         event = p_events.contents
@@ -402,7 +393,6 @@ class PrintGameSummary:
 
     # void cwbox_print_double_play(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_double_plays(self):
-        self.lgr.info("\n----------------------------------")
         dp = self.box.contents.dp
         if dp[0] == 0 and dp[1] == 0:
             return
@@ -417,7 +407,6 @@ class PrintGameSummary:
 
     # void cwbox_print_triple_play(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_triple_plays(self):
-        self.lgr.info("\n----------------------------------")
         tp = self.box.contents.tp
         if tp[0] == 0 and tp[1] == 0:
             return
@@ -432,7 +421,6 @@ class PrintGameSummary:
 
     # void cwbox_print_hbp_apparatus(CWGame *game, CWBoxEvent *list,  CWRoster *visitors, CWRoster *home)
     def print_hbp(self, p_event:pointer) -> bool:
-        self.lgr.info("\n----------------------------------")
         if not p_event:
             return False
         event = p_event
@@ -487,7 +475,6 @@ class PrintGameSummary:
 
     # void cwbox_print_lob(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     def print_lob(self):
-        self.lgr.info("\n----------------------------------")
         lob = self.box.contents.lob
         if lob[0] == 0 and lob[1] == 0:
             return
@@ -508,19 +495,29 @@ def process_args():
     arg_parser.add_argument('-e', '--end', help="end date to print out games (mmdd)")
     arg_parser.add_argument('-p', '--post', action="store_true", help=F"find {POST_SEASON} games instead of {REG_SEASON}")
     arg_parser.add_argument('-q', '--quiet', action="store_true", help="NO logging")
-    arg_parser.add_argument('-l', '--level', default=lg.getLevelName(DEFAULT_CONSOLE_LEVEL), help="set LEVEL of logging output")
+    arg_parser.add_argument('-c', '--levcon', default=lg.getLevelName(DEFAULT_CONSOLE_LEVEL),
+                            help="set LEVEL of console logging output")
+    arg_parser.add_argument('-f', '--levfile', default=lg.getLevelName(DEFAULT_FILE_LEVEL),
+                            help="set LEVEL of file logging output")
 
     return arg_parser
 
 
 def process_input_parameters(argl:list):
     argp = process_args().parse_args(argl)
-    loglevel = lg.getLevelName(QUIET_LOG_LEVEL) if argp.quiet else argp.level.strip().upper()
+
+    con_level = lg.getLevelName(QUIET_LOG_LEVEL) if argp.quiet else argp.levcon.strip().upper()
     try:
-        getattr( lg, loglevel )
+        getattr( lg, con_level )
     except AttributeError as ae:
-        print(F"Problem with log level: {repr(ae)}")
-        loglevel = DEFAULT_CONSOLE_LEVEL
+        print(F"Problem with console log level: {repr(ae)}")
+        con_level = DEFAULT_CONSOLE_LEVEL
+    file_level = argp.levfile.strip().upper()
+    try:
+        getattr( lg, file_level )
+    except AttributeError as ae:
+        print(F"Problem with file log level: {repr(ae)}")
+        file_level = DEFAULT_FILE_LEVEL
 
     if argp.team.isalnum() and len(argp.team.strip()) >= 3:
         team = argp.team.strip().upper()
@@ -544,15 +541,15 @@ def process_input_parameters(argl:list):
         start = "0901" if argp.post else "0301"
         end = "1231" if argp.post else "1031"
 
-    return team, year, start, end, argp.post, loglevel
+    return team, year, start, end, argp.post, con_level, file_level
 
 
 def main_game_summary(args:list):
-    team, year, start, end, post, loglevel = process_input_parameters(args)
+    team, year, start, end, post, conlevel, filelevel = process_input_parameters(args)
 
-    lg_ctrl = MhsLogger(__file__, con_level = loglevel, folder = "logs/games")
+    lg_ctrl = MhsLogger(__file__, con_level = conlevel, file_level = filelevel, folder = "logs/games")
     lgr = lg_ctrl.get_logger()
-    lgr.debug(F"loglevel = {repr(loglevel)}")
+    lgr.info(F"Logging: console level = {repr(conlevel)}; file level = {repr(filelevel)}")
     lgr.warning(F" team = {team}; year = {year}; start = {start}; end = {end}")
 
     games = {}
@@ -578,7 +575,9 @@ def main_game_summary(args:list):
                     raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
                 roster_fptr = chadwick.fopen( bytes(roster_file, UTF8_ENCODING) )
                 # fill the rosters
-                MyCwlib.roster_read(rosters[rteam], roster_fptr)
+                result = MyCwlib.roster_read(rosters[rteam], roster_fptr)
+                # roster files that end with newline return zero even though all the players loaded without problem
+                lgr.info(F"{rteam} roster read result = {'FAILURE' if result == 0 else 'success'}.")
                 chadwick.fclose(roster_fptr)
                 # find and store the event file paths
                 if not post:
