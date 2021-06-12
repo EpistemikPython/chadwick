@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-06-10"
+__updated__ = "2021-06-12"
 
 import csv
 import glob
@@ -25,7 +25,7 @@ from ctypes import c_char_p, pointer
 from cwLibWrappers import MyCwlib, chadwick
 sys.path.append("/newdata/dev/git/Python/utils")
 from mhsUtils import lg, get_base_filename, osp, UTF8_ENCODING
-from mhsLogging import DEFAULT_CONSOLE_LEVEL, QUIET_LOG_LEVEL
+from mhsLogging import DEFAULT_CONSOLE_LEVEL, DEFAULT_FILE_LEVEL, QUIET_LOG_LEVEL
 
 LABEL_TOTAL = "Total"
 POST_SEASON = "post-season"
@@ -240,7 +240,10 @@ def process_bp_args(desc:str, exe:str, id_help:str):
     arg_parser.add_argument('-e', '--end', type=int, help="end year to find stats (yyyy)")
     arg_parser.add_argument('-p', '--post', action="store_true", help=F"find {POST_SEASON} games instead of {REG_SEASON}")
     arg_parser.add_argument('-q', '--quiet', action="store_true", help="NO logging")
-    arg_parser.add_argument('-l', '--level', default=lg.getLevelName(DEFAULT_CONSOLE_LEVEL), help="set LEVEL of logging output")
+    arg_parser.add_argument('-c', '--levcon', default=lg.getLevelName(DEFAULT_CONSOLE_LEVEL),
+                            help="set LEVEL of console logging output")
+    arg_parser.add_argument('-f', '--levfile', default=lg.getLevelName(DEFAULT_FILE_LEVEL),
+                            help="set LEVEL of file logging output")
 
     return arg_parser
 
@@ -248,12 +251,19 @@ def process_bp_args(desc:str, exe:str, id_help:str):
 def process_bp_input(argl:list, default_id:str, default_yr:int, desc:str, prog:str, id_help:str):
     """process command line input for batching and pitching stats"""
     argp = process_bp_args(desc, prog, id_help).parse_args(argl)
-    loglevel = lg.getLevelName(QUIET_LOG_LEVEL) if argp.quiet else argp.level.strip().upper()
+
+    con_level = lg.getLevelName(QUIET_LOG_LEVEL) if argp.quiet else argp.levcon.strip().upper()
     try:
-        getattr( lg, loglevel )
+        getattr( lg, con_level )
     except AttributeError as ae:
-        print(F"Problem with log level: {repr(ae)}")
-        loglevel = DEFAULT_CONSOLE_LEVEL
+        print(F"Problem with console log level: {repr(ae)}")
+        con_level = DEFAULT_CONSOLE_LEVEL
+    file_level = argp.levfile.strip().upper()
+    try:
+        getattr( lg, file_level )
+    except AttributeError as ae:
+        print(F"Problem with file log level: {repr(ae)}")
+        file_level = DEFAULT_FILE_LEVEL
 
     if len(argp.player_id) >= RETROSHEET_ID_SIZE and argp.player_id[:RETROSHEET_ID_ALPHA].isalpha() \
             and argp.player_id[RETROSHEET_ID_ALPHA:RETROSHEET_ID_SIZE].isdecimal():
@@ -277,4 +287,4 @@ def process_bp_input(argl:list, default_id:str, default_yr:int, desc:str, prog:s
             print(F">>> INVALID end year '{argp.end}'! Using end year = {start}.\n")
         end = start
 
-    return player_id, start, end, argp.post, loglevel
+    return player_id, start, end, argp.post, con_level, file_level

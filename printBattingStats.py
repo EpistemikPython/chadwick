@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-06-04"
+__updated__ = "2021-06-12"
 
 import copy
 from mhsUtils import dt, run_ts, now_dt
@@ -227,13 +227,13 @@ class PrintBattingStats(PrintStats):
 
 
 def main_batting_stats(args:list):
-    pers_id, start, end, post, loglevel = process_bp_input(args, DEFAULT_BAT_ID, DEFAULT_BAT_YR,
-                                                           PROGRAM_DESC, PROGRAM_NAME, ID_HELP_DESC)
+    pers_id, start, end, post, conlevel, filelevel = process_bp_input( args, DEFAULT_BAT_ID, DEFAULT_BAT_YR,
+                                                                       PROGRAM_DESC, PROGRAM_NAME, ID_HELP_DESC )
 
-    lg_ctrl = MhsLogger(__file__, con_level = loglevel, folder = "logs/batting")
+    lg_ctrl = MhsLogger(__file__, con_level = conlevel, file_level = filelevel, folder = "logs/batting")
     lgr = lg_ctrl.get_logger()
-    lgr.debug(F"loglevel = {repr(loglevel)}")
-    lgr.warning(F" id = {pers_id}; years = {start}->{end}")
+    lgr.info(F"Logging: console level = {repr(conlevel)}; file level = {repr(filelevel)}")
+    lgr.warning(F" id = {pers_id}; years: {start} -> {end}")
 
     bat_stats = PrintBattingStats(lgr)
     bat_stats.get_events(post, pers_id, start, end)

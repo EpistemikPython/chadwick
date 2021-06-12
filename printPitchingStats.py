@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-25"
-__updated__ = "2021-06-04"
+__updated__ = "2021-06-12"
 
 import copy
 from mhsUtils import dt, run_ts, now_dt
@@ -270,13 +270,13 @@ class PrintPitchingStats(PrintStats):
 
 
 def main_pitching_stats(args:list):
-    pers_id, start, end, post, loglevel = process_bp_input(args, DEFAULT_PITCH_ID, DEFAULT_PITCH_YR,
-                                                           PROGRAM_DESC, PROGRAM_NAME, ID_HELP_DESC)
+    pers_id, start, end, post, conlevel, filelevel = process_bp_input( args, DEFAULT_PITCH_ID, DEFAULT_PITCH_YR,
+                                                                       PROGRAM_DESC, PROGRAM_NAME, ID_HELP_DESC )
 
-    lg_ctrl = MhsLogger(__file__, con_level = loglevel, folder = "logs/pitching")
+    lg_ctrl = MhsLogger(__file__, con_level = conlevel, file_level = filelevel, folder = "logs/pitching")
     lgr = lg_ctrl.get_logger()
-    lgr.debug(F"loglevel = {repr(loglevel)}")
-    lgr.warning(F" id = {pers_id}; years = {start}->{end}")
+    lgr.info(F"Logging: console level = {repr(conlevel)}; file level = {repr(filelevel)}")
+    lgr.warning(F" id = {pers_id}; years: {start} -> {end}")
 
     pitch_stats = PrintPitchingStats(lgr)
     pitch_stats.get_events(post, pers_id, start, end)
