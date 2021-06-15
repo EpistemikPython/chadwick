@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-06-12"
+__updated__ = "2021-06-15"
 
 from mhsUtils import dt, run_ts, now_dt
 from mhsLogging import MhsLogger
@@ -30,14 +30,13 @@ class PrintGameSummary:
 
     # void cwbox_print_text(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     # noinspection PyAttributeOutsideInit
-    def print_summary( self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer ):
+    def print_summary(self, p_game:pointer, p_box:pointer, p_vis:pointer, p_home:pointer):
         self.game = p_game
         self.box  = p_box
         self.vis_rost  = p_vis
         self.home_rost = p_home
 
-        self.vis_city = c_char_p_to_str(p_vis.contents.city, 16) \
-                          if p_vis else MyCwlib.game_info_lookup(self.game, b'visteam')
+        self.vis_city = c_char_p_to_str(p_vis.contents.city, 16) if p_vis else MyCwlib.game_info_lookup(self.game, b'visteam')
         self.lgr.info(F"visitor = {self.vis_city}")
 
         self.home_city = c_char_p_to_str(p_home.contents.city, 16) \
@@ -54,7 +53,7 @@ class PrintGameSummary:
         self.print_attendance()
 
     # void cwbox_print_header(CWGame *game, CWRoster *visitors, CWRoster *home)
-    def print_header( self):
+    def print_header(self):
         dn_code = '?'
         day_night = MyCwlib.game_info_lookup(self.game, b'daynight')
         if day_night:
@@ -70,7 +69,7 @@ class PrintGameSummary:
         print(F"\n\t\tGame of {month}/{day}/{year}{game_number_str} -- {self.vis_city} @ {self.home_city} ({dn_code})\n")
 
     # void cwbox_print_linescore(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
-    def print_linescore( self):
+    def print_linescore(self):
         linescore = self.box.contents.linescore
         for t in range(2):
             runs = 0
@@ -103,15 +102,15 @@ class PrintGameSummary:
         print('')
 
     def print_batting(self):
-        slots = [1, 1]
+        slots = [1,1]
         players = list()
-        ab = [0, 0]
-        r  = [0, 0]
-        h  = [0, 0]
-        bi = [0, 0]
-        pa = [0, 0]
-        bb = [0, 0]
-        so = [0, 0]
+        ab = [0,0]
+        r  = [0,0]
+        h  = [0,0]
+        bi = [0,0]
+        pa = [0,0]
+        bb = [0,0]
+        so = [0,0]
 
         # ?? using cwlib.cw_box_get_starter() FAILS here as print_batter() gets players[t] as an int... see below
         player0 = MyCwlib.box_get_starter(self.box, 0, 1)
@@ -191,7 +190,7 @@ class PrintGameSummary:
         print(F"A -- {MyCwlib.game_info_lookup(self.game, b'attendance')}")
 
     # void cwbox_print_player(CWBoxPlayer *player, CWRoster *roster)
-    def print_batter( self, p_player:pointer, side:int ):
+    def print_batter(self, p_player:pointer, side:int):
         bio = None
         posstr = ''
         p_roster = self.home_rost if side == 1 else self.vis_rost
@@ -249,7 +248,7 @@ class PrintGameSummary:
         self.print_player_apparatus(boxscore.sf_list, 0, "SF")
 
     # void cwbox_print_pitcher(CWGame * game, CWBoxPitcher * pitcher, CWRoster * roster, int * note_count)
-    def print_pitcher( self, p_pitcher:pointer, side:int ):
+    def print_pitcher(self, p_pitcher:pointer, side:int):
         """
         Output one pitcher's pitching line. The parameter 'note_count' keeps track of how many apparatus notes
         have been emitted (for pitchers who do not record an out in an inning)
@@ -611,20 +610,20 @@ def main_game_summary(args:list):
                 if end_date >= game_date >= start_date:
                     proc_game = chadwick.process_game(game)
                     g_results = tuple(proc_game)
-                    if team == g_results[0]["HOME_TEAM_ID"] or team == g_results[0]["AWAY_TEAM_ID"]:
+                    home_team = g_results[0]["HOME_TEAM_ID"]
+                    vis_team = g_results[0]["AWAY_TEAM_ID"]
+                    if team == home_team or team == vis_team:
                         lgr.info(F" Found game id = {game_id}")
-                        games[game_id[3:]] = game
+                        games[game_id[3:]] = game, home_team, vis_team
 
         lgr.warning(F" Found {len(games)} {season} games")
         pgs = PrintGameSummary(lgr)
         # sort the games and print out the information
         for key in sorted( games.keys() ):
-            kgame = games[key]
+            kgame, home_team, vis_team = games[key]
             kbox = MyCwlib.box_create(kgame)
-            kevents = chadwick.process_game(kgame)
-            ev_results = tuple(kevents)
-            visitor = rosters[ ev_results[0]["AWAY_TEAM_ID"] ]
-            home = rosters[ ev_results[0]["HOME_TEAM_ID"] ]
+            home = rosters[ home_team ]
+            visitor = rosters[ vis_team ]
 
             pgs.print_summary(kgame, kbox, visitor, home)
 
