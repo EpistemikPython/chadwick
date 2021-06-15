@@ -17,7 +17,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-06-11"
+__updated__ = "2021-06-15"
 
 from ctypes import c_void_p
 from pychadwick.box import CWBoxPlayer, CWBoxPitcher, CWBoxscore
@@ -27,6 +27,7 @@ from pychadwick.roster import CWPlayer
 chadwick = Chadwick()
 cwlib = chadwick.libchadwick
 
+ENC_UTF8 = "utf-8"
 
 class MyCwlib:
     # char *cw_game_info_lookup(CWGame *game, char *label)
@@ -41,7 +42,7 @@ class MyCwlib:
         func.restype = c_char_p
         func.argtypes = (POINTER(CWGame), c_char_p,)
         result = func(game_ptr, label)
-        return result.decode(encoding='UTF-8')
+        return result.decode(encoding = ENC_UTF8)
 
     # CWRoster *cw_roster_create(char *team_id, int year, char *league, char *city, char *nickname)
     @staticmethod
@@ -50,10 +51,10 @@ class MyCwlib:
         Allocates and initializes a new CWRoster. Roster initially has no players.
         Caller is responsible for memory management of returned pointer.
         """
-        bteam = bytes(team, "utf8")
-        bleague = bytes(league, "utf8")
-        bcity = bytes(city, "utf8")
-        bnickname = bytes(nickname, "utf8")
+        bteam = bytes(team, ENC_UTF8)
+        bleague = bytes(league, ENC_UTF8)
+        bcity = bytes(city, ENC_UTF8)
+        bnickname = bytes(nickname, ENC_UTF8)
 
         func = cwlib.cw_roster_create
         func.restype = POINTER(CWRoster)
