@@ -14,7 +14,7 @@
 **/bin/
 **/export*/
 dev
-/dev-cw
+/dev-chad
 /info
 fork-cwb
 *.py[cdo]
@@ -35,3 +35,4 @@ regular
 cw-*
 cwb-*
 doc*s*
+
