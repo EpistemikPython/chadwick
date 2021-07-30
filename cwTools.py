@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-06-12"
+__updated__ = "2021-07-30"
 
 import csv
 import glob
@@ -23,7 +23,7 @@ from abc import ABC, abstractmethod
 from argparse import ArgumentParser
 from ctypes import c_char_p, pointer
 from cwLibWrappers import MyCwlib, chadwick
-sys.path.append("/newdata/dev/git/Python/utils")
+sys.path.append("/home/marksa/git/Python/utils")
 from mhsUtils import lg, get_base_filename, osp, UTF8_ENCODING
 from mhsLogging import DEFAULT_CONSOLE_LEVEL, DEFAULT_FILE_LEVEL, QUIET_LOG_LEVEL
 
@@ -41,11 +41,14 @@ RETROSHEET_END_YEAR   = 2020
 RETROSHEET_ID_SIZE    = 8
 RETROSHEET_ID_ALPHA   = 5
 
-RETROSHEET_FOLDER     = "/newdata/dev/git/fork/ChadwickBureau/retrosheet/"
-ROSTERS_FOLDER        = RETROSHEET_FOLDER + "rosters/"
-REGULAR_SEASON_FOLDER = RETROSHEET_FOLDER + "event/regular/"
-POST_SEASON_FOLDER    = RETROSHEET_FOLDER + "event/post/"
-BOXSCORE_FOLDER       = "/newdata/dev/Retrosheet/data/boxscores/"
+HOME_DEV_FOLDER    = "/home/marksa/dev"
+HOME_GIT_FOLDER    = "/home/marksa/git"
+RETROSHEET_FOLDER  = osp.join(HOME_GIT_FOLDER, "clone" + osp.sep + "ChadwickBureau" + osp.sep + "retrosheet")
+ROSTERS_FOLDER     = osp.join(RETROSHEET_FOLDER, "rosters")
+EVENTS_FOLDER      = osp.join(RETROSHEET_FOLDER, "event")
+REG_SEASON_FOLDER  = osp.join(EVENTS_FOLDER, "regular")
+POST_SEASON_FOLDER = osp.join(EVENTS_FOLDER, "post")
+BOXSCORE_FOLDER    = osp.join(HOME_DEV_FOLDER, "Retrosheet" + osp.sep + "data" + osp.sep + "boxscores")
 
 def c_char_p_to_str(lpcc:c_char_p, maxlen:int = 32) -> str:
     """Obtain a python string from a C-type char array:
@@ -164,7 +167,7 @@ class PrintStats(ABC):
             for year in range(start, end+1):
                 year_events = list()
                 # get the team files
-                team_file_name = REGULAR_SEASON_FOLDER + "TEAM" + str(year)
+                team_file_name = osp.join(REG_SEASON_FOLDER, "TEAM" + str(year))
                 self.lgr.debug(F"team file name = {team_file_name}")
                 if not osp.exists(team_file_name):
                     self.lgr.exception(F"CANNOT find team file {team_file_name}!")
@@ -176,7 +179,7 @@ class PrintStats(ABC):
                         self.lgr.debug(F"Found team {rteam}")
                         # search rosters for the player's full name
                         if need_name:
-                            roster_file = ROSTERS_FOLDER + rteam + str(year) + ".ROS"
+                            roster_file = osp.join(ROSTERS_FOLDER, rteam + str(year) + ".ROS")
                             self.lgr.debug(F"roster file name = {roster_file}")
                             if not osp.exists(roster_file):
                                 raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
@@ -190,7 +193,7 @@ class PrintStats(ABC):
                                         break
                         if not post:
                             # find and store the event file paths for the requested years
-                            rfile = REGULAR_SEASON_FOLDER + str(year) + rteam + ".EV" + trow[1]
+                            rfile = osp.join(REG_SEASON_FOLDER, str(year) + rteam + ".EV" + trow[1])
                             if not osp.exists(rfile):
                                 raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
                             year_events.append(rfile)
@@ -198,7 +201,7 @@ class PrintStats(ABC):
 
                 if post:
                     # find and store the event file paths for the requested years
-                    post_files = POST_SEASON_FOLDER + str(year) + "*"
+                    post_files = osp.join(POST_SEASON_FOLDER, str(year) + "*")
                     for pfile in glob.glob(post_files):
                         self.lgr.debug(F"{season} file name = {pfile}")
                         if not osp.exists(pfile):

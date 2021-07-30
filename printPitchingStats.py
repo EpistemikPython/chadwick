@@ -117,7 +117,8 @@ class PrintPitchingStats(PrintStats):
     def check_boxscores(self, pit_id:str, year:str):
         """Check the Retrosheet boxscore files for pitching stats missing from the event files."""
         self.lgr.debug(F"check boxscore files for year = {year}")
-        boxscore_files = [BOXSCORE_FOLDER + year + ".EBN", BOXSCORE_FOLDER + year + ".EBA"]
+        box_year = osp.join(BOXSCORE_FOLDER, year)
+        boxscore_files = [box_year + osp.extsep + "EBN", box_year + osp.extsep + "EBA"]
         for bfile in boxscore_files:
             try:
                 with open(bfile, newline = '') as box_csvfile:

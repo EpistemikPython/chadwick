@@ -557,7 +557,7 @@ def main_game_summary(args:list):
     season = POST_SEASON if post else REG_SEASON
     try:
         # get the team files
-        team_file_name = REGULAR_SEASON_FOLDER + "TEAM" + year
+        team_file_name = REG_SEASON_FOLDER + "TEAM" + year
         lgr.info(F"team file name = {team_file_name}")
         with open(team_file_name, newline = '') as csvfile:
             teamreader = csv.reader(csvfile)
@@ -580,7 +580,7 @@ def main_game_summary(args:list):
                 chadwick.fclose(roster_fptr)
                 # find and store the event file paths
                 if not post:
-                    rfile = REGULAR_SEASON_FOLDER + year + rteam + ".EV" + row[1]
+                    rfile = REG_SEASON_FOLDER + year + rteam + ".EV" + row[1]
                     if not osp.exists(rfile):
                         raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
                     event_files[rteam] = rfile
