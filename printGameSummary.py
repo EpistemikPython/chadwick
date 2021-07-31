@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-06-15"
+__updated__ = "2021-07-30"
 
 from mhsUtils import dt, run_ts, now_dt
 from mhsLogging import MhsLogger
@@ -557,7 +557,7 @@ def main_game_summary(args:list):
     season = POST_SEASON if post else REG_SEASON
     try:
         # get the team files
-        team_file_name = REG_SEASON_FOLDER + "TEAM" + year
+        team_file_name = osp.join(REG_SEASON_FOLDER, "TEAM" + year)
         lgr.info(F"team file name = {team_file_name}")
         with open(team_file_name, newline = '') as csvfile:
             teamreader = csv.reader(csvfile)
@@ -568,7 +568,7 @@ def main_game_summary(args:list):
                     lgr.info(F"\t-- league is {row[1]}L; city is {row[2]}; nickname is {row[3]}")
                 # create the rosters
                 rosters[rteam] = MyCwlib.roster_create(rteam, int(year), row[1]+"L", row[2], row[3])
-                roster_file = ROSTERS_FOLDER + rteam + year + ".ROS"
+                roster_file = osp.join(ROSTERS_FOLDER, rteam + year + osp.extsep + "ROS")
                 lgr.debug(F"roster file name = {roster_file}")
                 if not osp.exists(roster_file):
                     raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
@@ -580,7 +580,7 @@ def main_game_summary(args:list):
                 chadwick.fclose(roster_fptr)
                 # find and store the event file paths
                 if not post:
-                    rfile = REG_SEASON_FOLDER + year + rteam + ".EV" + row[1]
+                    rfile = osp.join(REG_SEASON_FOLDER, year + rteam + osp.extsep + "EV" + row[1])
                     if not osp.exists(rfile):
                         raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
                     event_files[rteam] = rfile
