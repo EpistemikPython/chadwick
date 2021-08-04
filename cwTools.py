@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-07-30"
+__updated__ = "2021-07-31"
 
 import csv
 import glob
@@ -179,7 +179,7 @@ class PrintStats(ABC):
                         self.lgr.debug(F"Found team {rteam}")
                         # search rosters for the player's full name
                         if need_name:
-                            roster_file = osp.join(ROSTERS_FOLDER, rteam + str(year) + ".ROS")
+                            roster_file = osp.join(ROSTERS_FOLDER, rteam + str(year) + osp.extsep + "ROS")
                             self.lgr.debug(F"roster file name = {roster_file}")
                             if not osp.exists(roster_file):
                                 raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
@@ -193,7 +193,7 @@ class PrintStats(ABC):
                                         break
                         if not post:
                             # find and store the event file paths for the requested years
-                            rfile = osp.join(REG_SEASON_FOLDER, str(year) + rteam + ".EV" + trow[1])
+                            rfile = osp.join(REG_SEASON_FOLDER, str(year) + rteam + osp.extsep + "EV" + trow[1])
                             if not osp.exists(rfile):
                                 raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
                             year_events.append(rfile)
