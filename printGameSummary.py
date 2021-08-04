@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-07-31"
+__updated__ = "2021-08-04"
 
 from mhsUtils import dt, run_ts, now_dt
 from mhsLogging import MhsLogger
@@ -23,10 +23,38 @@ from cwTools import *
 
 class PrintGameSummary:
     """Print MLB game summaries using Retrosheet data."""
-    def __init__(self, logger:lg.Logger):
+    def __init__(self, p_team, p_post, logger:lg.Logger):
         self.note_count = 0
         self.lgr = logger
         self.lgr.warning(F" Start {self.__class__.__name__}")
+        self.team = p_team
+        self.post = p_post
+        self.games = {}
+        self.rosters = {}
+        self.event_files = {}
+
+    def go(self, p_year, p_start, p_end):
+        """Starting point to run the game summary code."""
+        try:
+            self.get_rosters_and_events(p_year)
+
+            self.get_games( (p_year + p_start), (p_year + p_end) )
+            self.lgr.warning(F" Found {len(self.games)} {POST_SEASON if self.post else REG_SEASON} games")
+
+            self.print_summaries()
+
+        except Exception as ex:
+            self.lgr.exception(F"Exception: {repr(ex)}")
+
+    def print_summaries(self):
+        """Sort the games and print out the information."""
+        for key in sorted( self.games.keys() ):
+            kgame, home_team, vis_team = self.games[key]
+            kbox = MyCwlib.box_create(kgame)
+            home = self.rosters[home_team]
+            visitor = self.rosters[vis_team]
+
+            self.print_summary(kgame, kbox, visitor, home)
 
     # void cwbox_print_text(CWGame *game, CWBoxscore *boxscore, CWRoster *visitors, CWRoster *home)
     # noinspection PyAttributeOutsideInit
@@ -479,81 +507,68 @@ class PrintGameSummary:
             return
         print(F"LOB -- {self.vis_city} {lob[0]}, {self.home_city} {lob[1]}")
 
+    def get_rosters_and_events(self, year):
+        # get the team files
+        season = POST_SEASON if self.post else REG_SEASON
+        team_file_name = osp.join(REG_SEASON_FOLDER, "TEAM" + year)
+        self.lgr.info(F"team file name = {team_file_name}")
+        with open(team_file_name, newline = '') as csvfile:
+            teamreader = csv.reader(csvfile)
+            for row in teamreader:
+                rteam = row[0]
+                self.lgr.debug(F"Found team {rteam}")
+                if rteam == self.team:
+                    self.lgr.info(F"\t-- league is {row[1]}L; city is {row[2]}; nickname is {row[3]}")
+
+                # create the rosters
+                self.rosters[rteam] = MyCwlib.roster_create(rteam, int(year), row[1] + "L", row[2], row[3])
+                roster_file = osp.join(ROSTERS_FOLDER, rteam + year + osp.extsep + "ROS")
+                self.lgr.debug(F"roster file name = {roster_file}")
+                if not osp.exists(roster_file):
+                    raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
+                roster_fptr = chadwick.fopen(bytes(roster_file, UTF8_ENCODING))
+                # fill the rosters
+                result = MyCwlib.roster_read(self.rosters[rteam], roster_fptr)
+                # roster files that end with newline return zero even though all the players loaded without problem
+                self.lgr.info(F"{rteam} roster read result = {'FAILURE' if result == 0 else 'success'}.")
+                chadwick.fclose(roster_fptr)
+
+                # find and store the event file paths for the regular season
+                if not self.post:
+                    rfile = osp.join(REG_SEASON_FOLDER, year + rteam + osp.extsep + "EV" + row[1])
+                    if not osp.exists(rfile):
+                        raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
+                    self.event_files[rteam] = rfile
+
+        # find and store the event file paths for the requested post-season years
+        if self.post:
+            post_files = osp.join(POST_SEASON_FOLDER, str(year) + "*")
+            for pfile in glob.glob(post_files):
+                basename = get_base_filename(pfile)
+                self.lgr.debug(F"{season} base file name = {basename}")
+                if not osp.exists(pfile):
+                    raise FileNotFoundError(F"CANNOT find {season} event file {pfile}!")
+                self.event_files[basename] = pfile
+
+    def get_games(self, start_date, end_date):
+        # get all the games for the requested team in the supplied date range
+        for evteam in self.event_files:
+            self.lgr.debug(F"found event file for {('file' if self.post else 'team')} = {evteam}")
+            cwgames = chadwick.games(self.event_files[evteam])
+            for game in cwgames:
+                game_id = game.contents.game_id.decode(encoding = UTF8_ENCODING)
+                game_date = game_id[3:11]
+                if end_date >= game_date >= start_date:
+                    self.lgr.debug(F" Found game id = {game_id}; date = {game_date}")
+                    proc_game = chadwick.process_game(game)
+                    g_results = tuple(proc_game)
+                    home_team = g_results[0]["HOME_TEAM_ID"]
+                    vis_team = g_results[0]["AWAY_TEAM_ID"]
+                    if self.team == home_team or self.team == vis_team:
+                        self.lgr.info(F" Found game id = {game_id}")
+                        self.games[game_id[3:]] = game, home_team, vis_team
+
 # END class PrintGameSummary
-
-
-def get_rosters_and_events(event_files, rosters, team, year, post, lgr):
-    # get the team files
-    season = POST_SEASON if post else REG_SEASON
-    team_file_name = osp.join(REG_SEASON_FOLDER, "TEAM" + year)
-    lgr.info(F"team file name = {team_file_name}")
-    with open(team_file_name, newline = '') as csvfile:
-        teamreader = csv.reader(csvfile)
-        for row in teamreader:
-            rteam = row[0]
-            lgr.debug(F"Found team {rteam}")
-            if rteam == team:
-                lgr.info(F"\t-- league is {row[1]}L; city is {row[2]}; nickname is {row[3]}")
-
-            # create the rosters
-            rosters[rteam] = MyCwlib.roster_create(rteam, int(year), row[1] + "L", row[2], row[3])
-            roster_file = osp.join(ROSTERS_FOLDER, rteam + year + osp.extsep + "ROS")
-            lgr.debug(F"roster file name = {roster_file}")
-            if not osp.exists(roster_file):
-                raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
-            roster_fptr = chadwick.fopen(bytes(roster_file, UTF8_ENCODING))
-            # fill the rosters
-            result = MyCwlib.roster_read(rosters[rteam], roster_fptr)
-            # roster files that end with newline return zero even though all the players loaded without problem
-            lgr.info(F"{rteam} roster read result = {'FAILURE' if result == 0 else 'success'}.")
-            chadwick.fclose(roster_fptr)
-
-            # find and store the event file paths for the regular season
-            if not post:
-                rfile = osp.join(REG_SEASON_FOLDER, year + rteam + osp.extsep + "EV" + row[1])
-                if not osp.exists(rfile):
-                    raise FileNotFoundError(F"CANNOT find {season} event file {rfile}!")
-                event_files[rteam] = rfile
-
-    # find and store the event file paths for the requested post-season years
-    if post:
-        post_files = osp.join(POST_SEASON_FOLDER, str(year) + "*")
-        for pfile in glob.glob(post_files):
-            basename = get_base_filename(pfile)
-            lgr.debug(F"{season} base file name = {basename}")
-            if not osp.exists(pfile):
-                raise FileNotFoundError(F"CANNOT find {season} event file {pfile}!")
-            event_files[basename] = pfile
-
-
-def print_summaries(games, rosters, pgs):
-    # sort the games and print out the information
-    for key in sorted(games.keys()):
-        kgame, home_team, vis_team = games[key]
-        kbox = MyCwlib.box_create(kgame)
-        home = rosters[home_team]
-        visitor = rosters[vis_team]
-
-        pgs.print_summary(kgame, kbox, visitor, home)
-
-
-def get_games(event_files, games, team, start_date, end_date, post, lgr):
-    # get all the games for the requested team in the supplied date range
-    for evteam in event_files:
-        lgr.debug(F"found event file for {('file' if post else 'team')} = {evteam}")
-        cwgames = chadwick.games(event_files[evteam])
-        for game in cwgames:
-            game_id = game.contents.game_id.decode(encoding = UTF8_ENCODING)
-            game_date = game_id[3:11]
-            if end_date >= game_date >= start_date:
-                lgr.debug(F" Found game id = {game_id}; date = {game_date}")
-                proc_game = chadwick.process_game(game)
-                g_results = tuple(proc_game)
-                home_team = g_results[0]["HOME_TEAM_ID"]
-                vis_team = g_results[0]["AWAY_TEAM_ID"]
-                if team == home_team or team == vis_team:
-                    lgr.info(F" Found game id = {game_id}")
-                    games[game_id[3:]] = game, home_team, vis_team
 
 
 def process_args():
@@ -625,22 +640,8 @@ def main_game_summary(args:list):
     lgr.info(F"Logging: console level = {repr(conlevel)}; file level = {repr(filelevel)}")
     lgr.warning(F" team = {team}; year = {year}; start = {start}; end = {end}")
 
-    start_date = year + start
-    end_date = year + end
-    pgs = PrintGameSummary(lgr)
-    games = {}
-    rosters = {}
-    event_files = {}
-    try:
-        get_rosters_and_events(event_files, rosters, team, year, post, lgr)
-
-        get_games(event_files, games, team, start_date, end_date, post, lgr)
-        lgr.warning(F" Found {len(games)} {POST_SEASON if post else REG_SEASON} games")
-
-        print_summaries(games, rosters, pgs)
-
-    except Exception as ex:
-        lgr.exception(F"Exception: {repr(ex)}")
+    pgs = PrintGameSummary(team, post, lgr)
+    pgs.go(year, start, end)
 
 
 if __name__ == "__main__":
