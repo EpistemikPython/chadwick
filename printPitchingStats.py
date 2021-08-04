@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-25"
-__updated__ = "2021-06-12"
+__updated__ = "2021-07-31"
 
 import copy
 from mhsUtils import dt, run_ts, now_dt
@@ -27,7 +27,7 @@ PROGRAM_DESC = "Print pitching stats, totals & averages from Retrosheet data for
 PROGRAM_NAME = "printPitchingStats.py"
 ID_HELP_DESC = "Retrosheet id for a pitcher, e.g. spahw101, kersc001"
 PITCH_STD_SPACE = STD_SPACE_SIZE
-PITCH_RD_PRECISION = 2
+PITCH_RND_PRECISION = 2
 
 GM  = 0         # 0
 GS  = GM + 1    # 1
@@ -212,37 +212,37 @@ class PrintPitchingStats(PrintStats):
         outs  = pitch_stats[self.hdrs[OUT]]
 
         era = pitch_stats[self.hdrs[ER]] * 27 / outs if outs > 0 else 0.0
-        pera = get_print_strx(era, games, PITCH_RD_PRECISION)
+        pera = get_print_strx(era, games, PITCH_RND_PRECISION)
         print(pera.rjust(self.std_space), end = '')
 
         whip = (walks + hits) / outs * 3 if outs > 0 else 0.0
-        pwhip = get_print_strx(whip, games, PITCH_RD_PRECISION + 1, STD_HDR_SIZE + 1)
+        pwhip = get_print_strx(whip, games, PITCH_RND_PRECISION + 1, STD_HDR_SIZE + 1)
         print(pwhip.rjust(self.std_space), end = '')
 
         h9 = hits * 27 / outs if outs > 0 else 0.0
-        ph9 = get_print_strx(h9, games, PITCH_RD_PRECISION)
+        ph9 = get_print_strx(h9, games, PITCH_RND_PRECISION)
         print(ph9.rjust(self.std_space), end = '')
 
         hr9 = pitch_stats[self.hdrs[HR]] * 27 / outs if outs > 0 else 0.0
-        phr9 = get_print_strx(hr9, games, PITCH_RD_PRECISION)
+        phr9 = get_print_strx(hr9, games, PITCH_RND_PRECISION)
         print(phr9.rjust(self.std_space), end = '')
 
         so9 = sos * 27 / outs if outs > 0 else 0.0
         self.lgr.debug(F"so9 = '{so9}'")
-        pso9 = get_print_strx(so9, games, PITCH_RD_PRECISION)
+        pso9 = get_print_strx(so9, games, PITCH_RND_PRECISION)
         print(pso9.rjust(self.std_space), end = '')
 
         bb9 = walks * 27 / outs if outs > 0 else 0.0
-        pbb9 = get_print_strx(bb9, games, PITCH_RD_PRECISION)
+        pbb9 = get_print_strx(bb9, games, PITCH_RND_PRECISION)
         print(pbb9.rjust(self.std_space), end = '')
 
         sobb = sos / walks if walks > 0 else 0.0
-        psobb = get_print_strx(sobb, games, PITCH_RD_PRECISION)
+        psobb = get_print_strx(sobb, games, PITCH_RND_PRECISION)
         print(psobb.rjust(self.std_space), end = '')
 
         wlp = pitch_stats[self.hdrs[WIN]] / (pitch_stats[self.hdrs[WIN]] + pitch_stats[self.hdrs[LOS]]) * 100.0 \
                 if pitch_stats[self.hdrs[WIN]] > 0 else 0.0
-        pwlp = get_print_strx(wlp, games, PITCH_RD_PRECISION - 1)
+        pwlp = get_print_strx(wlp, games, PITCH_RND_PRECISION - 1)
         print(pwlp.rjust(self.std_space))
 
     def print_ave_line(self):
@@ -274,7 +274,7 @@ def main_pitching_stats(args:list):
     pers_id, start, end, post, conlevel, filelevel = process_bp_input( args, DEFAULT_PITCH_ID, DEFAULT_PITCH_YR,
                                                                        PROGRAM_DESC, PROGRAM_NAME, ID_HELP_DESC )
 
-    lg_ctrl = MhsLogger(__file__, con_level = conlevel, file_level = filelevel, folder = "logs/pitching")
+    lg_ctrl = MhsLogger( __file__, con_level = conlevel, file_level = filelevel, folder = osp.join("logs", "pitching") )
     lgr = lg_ctrl.get_logger()
     lgr.info(F"Logging: console level = {repr(conlevel)}; file level = {repr(filelevel)}")
     lgr.warning(F" id = {pers_id}; years: {start} -> {end}")

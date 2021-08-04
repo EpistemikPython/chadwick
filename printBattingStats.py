@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-06-12"
+__updated__ = "2021-07-31"
 
 import copy
 from mhsUtils import dt, run_ts, now_dt
@@ -28,7 +28,7 @@ PROGRAM_DESC   = "Print batting stats, totals & averages from Retrosheet data fo
 PROGRAM_NAME   = "printBattingStats.py"
 ID_HELP_DESC   = "Retrosheet id for a player, e.g. aaroh101, bondb101"
 BAT_STD_SPACE  = STD_SPACE_SIZE
-BAT_RD_PRECISION = 3
+BAT_RND_PRECISION = 3
 
 GM  = 0       # 0
 PA  = GM+1    # 1
@@ -70,8 +70,8 @@ class PrintBattingStats(PrintStats):
         self.lgr.debug(F"search for '{bat_id}' in year = {year}")
         slots = [1,1]
         players = list()
-        players.insert( 0, MyCwlib.box_get_starter(p_box,0,1) )
-        players.insert( 1, MyCwlib.box_get_starter(p_box,1,1) )
+        players.append( MyCwlib.box_get_starter(p_box,0,1) )
+        players.append( MyCwlib.box_get_starter(p_box,1,1) )
 
         while slots[0] <= 9 or slots[1] <= 9 :
             for t in range(2):
@@ -186,7 +186,7 @@ class PrintBattingStats(PrintStats):
         bb_hbp = bat_stats[self.hdrs[BB]] + bat_stats[self.hdrs[HBP]]
 
         ba = hits / ab if ab > 0 else 0.0
-        pba = get_print_strx(ba, games, prec = BAT_RD_PRECISION)
+        pba = get_print_strx(ba, games, prec = BAT_RND_PRECISION)
         self.lgr.debug(F"pba = {pba}")
         print( pba.rjust(self.std_space), end = '' )
 
@@ -194,17 +194,17 @@ class PrintBattingStats(PrintStats):
         obp_denom = ab + bb_hbp + bat_stats[self.hdrs[SF]]
         obp = obp_num / obp_denom if obp_denom > 0 else 0.0
         self.lgr.debug(F"obp = '{obp}'")
-        pobp = get_print_strx(obp, games, prec = BAT_RD_PRECISION)
+        pobp = get_print_strx(obp, games, prec = BAT_RND_PRECISION)
         print( pobp.rjust(self.std_space), end = '' )
 
         slg = tb / ab if ab > 0 else 0.0
         self.lgr.debug(F"slg = '{slg}'")
-        pslg = get_print_strx(slg, games, prec = BAT_RD_PRECISION)
+        pslg = get_print_strx(slg, games, prec = BAT_RND_PRECISION)
         print( pslg.rjust(self.std_space), end = '' )
 
         ops = obp + slg
         self.lgr.debug(F"ops = '{ops}'")
-        pops = get_print_strx(ops, games, prec = BAT_RD_PRECISION)
+        pops = get_print_strx(ops, games, prec = BAT_RND_PRECISION)
         print( pops.rjust(self.std_space) )
 
     def print_ave_line(self):
@@ -231,7 +231,7 @@ def main_batting_stats(args:list):
     pers_id, start, end, post, conlevel, filelevel = process_bp_input( args, DEFAULT_BAT_ID, DEFAULT_BAT_YR,
                                                                        PROGRAM_DESC, PROGRAM_NAME, ID_HELP_DESC )
 
-    lg_ctrl = MhsLogger(__file__, con_level = conlevel, file_level = filelevel, folder = "logs/batting")
+    lg_ctrl = MhsLogger( __file__, con_level = conlevel, file_level = filelevel, folder = osp.join("logs", "batting") )
     lgr = lg_ctrl.get_logger()
     lgr.info(F"Logging: console level = {repr(conlevel)}; file level = {repr(filelevel)}")
     lgr.warning(F" id = {pers_id}; years: {start} -> {end}")
