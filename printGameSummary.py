@@ -194,7 +194,7 @@ class PrintGameSummary:
         for t in range(2):
             pitcher = MyCwlib.box_get_starting_pitcher(self.box, t)
             city = self.home_city if t == 1 else self.vis_city
-            print(F"  {city:20} IP  H  R ER BB SO  TP TS GB FB")
+            print(F"  {city:20} IP  H  R ER SO BB IBB TP TS GB FB")
 
             while pitcher:
                 self.print_pitcher(pitcher, t)
@@ -321,8 +321,9 @@ class PrintGameSummary:
 
         print(F"{name:20} {pitching.outs // 3:2}.{pitching.outs % 3} {pitching.h:2} {pitching.r:2}", end = '')
         print(F"{pitching.er:3}" if pitching.er >= 0 else "   ", end = '')
-        print(F"{pitching.bb:3}" if pitching.bb >= 0 else "   ", end = '')
         print(F"{pitching.so:3}" if pitching.so >= 0 else "   ", end = '')
+        print(F"{pitching.bb:3}" if pitching.bb >= 0 else "   ", end = '')
+        print(F"{pitching.ibb:3}" if pitching.ibb >= 0 else "   ", end = '')
         print(F"{pitching.pitches:4}" if pitching.pitches >= 0 else "    ", end = '')
         print(F"{pitching.strikes:3}" if pitching.strikes >= 0 else "   ", end = '')
         print(F"{pitching.gb:3}" if pitching.gb >= 0 else "   ", end = '')
@@ -367,7 +368,7 @@ class PrintGameSummary:
     # cwbox_print_player_apparatus(CWGame *game, CWBoxEvent *list, int index, char *label, CWRoster *visitors, CWRoster *home)
     def print_player_apparatus(self, p_events:pointer, index:int, label:str) -> bool:
         """Output for various events: 2B, 3B, WP, Balk etc."""
-        self.lgr.info(F"index = {index}; label = {label}")
+        self.lgr.debug(F"index = {index}; label = {label}")
         if not p_events:
             return False
         event = p_events.contents
