@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-25"
-__updated__ = "2021-07-31"
+__updated__ = "2021-08-04"
 
 import copy
 from mhsUtils import dt, run_ts, now_dt
@@ -95,6 +95,7 @@ class PrintPitchingStats(PrintStats):
                     self.stats[self.hdrs[ER]]  += pitching.er
                     self.stats[self.hdrs[HR]]  += pitching.hr
                     self.stats[self.hdrs[BB]]  += pitching.bb
+                    self.lgr.info(F"pitching.ibb = {pitching.ibb}")
                     self.stats[self.hdrs[IBB]] += pitching.ibb
                     self.stats[self.hdrs[SO]]  += pitching.so
                     self.stats[self.hdrs[BF]]  += pitching.bf
@@ -164,8 +165,10 @@ class PrintPitchingStats(PrintStats):
                                 self.stats[self.hdrs[ER]]  += int(brow[13])
                                 self.stats[self.hdrs[HR]]  += int(brow[11])
                                 self.stats[self.hdrs[BB]]  += int(brow[14])
-                                if int(brow[15]) > 0:
-                                    self.stats[self.hdrs[IBB]] += int(brow[15])
+                                ibb = int(brow[15])
+                                if ibb > 0:
+                                    self.stats[self.hdrs[IBB]] += ibb
+                                    self.lgr.info(F"pitching.ibb = {ibb}")
                                 self.stats[self.hdrs[SO]]  += int(brow[16])
                                 self.stats[self.hdrs[WP]]  += int(brow[18])
                                 self.stats[self.hdrs[HBP]] += int(brow[17])
