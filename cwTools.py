@@ -141,7 +141,7 @@ class PrintStats(ABC):
                     box = MyCwlib.box_create(game)
                     self.collect_stats(box, player_id, str_year, game_id)
 
-            self.lgr.info(F"found {len(self.game_ids)} games with {player_id} stats.")
+            self.lgr.info(F"found {len(self.game_ids)} {year} games with {player_id} stats.")
 
             if year < RETROSHEET_AVAIL_YEAR and season == REG_SEASON:
                 self.check_boxscores(player_id, str_year)
