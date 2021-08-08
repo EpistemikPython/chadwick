@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-07-31"
+__updated__ = "2021-08-08"
 
 import csv
 import glob
@@ -24,7 +24,7 @@ from argparse import ArgumentParser
 from ctypes import c_char_p, pointer
 from cwLibWrappers import MyCwlib, chadwick
 sys.path.append("/home/marksa/git/Python/utils")
-from mhsUtils import lg, get_base_filename, osp, UTF8_ENCODING
+from mhsUtils import lg, get_base_filename, osp, UTF8_ENCODING, BASE_DEV_FOLDER, BASE_GIT_FOLDER
 from mhsLogging import DEFAULT_CONSOLE_LEVEL, DEFAULT_FILE_LEVEL, QUIET_LOG_LEVEL
 
 LABEL_TOTAL = "Total"
@@ -37,22 +37,20 @@ STD_HDR_SIZE   = 4
 
 RETROSHEET_START_YEAR = 1871
 RETROSHEET_AVAIL_YEAR = 1974
-RETROSHEET_END_YEAR   = 2020
+RETROSHEET_END_YEAR   = 2021
 RETROSHEET_ID_SIZE    = 8
 RETROSHEET_ID_ALPHA   = 5
 
-HOME_DEV_FOLDER    = "/home/marksa/dev"
-HOME_GIT_FOLDER    = "/home/marksa/git"
-RETROSHEET_FOLDER  = osp.join(HOME_GIT_FOLDER, "clone" + osp.sep + "ChadwickBureau" + osp.sep + "retrosheet")
+RETROSHEET_FOLDER  = osp.join(BASE_GIT_FOLDER, "clone" + osp.sep + "ChadwickBureau" + osp.sep + "retrosheet")
 ROSTERS_FOLDER     = osp.join(RETROSHEET_FOLDER, "rosters")
 EVENTS_FOLDER      = osp.join(RETROSHEET_FOLDER, "event")
 REG_SEASON_FOLDER  = osp.join(EVENTS_FOLDER, "regular")
 POST_SEASON_FOLDER = osp.join(EVENTS_FOLDER, "post")
-BOXSCORE_FOLDER    = osp.join(HOME_DEV_FOLDER, "Retrosheet" + osp.sep + "data" + osp.sep + "boxscores")
+BOXSCORE_FOLDER    = osp.join(BASE_DEV_FOLDER, "Retrosheet" + osp.sep + "data" + osp.sep + "boxscores")
 
 def c_char_p_to_str(lpcc:c_char_p, maxlen:int = 32) -> str:
     """Obtain a python string from a C-type char array:
-           convert and concatenate the values until hit the null terminator or the char limit"""
+           convert and concatenate the values until hit the null terminator or the char limit."""
     limit = 1 if maxlen <= 1 else min(maxlen, 256)
     bytez = lpcc[:limit]
     result = ''
@@ -118,7 +116,7 @@ class PrintStats(ABC):
         self.print_hdr_uls()
 
     def print_stats(self, player_id:str, name:str, season:str, yrstart:int, yrend:int):
-        """Print regular or post-season stats for player 'player_id' in years [yrstart] to [yrend]."""
+        """Print regular or post-season stats for player 'player_id' in years <yrstart> to <yrend>."""
         self.lgr.debug(F"print {season} stats for years {yrstart} to {yrend}")
         print(F"\n\t{name} {season} Stats:")
         self.print_header()
@@ -212,7 +210,7 @@ class PrintStats(ABC):
                 self.event_files[str(year)] = year_events
 
         except Exception as ex:
-            self.lgr.exception(F"Exception: {repr(ex)}")
+            raise ex
 
     @abstractmethod
     def collect_stats(self, p_box:pointer, player_id:str, year:str, game_id:str):
@@ -233,7 +231,7 @@ class PrintStats(ABC):
 # END class PrintStats
 
 def process_bp_args(desc:str, exe:str, id_help:str):
-    """use ArgumentParser to specify command line arguments for batching and pitching stats"""
+    """Use ArgumentParser to specify command line arguments for batting and pitching stats."""
     arg_parser = ArgumentParser(description = desc, prog = exe)
     # required arguments
     required = arg_parser.add_argument_group('REQUIRED')
@@ -252,7 +250,7 @@ def process_bp_args(desc:str, exe:str, id_help:str):
 
 
 def process_bp_input(argl:list, default_id:str, default_yr:int, desc:str, prog:str, id_help:str):
-    """process command line input for batching and pitching stats"""
+    """Process command line input for batting and pitching stats."""
     argp = process_bp_args(desc, prog, id_help).parse_args(argl)
 
     con_level = lg.getLevelName(QUIET_LOG_LEVEL) if argp.quiet else argp.levcon.strip().upper()
