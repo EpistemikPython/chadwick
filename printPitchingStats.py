@@ -14,8 +14,10 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-25"
-__updated__ = "2021-08-04"
+__updated__ = "2021-08-22"
 
+import sys
+sys.path.append("/home/marksa/git/Python/utils")
 import copy
 from mhsUtils import dt, run_ts, now_dt
 from mhsLogging import MhsLogger
