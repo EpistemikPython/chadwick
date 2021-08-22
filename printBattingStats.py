@@ -9,7 +9,7 @@
 # Original C code Copyright (c) 2002-2021
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
 #
-# Port to Python3, additions & modifications Copyright (c) 2019-2021 Mark Sattolo <epistemik@gmail.com>
+# Port to Python3, additions & modifications Copyright (c) 2021 Mark Sattolo <epistemik@gmail.com>
 
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
@@ -26,7 +26,7 @@ from cwTools import *
 
 DEFAULT_BAT_ID = "maysw101"
 DEFAULT_BAT_YR = 1954
-PROGRAM_DESC   = "Print batting stats, totals & averages from Retrosheet data for the specified years."
+PROGRAM_DESC   = "Print batting stats, totals & averages from Retrosheet data for the specified year(s)."
 PROGRAM_NAME   = "printBattingStats.py"
 ID_HELP_DESC   = "Retrosheet id for a player, e.g. aaroh101, bondb101"
 BAT_STD_SPACE  = STD_SPACE_SIZE
@@ -125,7 +125,7 @@ class PrintBattingStats(PrintStats):
                         if brow[0] == "id":
                             current_id = brow[1]
                             if current_id in self.game_ids:
-                                self.lgr.info(F"found duplicate game '{current_id}' in Boxscore file.")
+                                self.lgr.warning(F"found duplicate game '{current_id}' in Boxscore file.")
                                 find_player = False
                                 continue
                             else:

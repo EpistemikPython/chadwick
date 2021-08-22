@@ -9,7 +9,7 @@
 # Original C code Copyright (c) 2002-2021
 # Dr T L Turocy, Chadwick Baseball Bureau (ted.turocy@gmail.com)
 #
-# Port to Python3, additions & modifications Copyright (c) 2019-2021 Mark Sattolo <epistemik@gmail.com>
+# Port to Python3, additions & modifications Copyright (c) 2021 Mark Sattolo <epistemik@gmail.com>
 
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
@@ -25,7 +25,7 @@ from cwTools import *
 
 DEFAULT_PITCH_ID = "kersc001"
 DEFAULT_PITCH_YR = 2014
-PROGRAM_DESC = "Print pitching stats, totals & averages from Retrosheet data for the specified years."
+PROGRAM_DESC = "Print pitching stats, totals & averages from Retrosheet data for the specified year(s)."
 PROGRAM_NAME = "printPitchingStats.py"
 ID_HELP_DESC = "Retrosheet id for a pitcher, e.g. spahw101, kersc001"
 PITCH_STD_SPACE = STD_SPACE_SIZE
@@ -132,11 +132,11 @@ class PrintPitchingStats(PrintStats):
                         if brow[0] == "id":
                             current_id = brow[1]
                             if current_id in self.game_ids:
-                                self.lgr.debug(F"found duplicate game '{current_id}' in Boxscore file.")
+                                self.lgr.warning(F"found duplicate game '{current_id}' in Boxscore file.")
                                 find_player = False
                                 continue
                             else:
-                                self.lgr.debug(F"found NEW game '{current_id}' in Boxscore file.")
+                                self.lgr.info(F"found NEW game '{current_id}' in Boxscore file.")
                                 find_player = True
                         elif find_player:
                             if brow[0] == "info":
