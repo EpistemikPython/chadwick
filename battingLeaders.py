@@ -192,31 +192,31 @@ class PrintBattingLeaders:
     def print_ldr_stats(self):
         print(F"\n{self.stat} leaders for {self.start}{'' if self.end == self.start else f' -> {self.end}'}:")
 
-        # sort the leaders in DESC
-        # print(F"number of entries = {len(self.stats)}")
+        # sort the leaders DESC
         vals_sorted = { k:v for k, v in sorted(self.stats.items(), key = lambda x:x[1], reverse = True) }
-        # print(F"number of vals sorted = {len(vals_sorted)}")
         vals = {}
-        ct = 0
-        # get only the specified number of entries
+        ct = val = 0
+        # get only the specified number of entries, plus ties
         for key in vals_sorted:
-            if ct == self.limit: break
-            vals[key] = vals_sorted[key]
+            if ct == self.limit:
+                if vals_sorted[key] < val:
+                    break
+                else:
+                    ct -= 1
+            val = vals_sorted[key]
+            vals[key] = val
             ct += 1
-        # print(F"number of vals = {len(vals)}")
-        # print(vals)
 
         # get the real names from roster
         vals_named = self.get_real_names(vals)
         vals_sorted = { k:v for k, v in sorted(vals_named.items(), key = lambda x:x[1], reverse = True) }
 
-        # print the required number
+        # print the entries
         for key in vals_sorted:
             print(F"{key:24}: {vals_sorted[key]}")
         print()
 
     def get_real_names(self, vals:dict):
-        num_names = 0
         vwnames = {}
         try:
             for year in range(self.start, self.end+1):
@@ -232,18 +232,16 @@ class PrintBattingLeaders:
                         rteam = trow[0]
                         self.lgr.debug(F"Found team {rteam}")
                         # search rosters for the players full names
-                        if num_names < self.limit:
-                            roster_file = osp.join(ROSTERS_FOLDER, rteam + str(year) + osp.extsep + "ROS")
-                            self.lgr.debug(F"roster file name = {roster_file}")
-                            if not osp.exists(roster_file):
-                                raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
-                            with open(roster_file, newline = '') as roster_csvfile:
-                                ros_reader = csv.reader(roster_csvfile)
-                                for rrow in ros_reader:
-                                    if rrow[0] in vals.keys():
-                                        pers_name = F"{rrow[2]} {rrow[1]}"
-                                        vwnames[pers_name] = vals[rrow[0]]
-                                        num_names += 1
+                        roster_file = osp.join(ROSTERS_FOLDER, rteam + str(year) + osp.extsep + "ROS")
+                        self.lgr.debug(F"roster file name = {roster_file}")
+                        if not osp.exists(roster_file):
+                            raise FileNotFoundError(F"CANNOT find roster file {roster_file}!")
+                        with open(roster_file, newline = '') as roster_csvfile:
+                            ros_reader = csv.reader(roster_csvfile)
+                            for rrow in ros_reader:
+                                if rrow[0] in vals.keys():
+                                    pers_name = F"{rrow[2]} {rrow[1]}"
+                                    vwnames[pers_name] = vals[rrow[0]]
         except Exception as ex:
             raise ex
         return vwnames
