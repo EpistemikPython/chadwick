@@ -139,11 +139,14 @@ class PrintBattingLeaders:
                     self.lgr.debug(F" Found game id = {game_id}; date = {game_date}")
 
                     box = MyCwlib.box_create(game)
-                    self.collect_stats(box, str_year)
+                    self.collect_stats(box, str_year, game_id)
 
+            if year < RETROSHEET_AVAIL_YEAR and season == REG_SEASON:
+                self.check_boxscores(str_year)
+            
             self.lgr.info(F"found {len(self.game_ids)} {year} games with {self.stat} stats.")
 
-    def collect_stats(self, p_box:pointer, year:str):
+    def collect_stats(self, p_box:pointer, year:str, game_id:str):
         stat = self.stat
         self.lgr.debug(F"search for '{stat}' in year = {year}")
         slots = [1,1]
@@ -155,7 +158,7 @@ class PrintBattingLeaders:
             for t in range(2):
                 if slots[t] <= 9:
                     player = players[t].contents.player_id.decode(UTF8_ENCODING)
-                    # self.game_ids.append(game_id)
+                    self.game_ids.append(game_id)
                     batting = players[t].contents.batting.contents
                     game_stat = 0
                     if stat == self.hdrs[GM]: game_stat = batting.g
@@ -189,8 +192,64 @@ class PrintBattingLeaders:
                             if slots[t] <= 9:
                                 players[t] = cwlib.cw_box_get_starter(p_box, t, slots[t])
 
+    def check_boxscores(self, year:str):
+        """Check the Retrosheet boxscore files for batting stats missing from the event files."""
+        self.lgr.debug(F"check boxscore files for year = {year}")
+        box_year = osp.join(BOXSCORE_FOLDER, year)
+        boxscore_files = [box_year + osp.extsep + "EBN", box_year + osp.extsep + "EBA"]
+        for bfile in boxscore_files:
+            try:
+                with open(bfile, newline = '') as box_csvfile:
+                    self.lgr.info(F"search boxscore file {bfile}")
+                    box_reader = csv.reader(box_csvfile)
+                    for brow in box_reader:
+                        if brow[0] == "id":
+                            current_id = brow[1]
+                            if current_id in self.game_ids:
+                                self.lgr.warning(F"found duplicate game '{current_id}' in Boxscore file.")
+                                break
+                            else:
+                                self.lgr.warning(F"found NEW game '{current_id}' in Boxscore file.")
+                        if brow[1] == "bline":
+                            player_id = brow[2]
+                            self.lgr.debug(F"found player '{player_id}' in boxscore game {current_id}")
+                            if player_id in self.stats.keys():
+                                # parse boxscore batting stat line
+                                # key: 'stat','bline',id,side,pos,seq,ab,r,h,2b,3b,hr,rbi,sh,sf,hbp,bb,ibb,k, sb,cs,gidp,int
+                                #       0      1      2  3    4   5   6  7 8 9  10 11 12  13 14 15  16 17  18 19 20  21  22
+                                if self.stat == self.hdrs[GM]: self.stats[player_id] += 1
+                                if self.stat == self.hdrs[PA]:
+                                    game_stat = int(brow[6]) + int(brow[13]) + int(brow[14]) + int(brow[15]) \
+                                                + int(brow[16]) + int(brow[22])
+                                    self.stats[player_id] += game_stat
+                                if self.stat == self.hdrs[AB]: self.stats[player_id] += int(brow[6])
+                                if self.stat == self.hdrs[RUN]: self.stats[player_id] += int(brow[7])
+                                if self.stat == self.hdrs[HIT]: self.stats[player_id] += int(brow[8])
+                                if self.stat == self.hdrs[B2]: self.stats[player_id] += int(brow[9])
+                                if self.stat == self.hdrs[B3]: self.stats[player_id] += int(brow[10])
+                                if self.stat == self.hdrs[HR] and int(brow[11]) > 0:
+                                    self.lgr.warning(F"found {brow[11]} extra HRs for {player_id}!")
+                                    self.stats[player_id] += int(brow[11])
+                                if self.stat == self.hdrs[XBH]:
+                                    self.stats[player_id] += ( int(brow[9]) + int(brow[10]) + int(brow[11]) )
+                                if self.stat == self.hdrs[RBI] and int(brow[12]) > 0:
+                                    self.lgr.warning(F"found {brow[12]} extra RBIs for {player_id}!")
+                                    self.stats[player_id] += int(brow[12])
+                                if self.stat == self.hdrs[BB]: self.stats[player_id] += int(brow[16])
+                                if self.stat == self.hdrs[IBB] and int(brow[17]) > 0:
+                                    self.stats[player_id] += int(brow[17])
+                                if self.stat == self.hdrs[SO]: self.stats[player_id] += int(brow[18])
+                                if self.stat == self.hdrs[SB]: self.stats[player_id] += int(brow[19])
+                                if self.stat == self.hdrs[CS]: self.stats[player_id] += int(brow[20])
+                                if self.stat == self.hdrs[SH]: self.stats[player_id] += int(brow[13])
+                                if self.stat == self.hdrs[SF]: self.stats[player_id] += int(brow[14])
+                                if self.stat == self.hdrs[HBP]: self.stats[player_id] += int(brow[15])
+                                if self.stat == self.hdrs[GDP]: self.stats[player_id] += int(brow[21])
+            except FileNotFoundError:
+                continue
+
     def print_ldr_stats(self):
-        print(F"\n{self.stat} leaders for {self.start}{'' if self.end == self.start else f' -> {self.end}'}:")
+        print(F"\n{self.stat} leaders for {self.start}{':' if self.end == self.start else F' -> {self.end}:'}")
 
         # sort the leaders DESC
         vals_sorted = { k:v for k, v in sorted(self.stats.items(), key = lambda x:x[1], reverse = True) }
@@ -213,7 +272,7 @@ class PrintBattingLeaders:
 
         # print the entries
         for key in vals_sorted:
-            print(F"{key:24}: {vals_sorted[key]}")
+            print(F"{key:20}{vals_sorted[key]}")
         print()
 
     def get_real_names(self, vals:dict):
