@@ -26,10 +26,11 @@ from cwTools import *
 MIN_LIMIT = 10
 MAX_LIMIT = 120
 DEFAULT_LIMIT = 30
+MIN_PA = 502 # one season
+MULTIYEAR_MULTIPLIER = 0.8
 DEFAULT_YEAR  = 1954
 PROGRAM_DESC  = "Print leaders for a batting stat from Retrosheet data for the specified year(s)."
 PROGRAM_NAME  = "battingLeaders.py"
-BAT_STD_SPACE = STD_SPACE_SIZE
 BAT_RND_PRECISION = 3
 
 GM  = 0       # 0
@@ -75,6 +76,9 @@ class PrintBattingLeaders:
         self.stats = {}
         self.limit = p_limit
         self.num_files = 0
+        num_years = p_end - p_start + 1
+        self.min_pa = MIN_PA * num_years if num_years <= 4 else MIN_PA * MULTIYEAR_MULTIPLIER * num_years
+        self.lgr.warning(F"Minimum PA to display results = {self.min_pa}")
 
     def get_num_files(self):
         return self.num_files
@@ -282,7 +286,7 @@ class PrintBattingLeaders:
                 pa = self.stats[key][BATTING_HDRS[PA]]
                 # if key == "ashbr101":
                 #     print(F"Richie Ashburn: PA = {pa}, AB = {self.stats[key][BATTING_HDRS[AB]]}, hits = {self.stats[key][BATTING_HDRS[HIT]]}")
-                if pa < 502:
+                if pa < self.min_pa:
                     self.stats[key] = 0.0
                 else:
                     self.stats[key] = round( (self.stats[key][BATTING_HDRS[HIT]] / self.stats[key][BATTING_HDRS[AB]]), 3 )
@@ -311,7 +315,7 @@ class PrintBattingLeaders:
             if vals_sorted[key] > 1:
                 print(F"{key:20}{vals_sorted[key]}")
             else:
-                print(F"{key:20}{vals_sorted[key]:0.3f}")
+                print(F"{key:20}{vals_sorted[key]:0.{BAT_RND_PRECISION}f}")
         print()
 
     def get_real_names(self, vals:dict):
