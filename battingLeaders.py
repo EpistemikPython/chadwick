@@ -16,6 +16,7 @@ __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-08-22"
 __updated__ = "2021-08-25"
 
+import copy
 import sys
 sys.path.append("/home/marksa/git/Python/utils")
 from mhsUtils import dt, run_ts, now_dt
@@ -27,7 +28,7 @@ MIN_LIMIT = 10
 MAX_LIMIT = 120
 DEFAULT_LIMIT = 30
 MIN_PA = 502 # one season
-MULTIYEAR_MULTIPLIER = 0.8
+MULTIYEAR_MULTIPLIER = 0.7
 DEFAULT_YEAR  = 1954
 PROGRAM_DESC  = "Print leaders for a batting stat from Retrosheet data for the specified year(s)."
 PROGRAM_NAME  = "battingLeaders.py"
@@ -54,13 +55,18 @@ HBP = SF+1    # 17
 GDP = HBP+1   # 18
 TB  = GDP+1   # 19
 BA  = TB+1    # 20
-LAST = BA+1   # end of available counting stats
+OBP = BA+1    # 21
+SLG = OBP+1   # 22
+OPS = SLG+1   # 23
+LAST = OPS+1  # end of batting stats
 # CWBoxBatting: int g, pa, ab, r, h, b2, b3, hr, hrslam, bi, bi2out, gw, bb, ibb, so, gdp, hp, sh, sf, sb, cs, xi;
 # baseball-ref.com: G  PA  AB  R  H  2B  3B  HR  RBI  SB  CS  BB  SO  BA  OBP  SLG  OPS  OPS+  TB  GDP  HBP  SH  SF IBB
 STATS_DICT = { "G ":0, "PA":0, "AB":0, "R ":0, "H ":0, "2B":0, "3B":0, "HR":0, "XBH":0, "RBI":0, "SO":0, "BB":0, "IBB":0,
-               "SB":0, "CS":0, "SH":0, "SF":0, "HBP":0, "GDP":0,"TB":0, "BA":0, "OBP":0, "SLG":0, "OPS":0 }
+               "SB":0, "CS":0, "SH":0, "SF":0, "HBP":0, "GDP":0, "TB":0, "BA":0, "OBP":0, "SLG":0, "OPS":0 }
 BATTING_HDRS = list( STATS_DICT.keys() )
 DEFAULT_STAT = BATTING_HDRS[RBI]
+RATE_STATS_DICT = { "PA":0, "AB":0, "H ":0, "BB":0, "SF":0, "HBP":0, "TB":0 }
+RATE_STATS = BATTING_HDRS[20:]
 
 
 class PrintBattingLeaders:
@@ -78,7 +84,8 @@ class PrintBattingLeaders:
         self.num_files = 0
         num_years = p_end - p_start + 1
         self.min_pa = MIN_PA * num_years if num_years <= 4 else MIN_PA * MULTIYEAR_MULTIPLIER * num_years
-        self.lgr.warning(F"Minimum PA to display results = {self.min_pa}")
+        if self.stat in RATE_STATS:
+            self.lgr.warning(F"Multi-year Multiplier = {MULTIYEAR_MULTIPLIER}; Minimum PA to display results = {self.min_pa}")
 
     def get_num_files(self):
         return self.num_files
@@ -187,15 +194,27 @@ class PrintBattingLeaders:
                     elif stat == BATTING_HDRS[HBP]: game_stat = batting.hp
                     elif stat == BATTING_HDRS[GDP]: game_stat = batting.gdp
                     elif stat == BATTING_HDRS[TB]: game_stat = batting.h + batting.b2 + (2 * batting.b3) + (3 * batting.hr)
-                    elif stat == BATTING_HDRS[BA]:
-                        game_stat = { BATTING_HDRS[HIT]:batting.h, BATTING_HDRS[AB]:batting.ab, BATTING_HDRS[PA]:batting.pa }
+                    elif stat in RATE_STATS:
+                        game_stat = copy.copy(RATE_STATS_DICT)
+                        game_stat[BATTING_HDRS[PA]] = batting.pa
+                        game_stat[BATTING_HDRS[AB]] = batting.ab
+                        game_stat[BATTING_HDRS[HIT]] = batting.h
+                        game_stat[BATTING_HDRS[BB]] = batting.bb
+                        game_stat[BATTING_HDRS[SF]] = batting.sf
+                        game_stat[BATTING_HDRS[HBP]] = batting.hp
+                        game_stat[BATTING_HDRS[TB]] = batting.h + batting.b2 + (2 * batting.b3) + (3 * batting.hr)
+
                     if player not in self.stats.keys():
                         self.stats[player] = game_stat
                     else:
-                        if stat == BATTING_HDRS[BA]:
-                            self.stats[player][BATTING_HDRS[HIT]] += batting.h
-                            self.stats[player][BATTING_HDRS[AB]] += batting.ab
+                        if stat in RATE_STATS:
                             self.stats[player][BATTING_HDRS[PA]] += batting.pa
+                            self.stats[player][BATTING_HDRS[AB]] += batting.ab
+                            self.stats[player][BATTING_HDRS[HIT]] += batting.h
+                            self.stats[player][BATTING_HDRS[BB]] += batting.bb
+                            self.stats[player][BATTING_HDRS[SF]] += batting.sf
+                            self.stats[player][BATTING_HDRS[HBP]] += batting.hp
+                            self.stats[player][BATTING_HDRS[TB]] += batting.h + batting.b2 + (2 * batting.b3) + (3 * batting.hr)
                         else:
                             self.stats[player] += game_stat
                     players[t] = players[t].contents.next
@@ -236,60 +255,75 @@ class PrintBattingLeaders:
                                 # key: 'stat','bline',id,side,pos,seq,ab,r,h,2b,3b,hr,rbi,sh,sf,hbp,bb,ibb,k, sb,cs,gidp,int
                                 #       0      1      2  3    4   5   6  7 8 9  10 11 12  13 14 15  16 17  18 19 20  21  22
                                 if stat == BATTING_HDRS[GM]: self.stats[player_id] += 1
-                                if stat == BATTING_HDRS[PA]:
-                                    game_stat = int(brow[6]) + int(brow[13]) + int(brow[14]) + int(brow[15]) \
-                                                + int(brow[16]) + int(brow[22])
-                                    self.stats[player_id] += game_stat
-                                if stat == BATTING_HDRS[AB]: self.stats[player_id] += int(brow[6])
-                                if stat == BATTING_HDRS[RUN]: self.stats[player_id] += int(brow[7])
-                                if stat == BATTING_HDRS[HIT]: self.stats[player_id] += int(brow[8])
-                                if stat == BATTING_HDRS[B2]: self.stats[player_id] += int(brow[9])
-                                if stat == BATTING_HDRS[B3]: self.stats[player_id] += int(brow[10])
-                                if stat == BATTING_HDRS[HR] and int(brow[11]) > 0:
+                                pa = int(brow[6]) + int(brow[13]) + int(brow[14]) + int(brow[15]) \
+                                     + int(brow[16]) + int(brow[22])
+                                if stat == BATTING_HDRS[PA] and pa > 0:
+                                    self.stats[player_id] += pa
+                                elif stat == BATTING_HDRS[AB]: self.stats[player_id] += int(brow[6])
+                                elif stat == BATTING_HDRS[RUN]: self.stats[player_id] += int(brow[7])
+                                elif stat == BATTING_HDRS[HIT]: self.stats[player_id] += int(brow[8])
+                                elif stat == BATTING_HDRS[B2]: self.stats[player_id] += int(brow[9])
+                                elif stat == BATTING_HDRS[B3]: self.stats[player_id] += int(brow[10])
+                                elif stat == BATTING_HDRS[HR] and int(brow[11]) > 0:
                                     self.lgr.warning(F"found {brow[11]} extra HRs for {player_id}!")
                                     self.stats[player_id] += int(brow[11])
-                                if stat == BATTING_HDRS[XBH]:
+                                elif stat == BATTING_HDRS[XBH]:
                                     self.stats[player_id] += ( int(brow[9]) + int(brow[10]) + int(brow[11]) )
-                                if stat == BATTING_HDRS[RBI] and int(brow[12]) > 0:
+                                elif stat == BATTING_HDRS[RBI] and int(brow[12]) > 0:
                                     self.lgr.warning(F"found {brow[12]} extra RBIs for {player_id}!")
                                     self.stats[player_id] += int(brow[12])
-                                if stat == BATTING_HDRS[BB]: self.stats[player_id] += int(brow[16])
-                                if stat == BATTING_HDRS[IBB] and int(brow[17]) > 0:
+                                elif stat == BATTING_HDRS[BB]: self.stats[player_id] += int(brow[16])
+                                elif stat == BATTING_HDRS[IBB] and int(brow[17]) > 0:
                                     self.stats[player_id] += int(brow[17])
-                                if stat == BATTING_HDRS[SO]: self.stats[player_id] += int(brow[18])
-                                if stat == BATTING_HDRS[SB]: self.stats[player_id] += int(brow[19])
-                                if stat == BATTING_HDRS[CS]: self.stats[player_id] += int(brow[20])
-                                if stat == BATTING_HDRS[SH]: self.stats[player_id] += int(brow[13])
-                                if stat == BATTING_HDRS[SF]: self.stats[player_id] += int(brow[14])
-                                if stat == BATTING_HDRS[HBP]: self.stats[player_id] += int(brow[15])
-                                if stat == BATTING_HDRS[GDP]: self.stats[player_id] += int(brow[21])
-                                elif stat == BATTING_HDRS[TB]:
+                                elif stat == BATTING_HDRS[SO]: self.stats[player_id] += int(brow[18])
+                                elif stat == BATTING_HDRS[SB]: self.stats[player_id] += int(brow[19])
+                                elif stat == BATTING_HDRS[CS]: self.stats[player_id] += int(brow[20])
+                                elif stat == BATTING_HDRS[SH]: self.stats[player_id] += int(brow[13])
+                                elif stat == BATTING_HDRS[SF]: self.stats[player_id] += int(brow[14])
+                                elif stat == BATTING_HDRS[HBP]: self.stats[player_id] += int(brow[15])
+                                elif stat == BATTING_HDRS[GDP]: self.stats[player_id] += int(brow[21])
+                                tb = int(brow[8]) + int(brow[9]) + (2 * int(brow[10])) + (3 * int(brow[11]))
+                                if stat == BATTING_HDRS[TB] and tb > 0:
                                     self.lgr.warning(F"found extra TBs for {player_id}!")
-                                    self.stats[player_id] += ( int(brow[8]) + int(brow[9]) + (2 * int(brow[10]))
-                                                               + (3 * int(brow[11])) )
-                                elif stat == BATTING_HDRS[BA]:
-                                    pa = int(brow[6]) + int(brow[13]) + int(brow[14]) + int(brow[15]) + int(brow[16]) + int(brow[22])
+                                    self.stats[player_id] += tb
+                                elif stat in RATE_STATS:
+                                    self.stats[player_id][BATTING_HDRS[PA]] += pa
+                                    self.stats[player_id][BATTING_HDRS[AB]] += int(brow[6])
                                     if int(brow[8]) > 0:
                                         self.lgr.warning(F"AB: found {brow[8]} extra hits for {player_id}!")
                                         self.stats[player_id][BATTING_HDRS[HIT]] += int(brow[8])
-                                    self.stats[player_id][BATTING_HDRS[AB]] += int(brow[6])
-                                    self.stats[player_id][BATTING_HDRS[PA]] += pa
+                                    self.stats[player_id][BATTING_HDRS[BB]] += int(brow[16])
+                                    self.stats[player_id][BATTING_HDRS[SF]] += int(brow[14])
+                                    self.stats[player_id][BATTING_HDRS[HBP]] += int(brow[15])
+                                    self.stats[player_id][BATTING_HDRS[TB]] += tb
             except FileNotFoundError:
                 continue
 
     def print_ldr_stats(self):
         print(F"\n{self.stat} leaders for {self.start}{':' if self.end == self.start else F' -> {self.end}:'}")
 
-        # calculations for BA
-        if self.stat == BATTING_HDRS[BA]:
+        # calculations for rate stats
+        if self.stat in RATE_STATS:
             for key in self.stats:
+                ab = self.stats[key][BATTING_HDRS[AB]]
                 pa = self.stats[key][BATTING_HDRS[PA]]
-                # if key == "ashbr101":
-                #     print(F"Richie Ashburn: PA = {pa}, AB = {self.stats[key][BATTING_HDRS[AB]]}, hits = {self.stats[key][BATTING_HDRS[HIT]]}")
                 if pa < self.min_pa:
                     self.stats[key] = 0.0
                 else:
-                    self.stats[key] = round( (self.stats[key][BATTING_HDRS[HIT]] / self.stats[key][BATTING_HDRS[AB]]), 3 )
+                    if self.stat == BATTING_HDRS[BA]:
+                        self.stats[key] = round( (self.stats[key][BATTING_HDRS[HIT]] / ab), 3 )
+                    else:
+                        bb_hbp = self.stats[key][BATTING_HDRS[BB]] + self.stats[key][BATTING_HDRS[HBP]]
+                        obp_num = self.stats[key][BATTING_HDRS[HIT]] + bb_hbp
+                        obp_denom = self.stats[key][BATTING_HDRS[AB]] + self.stats[key][BATTING_HDRS[SF]] + bb_hbp
+                        obp = obp_num / obp_denom if obp_denom > 0 else 0.0
+                        slg = self.stats[key][BATTING_HDRS[TB]] / ab if ab > 0 else 0.0
+                        if self.stat == BATTING_HDRS[OBP]:
+                            self.stats[key] = round( obp, 3 )
+                        elif self.stat == BATTING_HDRS[SLG]:
+                            self.stats[key] = round( slg, 3 )
+                        elif self.stat == BATTING_HDRS[OPS]:
+                            self.stats[key] = round( obp + slg, 3 )
 
         # sort the leaders DESC
         vals_sorted = { k:v for k, v in sorted(self.stats.items(), key = lambda x:x[1], reverse = True) }
@@ -311,12 +345,17 @@ class PrintBattingLeaders:
         vals_sorted = { k:v for k, v in sorted(vals_named.items(), key = lambda x:x[1], reverse = True) }
 
         # print the entries
+        line = 0
         for key in vals_sorted:
-            if vals_sorted[key] > 1:
+            line += 1
+            if vals_sorted[key] > 2:
                 print(F"{key:20}{vals_sorted[key]}")
+            elif vals_sorted[key] > 1:
+                print(F"{key:20}{vals_sorted[key]:1.{BAT_RND_PRECISION}f}")
             else:
                 print(F"{key:20}{vals_sorted[key]:0.{BAT_RND_PRECISION}f}")
-        print()
+            if line % 10 == 0:
+                print()
 
     def get_real_names(self, vals:dict):
         vwnames = {}
