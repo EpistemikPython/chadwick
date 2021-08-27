@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-08-08"
+__updated__ = "2021-08-27"
 
 import csv
 import glob
@@ -78,8 +78,8 @@ class PrintStats(ABC):
     def __init__(self, logger:lg.Logger):
         self.lgr = logger
         self.lgr.warning(F"Start {self.__class__.__name__}")
-        self.event_files = dict()
-        self.game_ids = list()
+        self.event_files = {}
+        self.game_ids = []
         self.num_years = 0
         self.stats = None
         self.totals = None
@@ -163,7 +163,7 @@ class PrintStats(ABC):
         self.fam_name = pers_id
         try:
             for year in range(start, end+1):
-                year_events = list()
+                year_events = []
                 # get the team files
                 team_file_name = osp.join(REG_SEASON_FOLDER, "TEAM" + str(year))
                 self.lgr.debug(F"team file name = {team_file_name}")
@@ -245,7 +245,6 @@ def process_bp_args(desc:str, exe:str, id_help:str):
                             help="set LEVEL of console logging output")
     arg_parser.add_argument('-f', '--levfile', default=lg.getLevelName(DEFAULT_FILE_LEVEL),
                             help="set LEVEL of file logging output")
-
     return arg_parser
 
 
