@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-08-22"
+__updated__ = "2021-08-27"
 
 import sys
 sys.path.append("/home/marksa/git/Python/utils")
@@ -71,9 +71,7 @@ class PrintBattingStats(PrintStats):
     def collect_stats(self, p_box:pointer, bat_id:str, year:str, game_id:str):
         self.lgr.debug(F"search for '{bat_id}' in year = {year}")
         slots = [1,1]
-        players = list()
-        players.append( MyCwlib.box_get_starter(p_box,0,1) )
-        players.append( MyCwlib.box_get_starter(p_box,1,1) )
+        players = [MyCwlib.box_get_starter(p_box, 0, 1), MyCwlib.box_get_starter(p_box, 1, 1)]
 
         while slots[0] <= 9 or slots[1] <= 9 :
             for t in range(2):
