@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-08-22"
-__updated__ = "2021-08-25"
+__updated__ = "2021-08-27"
 
 import copy
 import sys
@@ -74,8 +74,8 @@ class PrintBattingLeaders:
     def __init__(self, p_stat:str, p_start:int, p_end:int, p_limit:int, logger:lg.Logger):
         self.lgr = logger
         self.lgr.warning(F"Start {self.__class__.__name__}")
-        self.event_files = dict()
-        self.game_ids = list()
+        self.event_files = {}
+        self.game_ids = []
         self.start = p_start
         self.end = p_end
         self.stat = p_stat
@@ -96,7 +96,7 @@ class PrintBattingLeaders:
         self.lgr.info(F"get the {season} events for years {self.start}->{self.end}")
         try:
             for year in range(self.start, self.end+1):
-                year_events = list()
+                year_events = []
                 # get the team files
                 team_file_name = osp.join(REG_SEASON_FOLDER, "TEAM" + str(year))
                 self.lgr.debug(F"team file name = {team_file_name}")
@@ -311,7 +311,8 @@ class PrintBattingLeaders:
                     self.stats[key] = 0.0
                 else:
                     if self.stat == BATTING_HDRS[BA]:
-                        self.stats[key] = round( (self.stats[key][BATTING_HDRS[HIT]] / ab), 3 )
+                        ba = self.stats[key][BATTING_HDRS[HIT]] / ab if ab > 0 else 0.0
+                        self.stats[key] = round( ba, 3 )
                     else:
                         bb_hbp = self.stats[key][BATTING_HDRS[BB]] + self.stats[key][BATTING_HDRS[HBP]]
                         obp_num = self.stats[key][BATTING_HDRS[HIT]] + bb_hbp
