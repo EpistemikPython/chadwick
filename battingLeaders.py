@@ -27,7 +27,7 @@ from cwTools import *
 MIN_LIMIT = 10
 MAX_LIMIT = 120
 DEFAULT_LIMIT = 30
-MIN_PA = 502 # one season
+STD_MIN_PA = 502 # one season
 MULTIYEAR_MULTIPLIER = 0.7
 DEFAULT_YEAR  = 1954
 PROGRAM_DESC  = "Print leaders for a batting stat from Retrosheet data for the specified year(s)."
@@ -82,10 +82,12 @@ class PrintBattingLeaders:
         self.stats = {}
         self.limit = p_limit
         self.num_files = 0
-        num_years = p_end - p_start + 1
-        self.min_pa = MIN_PA * num_years if num_years <= 4 else MIN_PA * MULTIYEAR_MULTIPLIER * num_years
+        self.num_years = p_end - p_start + 1
+        myr_mult = 1.0 if self.num_years <= 4 else MULTIYEAR_MULTIPLIER
+        self.min_pa = STD_MIN_PA * myr_mult * self.num_years
         if self.stat in RATE_STATS:
-            self.lgr.warning(F"Multi-year Multiplier = {MULTIYEAR_MULTIPLIER}; Minimum PA to display results = {self.min_pa}")
+            myr_notice = F"Multi-year Multiplier = {myr_mult}; " if self.num_years > 1 else ''
+            self.lgr.warning(F"{myr_notice}Minimum PA to display results = {self.min_pa}")
 
     def get_num_files(self):
         return self.num_files
@@ -463,7 +465,7 @@ def main_batting_leaders(args:list):
     lg_ctrl = MhsLogger( __file__, con_level = conlevel, file_level = filelevel, folder = osp.join("logs", "leaders") )
     lgr = lg_ctrl.get_logger()
     lgr.info(F"Logging: console level = {repr(conlevel)}; file level = {repr(filelevel)}")
-    lgr.warning(F" stat = {stat}; years: {start} -> {end}; num = {limit}")
+    lgr.warning(F"stat = {stat}; years: {start} -> {end}; # {limit} (and ties)")
 
     ldr_stats = PrintBattingLeaders(stat, start, end, limit, lgr)
     ldr_stats.get_events(post)
