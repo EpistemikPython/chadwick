@@ -14,10 +14,11 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-08-27"
+__updated__ = "2021-08-28"
 
 import csv
 import glob
+import re
 import sys
 from abc import ABC, abstractmethod
 from argparse import ArgumentParser
@@ -38,8 +39,6 @@ STD_HDR_SIZE   = 4
 RETROSHEET_START_YEAR = 1871
 RETROSHEET_AVAIL_YEAR = 1974
 RETROSHEET_END_YEAR   = 2021
-RETROSHEET_ID_SIZE    = 8
-RETROSHEET_ID_ALPHA   = 5
 
 RETROSHEET_FOLDER  = osp.join(BASE_GIT_FOLDER, "clone" + osp.sep + "ChadwickBureau" + osp.sep + "retrosheet")
 ROSTERS_FOLDER     = osp.join(RETROSHEET_FOLDER, "rosters")
@@ -265,14 +264,14 @@ def process_bp_input(argl:list, default_id:str, default_yr:int, desc:str, prog:s
         print(F"Problem with file log level: {repr(ae)}")
         file_level = DEFAULT_FILE_LEVEL
 
-    if len(argp.player_id) >= RETROSHEET_ID_SIZE and argp.player_id[:RETROSHEET_ID_ALPHA].isalpha() \
-            and argp.player_id[RETROSHEET_ID_ALPHA:RETROSHEET_ID_SIZE].isdecimal():
+    # regex to match retrosheet player id format
+    re_id = re.compile(r"([a-z]{2}[a-z\-]{2}[a-z][0-1][0-9]{2})")
+    re_match = re.match(re_id, argp.player_id)
+    if re_match:
         player_id = argp.player_id.strip()
     else:
         print(F">>> IMPROPER player id '{argp.player_id}'! Using default value = {default_id}.\n")
         player_id = default_id
-    if len(player_id) > RETROSHEET_ID_SIZE:
-        player_id = player_id[:RETROSHEET_ID_SIZE]
 
     if RETROSHEET_START_YEAR <= argp.start <= RETROSHEET_END_YEAR:
         start = argp.start
