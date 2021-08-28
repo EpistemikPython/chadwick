@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-08-27"
+__updated__ = "2021-08-28"
 
 import sys
 sys.path.append("/home/marksa/git/Python/utils")
@@ -123,7 +123,7 @@ class PrintBattingStats(PrintStats):
                         if brow[0] == "id":
                             current_id = brow[1]
                             if current_id in self.game_ids:
-                                self.lgr.warning(F"found duplicate game '{current_id}' in Boxscore file.")
+                                self.lgr.debug(F"found duplicate game '{current_id}' in Boxscore file.")
                                 find_player = False
                                 continue
                             else:
@@ -131,7 +131,7 @@ class PrintBattingStats(PrintStats):
                                 find_player = True
                         elif find_player:
                             if brow[1] == "bline" and brow[2] == bat_id:
-                                self.lgr.info(F"found player '{bat_id}' in boxscore game {current_id}")
+                                self.lgr.info(F"found player '{bat_id}' in NEW boxscore game {current_id}")
                                 # parse boxscore batting stat line
                                 # key: 'stat','bline',id,side,pos,seq,ab,r,h,2b,3b,hr,rbi,sh,sf,hbp,bb,ibb,k, sb,cs,gidp,int
                                 #       0      1      2  3    4   5   6  7 8 9  10 11 12  13 14 15  16 17  18 19 20  21  22
