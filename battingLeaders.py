@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-08-22"
-__updated__ = "2021-08-27"
+__updated__ = "2021-08-29"
 
 import copy
 import sys
@@ -389,7 +389,6 @@ class PrintBattingLeaders:
         except Exception as ex:
             raise ex
         return vwnames
-
 # END class PrintBattingLeaders
 
 
@@ -399,10 +398,10 @@ def process_bl_args():
     # required arguments
     required = arg_parser.add_argument_group('REQUIRED')
     required.add_argument('-y', '--start_year', required = True, type = int, metavar = "YEAR",
-                          help = "start year to find stats (yyyy)")
+                          help = "(start) year to find stats <yyyy>")
     required.add_argument('-s', '--stat', required = True, help = F"batting stat to find: {BATTING_HDRS}")
     # optional arguments
-    arg_parser.add_argument('-e', '--end_year', type = int, metavar = "YEAR", help = "end year to find stats (yyyy)")
+    arg_parser.add_argument('-e', '--end_year', type = int, metavar = "YEAR", help = "end year to find stats <yyyy>")
     arg_parser.add_argument('-l', '--limit', type = int, default = DEFAULT_LIMIT,
                             help = F"# of players to print: default = {DEFAULT_LIMIT}, MIN = {MIN_LIMIT}, MAX = {MAX_LIMIT}")
     arg_parser.add_argument('-p', '--post', action = "store_true", help = F"find {POST_SEASON} games instead of {REG_SEASON}")
