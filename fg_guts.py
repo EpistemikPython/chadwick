@@ -1,3 +1,18 @@
+##############################################################################################################################
+# coding=utf-8
+#
+# fg_guts.py -- baseball statistical constants
+#
+# This data obtained from Fangraphs
+# @see https://www.fangraphs.com/guts.aspx?type=cn
+#
+# Port to Python3, additions & modifications Copyright (c) 2021 Mark Sattolo <epistemik@gmail.com>
+
+__author__       = "Mark Sattolo"
+__author_email__ = "epistemik@gmail.com"
+__created__ = "2021-08-27"
+__updated__ = "2021-08-29"
+
 guts = [
     {
         "Season":"2021",
