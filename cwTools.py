@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-08-28"
+__updated__ = "2021-08-29"
 
 import csv
 import glob
@@ -226,8 +226,8 @@ class PrintStats(ABC):
     @abstractmethod
     def print_ave_line(self):
         pass
-
 # END class PrintStats
+
 
 def process_bp_args(desc:str, exe:str, id_help:str):
     """Use ArgumentParser to specify command line arguments for batting and pitching stats."""
@@ -235,14 +235,14 @@ def process_bp_args(desc:str, exe:str, id_help:str):
     # required arguments
     required = arg_parser.add_argument_group('REQUIRED')
     required.add_argument('-i', '--player_id', required=True, help=id_help)
-    required.add_argument('-s', '--start', required=True, type=int, help="start year to find stats (yyyy)")
+    required.add_argument('-s', '--start', metavar = "YEAR", required=True, type=int, help="(start) year to find stats <yyyy>")
     # optional arguments
-    arg_parser.add_argument('-e', '--end', type=int, help="end year to find stats (yyyy)")
+    arg_parser.add_argument('-e', '--end', metavar = "YEAR", type=int, help="end year to find stats <yyyy>")
     arg_parser.add_argument('-p', '--post', action="store_true", help=F"find {POST_SEASON} games instead of {REG_SEASON}")
     arg_parser.add_argument('-q', '--quiet', action="store_true", help="NO logging")
-    arg_parser.add_argument('-c', '--levcon', default=lg.getLevelName(DEFAULT_CONSOLE_LEVEL),
+    arg_parser.add_argument('-c', '--levcon', metavar = "LEVEL", default=lg.getLevelName(DEFAULT_CONSOLE_LEVEL),
                             help="set LEVEL of console logging output")
-    arg_parser.add_argument('-f', '--levfile', default=lg.getLevelName(DEFAULT_FILE_LEVEL),
+    arg_parser.add_argument('-f', '--levfile', metavar = "LEVEL", default=lg.getLevelName(DEFAULT_FILE_LEVEL),
                             help="set LEVEL of file logging output")
     return arg_parser
 
@@ -264,11 +264,12 @@ def process_bp_input(argl:list, default_id:str, default_yr:int, desc:str, prog:s
         print(F"Problem with file log level: {repr(ae)}")
         file_level = DEFAULT_FILE_LEVEL
 
+    p_id = argp.player_id.lower().strip()
     # regex to match retrosheet player id format
     re_id = re.compile(r"([a-z]{2}[a-z\-]{2}[a-z][0-1][0-9]{2})")
-    re_match = re.match(re_id, argp.player_id)
+    re_match = re.match(re_id, p_id)
     if re_match:
-        player_id = argp.player_id.strip()
+        player_id = p_id
     else:
         print(F">>> IMPROPER player id '{argp.player_id}'! Using default value = {default_id}.\n")
         player_id = default_id
