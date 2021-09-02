@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-08-22"
-__updated__ = "2021-08-29"
+__updated__ = "2021-09-02"
 
 import copy
 import sys
@@ -28,8 +28,7 @@ MIN_LIMIT = 10
 MAX_LIMIT = 120
 DEFAULT_LIMIT = 30
 STD_MIN_PA = 502 # one season
-MULTIYEAR_MULTIPLIER = 0.7
-DEFAULT_YEAR  = 1954
+DEFAULT_YEAR  = 2010
 PROGRAM_DESC  = "Print leaders for a batting stat from Retrosheet data for the specified year(s)."
 PROGRAM_NAME  = "battingLeaders.py"
 BAT_RND_PRECISION = 3
@@ -64,7 +63,7 @@ LAST = OPS+1  # end of batting stats
 STATS_DICT = { "G ":0, "PA":0, "AB":0, "R ":0, "H ":0, "2B":0, "3B":0, "HR":0, "XBH":0, "RBI":0, "SO":0, "BB":0, "IBB":0,
                "SB":0, "CS":0, "SH":0, "SF":0, "HBP":0, "GDP":0, "TB":0, "BA":0, "OBP":0, "SLG":0, "OPS":0 }
 BATTING_HDRS = list( STATS_DICT.keys() )
-DEFAULT_STAT = BATTING_HDRS[RBI]
+DEFAULT_STAT = BATTING_HDRS[OBP]
 RATE_STATS_DICT = { "PA":0, "AB":0, "H ":0, "BB":0, "SF":0, "HBP":0, "TB":0 }
 RATE_STATS = BATTING_HDRS[20:]
 
@@ -83,7 +82,8 @@ class PrintBattingLeaders:
         self.limit = p_limit
         self.num_files = 0
         self.num_years = p_end - p_start + 1
-        myr_mult = 1.0 if self.num_years <= 4 else MULTIYEAR_MULTIPLIER
+        # adjust required number of PA depending on the number of years collecting the stat
+        myr_mult = 1.0 if self.num_years <= 4 else 0.8 if self.num_years <= 8 else 0.7 if self.num_years <= 16 else 0.6
         self.min_pa = STD_MIN_PA * myr_mult * self.num_years
         if self.stat in RATE_STATS:
             myr_notice = F"Multi-year Multiplier = {myr_mult}; " if self.num_years > 1 else ''
@@ -198,25 +198,25 @@ class PrintBattingLeaders:
                     elif stat == BATTING_HDRS[TB]: game_stat = batting.h + batting.b2 + (2 * batting.b3) + (3 * batting.hr)
                     elif stat in RATE_STATS:
                         game_stat = copy.copy(RATE_STATS_DICT)
-                        game_stat[BATTING_HDRS[PA]] = batting.pa
-                        game_stat[BATTING_HDRS[AB]] = batting.ab
+                        game_stat[BATTING_HDRS[PA]]  = batting.pa
+                        game_stat[BATTING_HDRS[AB]]  = batting.ab
                         game_stat[BATTING_HDRS[HIT]] = batting.h
-                        game_stat[BATTING_HDRS[BB]] = batting.bb
-                        game_stat[BATTING_HDRS[SF]] = batting.sf
+                        game_stat[BATTING_HDRS[BB]]  = batting.bb
+                        game_stat[BATTING_HDRS[SF]]  = batting.sf
                         game_stat[BATTING_HDRS[HBP]] = batting.hp
-                        game_stat[BATTING_HDRS[TB]] = batting.h + batting.b2 + (2 * batting.b3) + (3 * batting.hr)
+                        game_stat[BATTING_HDRS[TB]]  = batting.h + batting.b2 + (2 * batting.b3) + (3 * batting.hr)
 
                     if player not in self.stats.keys():
                         self.stats[player] = game_stat
                     else:
                         if stat in RATE_STATS:
-                            self.stats[player][BATTING_HDRS[PA]] += batting.pa
-                            self.stats[player][BATTING_HDRS[AB]] += batting.ab
+                            self.stats[player][BATTING_HDRS[PA]]  += batting.pa
+                            self.stats[player][BATTING_HDRS[AB]]  += batting.ab
                             self.stats[player][BATTING_HDRS[HIT]] += batting.h
-                            self.stats[player][BATTING_HDRS[BB]] += batting.bb
-                            self.stats[player][BATTING_HDRS[SF]] += batting.sf
+                            self.stats[player][BATTING_HDRS[BB]]  += batting.bb
+                            self.stats[player][BATTING_HDRS[SF]]  += batting.sf
                             self.stats[player][BATTING_HDRS[HBP]] += batting.hp
-                            self.stats[player][BATTING_HDRS[TB]] += batting.h + batting.b2 + (2 * batting.b3) + (3 * batting.hr)
+                            self.stats[player][BATTING_HDRS[TB]]  += batting.h + batting.b2 + (2 * batting.b3) + (3 * batting.hr)
                         else:
                             self.stats[player] += game_stat
                     players[t] = players[t].contents.next
@@ -295,6 +295,7 @@ class PrintBattingLeaders:
                                         self.lgr.warning(F"AB: found {brow[8]} extra hits for {player_id}!")
                                         self.stats[player_id][BATTING_HDRS[HIT]] += int(brow[8])
                                     self.stats[player_id][BATTING_HDRS[BB]] += int(brow[16])
+                                    self.stats[player_id][BATTING_HDRS[IBB]] += int(brow[16])
                                     self.stats[player_id][BATTING_HDRS[SF]] += int(brow[14])
                                     self.stats[player_id][BATTING_HDRS[HBP]] += int(brow[15])
                                     self.stats[player_id][BATTING_HDRS[TB]] += tb
