@@ -72,7 +72,7 @@ RATE_STATS = BATTING_HDRS[20:]
 
 class PrintBattingLeaders:
     """Print leaders for a batting stat for a specified time period using Retrosheet data."""
-    def __init__(self, p_stat:str, p_start:int, p_end:int, p_limit:int, logger:lg.Logger):
+    def __init__(self, p_stat:str, p_start:int, p_end:int, p_limit:int, p_pa:int, logger:lg.Logger):
         self.lgr = logger
         self.lgr.warning(F"Start {self.__class__.__name__}")
         self.event_files = {}
@@ -84,11 +84,15 @@ class PrintBattingLeaders:
         self.limit = p_limit
         self.num_files = 0
         self.num_years = p_end - p_start + 1
-        # adjust required number of PA depending on the number of years collecting the stat
-        myr_mult = 1.0 if self.num_years <= 4 else 0.8 if self.num_years <= 8 else 0.7 if self.num_years <= 16 else 0.6
-        self.min_pa = STD_MIN_PA * myr_mult * self.num_years
+        self.min_pa = p_pa
         if self.stat in RATE_STATS:
-            myr_notice = F"Multi-year Multiplier = {myr_mult}; " if self.num_years > 1 else ''
+            myr_notice = ''
+            # if no user min_pa, adjust required number of PA depending on the number of years collecting the stat
+            if p_pa == 0:
+                myr_mult = 1.0 if self.num_years <= 4 else 0.8 if self.num_years <= 8 else 0.7 if self.num_years <= 16 else 0.6
+                self.min_pa = STD_MIN_PA * myr_mult * self.num_years
+                if self.num_years > 1:
+                    myr_notice = F"Multi-year Multiplier = {myr_mult}; "
             self.lgr.warning(F"{myr_notice}Minimum PA to display results = {self.min_pa}")
 
     def get_num_files(self):
@@ -307,8 +311,9 @@ class PrintBattingLeaders:
     def print_ldr_stats(self):
         print(F"\n{self.stat} leaders for {self.start}{':' if self.end == self.start else F' -> {self.end}:'}")
         result = copy.copy(self.stats)
+        calc_rate = self.stat in RATE_STATS
         # calculations for rate stats
-        if self.stat in RATE_STATS:
+        if calc_rate:
             for key in result:
                 ab = result[key][BATTING_HDRS[AB]]
                 pa = result[key][BATTING_HDRS[PA]]
@@ -351,12 +356,12 @@ class PrintBattingLeaders:
         vals_sorted = { k:v for k, v in sorted(vals_named.items(), key = lambda x:x[1], reverse = True) }
 
         # print the entries
-        print(F"{'Player'.ljust(PLAYER_SPACE)}{self.stat.ljust(STAT_SPACE)}{'PA' if self.stat in RATE_STATS else ''}")
-        print(F"{'------'.ljust(PLAYER_SPACE)}{'-----'.ljust(STAT_SPACE)}{'---' if self.stat in RATE_STATS else ''}")
+        print(F"{'Player'.ljust(PLAYER_SPACE)}{self.stat.ljust(STAT_SPACE)}{'PA' if calc_rate else ''}")
+        print(F"{'------'.ljust(PLAYER_SPACE)}{'-----'.ljust(STAT_SPACE)}{'---' if calc_rate else ''}")
         line = 0
         for key in vals_sorted:
             line += 1
-            if self.stat in RATE_STATS:
+            if calc_rate:
                 pstat = F"{vals_sorted[key]:1.{BAT_RND_PRECISION}f}"
                 pa = F"{self.stats[names[key]][BATTING_HDRS[PA]]}"
                 print(F"{key:{PLAYER_SPACE}}{pstat.ljust(STAT_SPACE)}{pa}")
@@ -382,7 +387,7 @@ class PrintBattingLeaders:
                     for trow in team_reader:
                         rteam = trow[0]
                         self.lgr.debug(F"Found team {rteam}")
-                        # search rosters for the players full names
+                        # search rosters for each player's full name
                         roster_file = osp.join(ROSTERS_FOLDER, rteam + str(year) + osp.extsep + "ROS")
                         self.lgr.debug(F"roster file name = {roster_file}")
                         if not osp.exists(roster_file):
@@ -412,6 +417,7 @@ def process_bl_args():
     arg_parser.add_argument('-e', '--end_year', type = int, metavar = "YEAR", help = "end year to find stats <yyyy>")
     arg_parser.add_argument('-l', '--limit', type = int, default = DEFAULT_LIMIT,
                             help = F"# of players to print: default = {DEFAULT_LIMIT}, MIN = {MIN_LIMIT}, MAX = {MAX_LIMIT}")
+    arg_parser.add_argument('-a', '--pa', type = int, help = F"for rate stats: number of PA needed to qualify")
     arg_parser.add_argument('-p', '--post', action = "store_true", help = F"find {POST_SEASON} games instead of {REG_SEASON}")
     arg_parser.add_argument('-q', '--quiet', action = "store_true", help = "NO logging")
     arg_parser.add_argument('-c', '--levcon', metavar = "LEVEL", default = lg.getLevelName(DEFAULT_CONSOLE_LEVEL),
@@ -463,18 +469,20 @@ def process_bl_input(argl:list):
             print(F">>> INVALID end year '{argp.end_year}'! Using end year = {start}.\n")
         end = start
 
-    return stat, start, end, limit, argp.post, con_level, file_level
+    minpa = argp.pa if argp.pa and 16000 > argp.pa > 0 else 0
+
+    return stat, start, end, limit, minpa, argp.post, con_level, file_level
 
 
 def main_batting_leaders(args:list):
-    stat, start, end, limit, post, conlevel, filelevel = process_bl_input(args)
+    stat, start, end, limit, minpa, post, conlevel, filelevel = process_bl_input(args)
 
     lg_ctrl = MhsLogger( __file__, con_level = conlevel, file_level = filelevel, folder = osp.join("logs", "leaders") )
     lgr = lg_ctrl.get_logger()
     lgr.info(F"Logging: console level = {repr(conlevel)}; file level = {repr(filelevel)}")
     lgr.warning(F"stat = {stat}; years: {start} -> {end}; # {limit} (and ties)")
 
-    ldr_stats = PrintBattingLeaders(stat, start, end, limit, lgr)
+    ldr_stats = PrintBattingLeaders(stat, start, end, limit, minpa, lgr)
     ldr_stats.get_events(post)
 
     season = POST_SEASON if post else REG_SEASON
