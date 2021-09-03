@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-08-22"
-__updated__ = "2021-09-02"
+__updated__ = "2021-09-03"
 
 import copy
 import sys
@@ -336,12 +336,14 @@ class PrintBattingLeaders:
                         elif self.stat == BATTING_HDRS[OPS]:
                             result[key] = round( obp + slg, 3 )
 
-        # sort the leaders DESC
+        # sort the leaders DESC by the chosen stat
         vals_sorted = { k:v for k, v in sorted(result.items(), key = lambda x:x[1], reverse = True) }
         vals = {}
         ct = val = 0
-        # get only the specified number of entries, plus ties
+        # get up to the specified number of entries, plus ties
         for key in vals_sorted:
+            if vals_sorted[key] == 0.0:
+                break
             if ct == self.limit:
                 if vals_sorted[key] < val:
                     break
@@ -351,23 +353,23 @@ class PrintBattingLeaders:
             vals[key] = val
             ct += 1
 
-        # get the real names from roster
+        # get the real names from the roster files
         vals_named, names = self.get_real_names(vals)
         vals_sorted = { k:v for k, v in sorted(vals_named.items(), key = lambda x:x[1], reverse = True) }
 
         # print the entries
         print(F"{'Player'.ljust(PLAYER_SPACE)}{self.stat.ljust(STAT_SPACE)}{'PA' if calc_rate else ''}")
-        print(F"{'------'.ljust(PLAYER_SPACE)}{'-----'.ljust(STAT_SPACE)}{'---' if calc_rate else ''}")
+        print(F"{'------'.ljust(PLAYER_SPACE)}{'-----'.ljust(STAT_SPACE)}{'-----' if calc_rate else ''}")
         line = 0
         for key in vals_sorted:
             line += 1
             if calc_rate:
                 pstat = F"{vals_sorted[key]:1.{BAT_RND_PRECISION}f}"
                 pa = F"{self.stats[names[key]][BATTING_HDRS[PA]]}"
-                print(F"{key:{PLAYER_SPACE}}{pstat.ljust(STAT_SPACE)}{pa}")
             else:
+                pa = ''
                 pstat = F"{vals_sorted[key]}"
-                print(F"{key:{PLAYER_SPACE}}{pstat.ljust(STAT_SPACE)}")
+            print(F"{key:{PLAYER_SPACE}}{pstat.ljust(STAT_SPACE)}{pa}")
             if line % 10 == 0:
                 print()
 
