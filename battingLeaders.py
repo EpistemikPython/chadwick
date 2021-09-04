@@ -14,12 +14,12 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-08-22"
-__updated__ = "2021-09-03"
+__updated__ = "2021-09-04"
 
 import copy
 import sys
 sys.path.append("/home/marksa/git/Python/utils")
-from mhsUtils import dt, run_ts, now_dt
+from mhsUtils import dt, run_ts, now_dt, get_filename
 from mhsLogging import MhsLogger
 from cwLibWrappers import cwlib
 from cwTools import *
@@ -30,7 +30,7 @@ DEFAULT_LIMIT = 30
 STD_MIN_PA = 502 # one season
 DEFAULT_YEAR  = 2010
 PROGRAM_DESC  = "Print leaders for a batting stat from Retrosheet data for the specified year(s)."
-PROGRAM_NAME  = "battingLeaders.py"
+PROGRAM_NAME  = get_filename(__file__)
 BAT_RND_PRECISION = 3
 PLAYER_SPACE = 24
 STAT_SPACE = 12
@@ -409,7 +409,7 @@ class PrintBattingLeaders:
 
 def process_bl_args():
     """Use ArgumentParser to specify command line arguments for batting leaders."""
-    arg_parser = ArgumentParser(description = PROGRAM_DESC, prog = PROGRAM_NAME)
+    arg_parser = ArgumentParser(description = PROGRAM_DESC, prog = "python3 " + PROGRAM_NAME)
     # required arguments
     required = arg_parser.add_argument_group('REQUIRED')
     required.add_argument('-y', '--start_year', required = True, type = int, metavar = "YEAR",
