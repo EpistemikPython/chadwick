@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-08-22"
+__updated__ = "2021-09-04"
 
 import sys
 sys.path.append("/home/marksa/git/Python/utils")
@@ -575,22 +575,21 @@ class PrintGameSummary:
 
 
 def process_args():
-    arg_parser = ArgumentParser( description="Print boxscore(s) from retrosheet data for the specified team and date range",
-                                 prog = get_filename(__file__) )
+    arg_parser = ArgumentParser( description = "Print boxscore(s) from retrosheet data for the specified team and date range",
+                                 prog = "python3 " + get_filename(__file__) )
     # required arguments
-    required = arg_parser.add_argument_group('REQUIRED')
+    required = arg_parser.add_argument_group("REQUIRED")
     required.add_argument('-t', '--team', required = True, help = "Retrosheet 3-character id for a team, e.g. TOR, LAN")
-    required.add_argument('-y', '--year', type = int, required = True, help = "year to find games to print out (yyyy)")
+    required.add_argument('-y', '--year', type = int, required = True, help = "year to find games to print out, e.g. 1993")
     # optional arguments
-    arg_parser.add_argument('-s', '--start', help = "start date to print out games (mmdd)")
-    arg_parser.add_argument('-e', '--end', help = "end date to print out games (mmdd)")
+    arg_parser.add_argument('-s', '--start', metavar = "MMDD", help = "(start) month-day to print out games, e.g. 0701")
+    arg_parser.add_argument('-e', '--end', metavar = "MMDD", help = "end month-day to print out games, e.g. 0731")
     arg_parser.add_argument('-p', '--post', action = "store_true", help = F"find {POST_SEASON} games instead of {REG_SEASON}")
     arg_parser.add_argument('-q', '--quiet', action = "store_true", help = "NO logging")
-    arg_parser.add_argument('-c', '--levcon', default = lg.getLevelName(DEFAULT_CONSOLE_LEVEL),
-                            help="set LEVEL of console logging output")
-    arg_parser.add_argument('-f', '--levfile', default = lg.getLevelName(DEFAULT_FILE_LEVEL),
+    arg_parser.add_argument('-c', '--levcon', metavar = "LEVEL", default = lg.getLevelName(DEFAULT_CONSOLE_LEVEL),
+                            help = "set LEVEL of console logging output")
+    arg_parser.add_argument('-f', '--levfile', metavar = "LEVEL", default = lg.getLevelName(DEFAULT_FILE_LEVEL),
                             help = "set LEVEL of file logging output")
-
     return arg_parser
 
 
