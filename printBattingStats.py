@@ -14,12 +14,12 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-08-28"
+__updated__ = "2021-09-04"
 
 import sys
 sys.path.append("/home/marksa/git/Python/utils")
 import copy
-from mhsUtils import dt, run_ts, now_dt
+from mhsUtils import dt, run_ts, now_dt, get_filename
 from mhsLogging import MhsLogger
 from cwLibWrappers import cwlib
 from cwTools import *
@@ -27,7 +27,7 @@ from cwTools import *
 DEFAULT_BAT_ID = "maysw101"
 DEFAULT_BAT_YR = 1954
 PROGRAM_DESC   = "Print batting stats, totals & averages from Retrosheet data for the specified year(s)."
-PROGRAM_NAME   = "printBattingStats.py"
+PROGRAM_NAME   = get_filename(__file__)
 ID_HELP_DESC   = "Retrosheet id for a player, e.g. aaroh101, bondb101"
 BAT_STD_SPACE  = STD_SPACE_SIZE
 BAT_RND_PRECISION = 3

@@ -14,19 +14,19 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-25"
-__updated__ = "2021-08-22"
+__updated__ = "2021-09-04"
 
 import sys
 sys.path.append("/home/marksa/git/Python/utils")
 import copy
-from mhsUtils import dt, run_ts, now_dt
+from mhsUtils import dt, run_ts, now_dt, get_filename
 from mhsLogging import MhsLogger
 from cwTools import *
 
 DEFAULT_PITCH_ID = "kersc001"
 DEFAULT_PITCH_YR = 2014
 PROGRAM_DESC = "Print pitching stats, totals & averages from Retrosheet data for the specified year(s)."
-PROGRAM_NAME = "printPitchingStats.py"
+PROGRAM_NAME = get_filename(__file__)
 ID_HELP_DESC = "Retrosheet id for a pitcher, e.g. spahw101, kersc001"
 PITCH_STD_SPACE = STD_SPACE_SIZE
 PITCH_RND_PRECISION = 2
