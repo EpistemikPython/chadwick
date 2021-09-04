@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-08-29"
+__updated__ = "2021-09-04"
 
 import csv
 import glob
@@ -231,7 +231,7 @@ class PrintStats(ABC):
 
 def process_bp_args(desc:str, exe:str, id_help:str):
     """Use ArgumentParser to specify command line arguments for batting and pitching stats."""
-    arg_parser = ArgumentParser(description = desc, prog = exe)
+    arg_parser = ArgumentParser(description = desc, prog = "python3 " + exe)
     # required arguments
     required = arg_parser.add_argument_group('REQUIRED')
     required.add_argument('-i', '--player_id', required=True, help=id_help)
