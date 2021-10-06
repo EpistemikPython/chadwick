@@ -14,12 +14,12 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-25"
-__updated__ = "2021-09-04"
+__updated__ = "2021-10-06"
 
 import sys
 sys.path.append("/home/marksa/git/Python/utils")
 import copy
-from mhsUtils import dt, run_ts, now_dt, get_filename
+from mhsUtils import dt, now_dt, get_filename, get_current_time
 from mhsLogging import MhsLogger
 from cwTools import *
 
@@ -297,7 +297,7 @@ def main_pitching_stats(args:list):
 
 if __name__ == "__main__":
     if '-q' not in sys.argv:
-        print(F"\n\tStart time = {run_ts}\n")
+        print(F"\n\tStart time = {get_current_time()}\n")
     main_pitching_stats(sys.argv[1:])
     if '-q' not in sys.argv:
         run_time = (dt.now() - now_dt).total_seconds()

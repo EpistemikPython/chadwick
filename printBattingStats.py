@@ -14,12 +14,12 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-01-21"
-__updated__ = "2021-09-04"
+__updated__ = "2021-10-06"
 
 import sys
 sys.path.append("/home/marksa/git/Python/utils")
 import copy
-from mhsUtils import dt, run_ts, now_dt, get_filename
+from mhsUtils import dt, now_dt, get_filename, get_current_time
 from mhsLogging import MhsLogger
 from cwLibWrappers import cwlib
 from cwTools import *
@@ -55,7 +55,7 @@ LAST = GDP+1  # end of available counting stats
 # CWBoxBatting: int g, pa, ab, r, h, b2, b3, hr, hrslam, bi, bi2out, gw, bb, ibb, so, gdp, hp, sh, sf, sb, cs, xi;
 # baseball-ref.com: G  PA  AB  R  H  2B  3B  HR  RBI  SB  CS  BB  SO  BA  OBP  SLG  OPS  OPS+  TB  GDP  HBP  SH  SF IBB
 STATS_DICT = { "G ":0, "PA":0, "AB":0, "R ":0, "H ":0, "2B":0, "3B":0, "HR":0, "XBH":0, "RBI":0, "SO":0, "BB":0, "IBB":0,
-               "SB":0, "CS":0, "SH":0, "SF":0, "HBP":0, "GDP":0,"TB":0, "BA":0, "OBP":0, "SLG":0, "OPS":0 }
+               "SB":0, "CS":0, "SH":0, "SF":0, "HBP":0, "GDP":0, "TB":0, "BA":0, "OBP":0, "SLG":0, "OPS":0 }
 BATTING_HDRS = list( STATS_DICT.keys() )
 
 
@@ -249,7 +249,7 @@ def main_batting_stats(args:list):
 
 if __name__ == "__main__":
     if '-q' not in sys.argv:
-        print(F"\n\tStart time = {run_ts}\n")
+        print(F"\n\tStart time = {get_current_time()}\n")
     main_batting_stats(sys.argv[1:])
     if '-q' not in sys.argv:
         run_time = (dt.now() - now_dt).total_seconds()

@@ -14,12 +14,12 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2021-08-22"
-__updated__ = "2021-09-04"
+__updated__ = "2021-10-06"
 
 import copy
 import sys
 sys.path.append("/home/marksa/git/Python/utils")
-from mhsUtils import dt, run_ts, now_dt, get_filename
+from mhsUtils import dt, now_dt, get_filename, get_current_time
 from mhsLogging import MhsLogger
 from cwLibWrappers import cwlib
 from cwTools import *
@@ -496,7 +496,7 @@ def main_batting_leaders(args:list):
 
 if __name__ == "__main__":
     if '-q' not in sys.argv:
-        print(F"\n\tStart time = {run_ts}\n")
+        print(F"\n\tStart time = {get_current_time()}\n")
     main_batting_leaders(sys.argv[1:])
     if '-q' not in sys.argv:
         run_time = (dt.now() - now_dt).total_seconds()
