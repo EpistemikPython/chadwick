@@ -29,6 +29,7 @@ fork-cwb
 # find <dir/>* -type l >> .gitignore
 Baseball
 Chadwick*
+FanGraphs*
 event
 regular
 [Rr]etrosheet
