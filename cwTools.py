@@ -14,7 +14,7 @@
 __author__       = "Mark Sattolo"
 __author_email__ = "epistemik@gmail.com"
 __created__ = "2019-11-07"
-__updated__ = "2021-09-04"
+__updated__ = "2021-09-05"
 
 import csv
 import glob
@@ -40,7 +40,7 @@ RETROSHEET_START_YEAR = 1871
 RETROSHEET_AVAIL_YEAR = 1974
 RETROSHEET_END_YEAR   = 2021
 
-RETROSHEET_FOLDER  = osp.join(BASE_GIT_FOLDER, "clone" + osp.sep + "ChadwickBureau" + osp.sep + "retrosheet")
+RETROSHEET_FOLDER  = osp.join(BASE_GIT_FOLDER, "fork" + osp.sep + "retrosheet")
 ROSTERS_FOLDER     = osp.join(RETROSHEET_FOLDER, "rosters")
 EVENTS_FOLDER      = osp.join(RETROSHEET_FOLDER, "event")
 REG_SEASON_FOLDER  = osp.join(EVENTS_FOLDER, "regular")
@@ -85,7 +85,7 @@ class PrintStats(ABC):
         self.std_space = 0
         self.hdrs = None
         self.num_files = 0
-        self.fam_name = self.giv_name = ""
+        self.fam_name = self.giv_name = ''
 
     def get_num_files(self):
         return self.num_files
@@ -105,13 +105,13 @@ class PrintStats(ABC):
         print(''.rjust(self.std_space), end = '')
         for spx in range(len(self.hdrs)):
             print("---".rjust(self.std_space), end = '')
-        print(" ")
+        print(' ')
 
     def print_header(self):
         print(''.rjust(self.std_space), end = '')
         for item in self.hdrs:
             print(item.rjust(self.std_space), end = '')
-        print(" ")
+        print(' ')
         self.print_hdr_uls()
 
     def print_stats(self, player_id:str, name:str, season:str, yrstart:int, yrend:int):
@@ -233,17 +233,18 @@ def process_bp_args(desc:str, exe:str, id_help:str):
     """Use ArgumentParser to specify command line arguments for batting and pitching stats."""
     arg_parser = ArgumentParser(description = desc, prog = "python3 " + exe)
     # required arguments
-    required = arg_parser.add_argument_group('REQUIRED')
-    required.add_argument('-i', '--player_id', required=True, help=id_help)
-    required.add_argument('-s', '--start', metavar = "YEAR", required=True, type=int, help="(start) year to find stats <yyyy>")
+    required = arg_parser.add_argument_group("REQUIRED")
+    required.add_argument('-i', '--player_id', required = True, help = id_help)
+    required.add_argument('-s', '--start', metavar = "YEAR", required = True, type = int,
+                          help = "(start) year to find stats <yyyy>")
     # optional arguments
-    arg_parser.add_argument('-e', '--end', metavar = "YEAR", type=int, help="end year to find stats <yyyy>")
-    arg_parser.add_argument('-p', '--post', action="store_true", help=F"find {POST_SEASON} games instead of {REG_SEASON}")
-    arg_parser.add_argument('-q', '--quiet', action="store_true", help="NO logging")
-    arg_parser.add_argument('-c', '--levcon', metavar = "LEVEL", default=lg.getLevelName(DEFAULT_CONSOLE_LEVEL),
-                            help="set LEVEL of console logging output")
-    arg_parser.add_argument('-f', '--levfile', metavar = "LEVEL", default=lg.getLevelName(DEFAULT_FILE_LEVEL),
-                            help="set LEVEL of file logging output")
+    arg_parser.add_argument('-e', '--end', metavar = "YEAR", type = int, help = "end year to find stats <yyyy>")
+    arg_parser.add_argument('-p', '--post', action = "store_true", help = F"find {POST_SEASON} games instead of {REG_SEASON}")
+    arg_parser.add_argument('-q', '--quiet', action = "store_true", help = "NO logging")
+    arg_parser.add_argument('-c', '--levcon', metavar = "LEVEL", default = lg.getLevelName(DEFAULT_CONSOLE_LEVEL),
+                            help = "set LEVEL of console logging output")
+    arg_parser.add_argument('-f', '--levfile', metavar = "LEVEL", default = lg.getLevelName(DEFAULT_FILE_LEVEL),
+                            help = "set LEVEL of file logging output")
     return arg_parser
 
 
