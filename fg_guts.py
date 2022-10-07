@@ -4,7 +4,7 @@
 # fg_guts.py -- baseball statistical constants
 #
 # This data obtained from Fangraphs
-# @see https://www.fangraphs.com/guts.aspx?type=cn
+# @see https://www.fangraphs.com/guts.aspx
 #
 # Port to Python3, additions & modifications Copyright (c) 2021 Mark Sattolo <epistemik@gmail.com>
 
@@ -27,7 +27,7 @@ guts = [
                 "w3B"       : "1.568" ,
                 "wHR"       : "2.007" ,
                 "runSB"     : ".200"  ,
-                "runCS"     : "-.417" ,
+                "runCS"     : "-.419" ,
                 "R/PA"      : ".121"  ,
                 "R/W"       : "9.973" ,
                 "cFIP"      : "3.169"
